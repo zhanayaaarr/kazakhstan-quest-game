@@ -77,14 +77,18 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
     meta: [
       { charSet: "utf-8" },
       { name: "viewport", content: "width=device-width, initial-scale=1" },
-      { title: "Lovable App" },
-      { name: "description", content: "Lovable Generated Project" },
+      { title: "kazakh quiz" },
+      { name: "description", content: "Kazakhstan Quest is a 2D educational adventure quiz game for learning about Kazakhstan." },
       { name: "author", content: "Lovable" },
-      { property: "og:title", content: "Lovable App" },
-      { property: "og:description", content: "Lovable Generated Project" },
+      { property: "og:title", content: "kazakh quiz" },
+      { property: "og:description", content: "Kazakhstan Quest is a 2D educational adventure quiz game for learning about Kazakhstan." },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary" },
       { name: "twitter:site", content: "@Lovable" },
+      { name: "twitter:title", content: "kazakh quiz" },
+      { name: "twitter:description", content: "Kazakhstan Quest is a 2D educational adventure quiz game for learning about Kazakhstan." },
+      { property: "og:image", content: "https://pub-bb2e103a32db4e198524a2e9ed8f35b4.r2.dev/a2a2a1fd-43e4-4475-94df-4a601aed5b25/id-preview-163fcd1c--7f6bce7e-b830-4c84-a9af-1bb3ad83e3c4.lovable.app-1780298180477.png" },
+      { name: "twitter:image", content: "https://pub-bb2e103a32db4e198524a2e9ed8f35b4.r2.dev/a2a2a1fd-43e4-4475-94df-4a601aed5b25/id-preview-163fcd1c--7f6bce7e-b830-4c84-a9af-1bb3ad83e3c4.lovable.app-1780298180477.png" },
     ],
     links: [
       {
