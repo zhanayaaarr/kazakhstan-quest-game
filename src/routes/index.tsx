@@ -138,7 +138,7 @@ function getRank(score: number): { name: string; emoji: string } {
   return { name: "Beginner Explorer", emoji: "🌱" };
 }
 
-function Game() {
+function Game({ session }: { session: import("@supabase/supabase-js").Session }) {
   const [screen, setScreen] = useState<Screen>("start");
   const [levelIdx, setLevelIdx] = useState(0);
   const [qIdx, setQIdx] = useState(0);
