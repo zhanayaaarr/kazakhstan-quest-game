@@ -266,26 +266,7 @@ function Game({ session }: { session: import("@supabase/supabase-js").Session })
   // ============ FINISH ============
   if (screen === "finish") {
     const rank = getRank(score);
-    return (
-      <div className="min-h-screen flex items-center justify-center p-6" style={{ background: "var(--gradient-hero)" }}>
-        <div className="bg-card rounded-3xl p-10 max-w-lg w-full text-center animate-bounce-in" style={{ boxShadow: "var(--shadow-card)" }}>
-          <div className="text-7xl mb-4 animate-float">{rank.emoji}</div>
-          <h2 className="text-4xl font-black mb-2">Journey Complete!</h2>
-          <p className="text-muted-foreground mb-6">You traveled across all of Kazakhstan 🇰🇿</p>
-          <div className="rounded-2xl p-6 mb-6" style={{ background: "var(--gradient-gold)" }}>
-            <div className="text-sm font-bold text-secondary-foreground/70 mb-1">TOTAL SCORE</div>
-            <div className="text-6xl font-black text-secondary-foreground">{score} ⭐</div>
-            <div className="mt-3 text-lg font-bold text-secondary-foreground">Rank: {rank.name}</div>
-          </div>
-          <button
-            onClick={() => setScreen("start")}
-            className="w-full py-4 rounded-xl font-black text-lg bg-primary text-primary-foreground hover:opacity-90 transition"
-          >
-            Play Again 🔄
-          </button>
-        </div>
-      </div>
-    );
+    return <FinishScreen score={score} rank={rank} session={session} onReplay={() => setScreen("start")} />;
   }
 
   // ============ LEVEL RESULT ============
