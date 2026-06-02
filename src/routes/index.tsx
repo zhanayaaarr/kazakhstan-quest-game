@@ -108,6 +108,8 @@ const LEVELS: Level[] = [
       { q: "What place is shown in the image?", answers: ["baikonur", "baykonur"], hint: "Famous rocket launch site." },
       { q: "What is launched here?", answers: ["rockets", "rocket", "spacecraft", "spaceships"], hint: "They fly to space." },
       { q: "Who was the first human in space launched here?", answers: ["gagarin", "yuri gagarin", "yurigagarin"], hint: "Russian cosmonaut, 1961." },
+      { q: "In what year did Gagarin fly to space?", answers: ["1961"], hint: "Early 1960s." },
+      { q: "Which region hosts the cosmodrome?", answers: ["kyzylorda", "kyzyl-orda", "kyzylorda region"], hint: "Southern Kazakhstan region." },
     ],
   },
 ];
