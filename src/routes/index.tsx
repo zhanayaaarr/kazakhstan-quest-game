@@ -446,6 +446,8 @@ function Game({ session }: { session: import("@supabase/supabase-js").Session })
   );
 }
 
+type Result = { id: string; display_name: string | null; score: number; rank: string | null; created_at: string };
+
 function FinishScreen({
   score,
   rank,
@@ -457,23 +459,44 @@ function FinishScreen({
   session: import("@supabase/supabase-js").Session;
   onReplay: () => void;
 }) {
+  const [results, setResults] = useState<Result[]>([]);
+  const [saved, setSaved] = useState(false);
+
   useEffect(() => {
     (async () => {
       const userId = session.user.id;
-      const { data: existing } = await supabase
+      const { data: profile } = await supabase
         .from("profiles")
-        .select("best_score")
+        .select("best_score, display_name")
         .eq("user_id", userId)
         .maybeSingle();
-      const prev = existing?.best_score ?? 0;
+
+      const prev = profile?.best_score ?? 0;
       if (score > prev) {
         await supabase
           .from("profiles")
           .update({ best_score: score, rank: rank.name })
           .eq("user_id", userId);
       }
+
+      await supabase.from("game_results").insert({
+        user_id: userId,
+        display_name: profile?.display_name ?? session.user.email,
+        score,
+        rank: rank.name,
+        levels_completed: LEVELS.length,
+      });
+
+      const { data: top } = await supabase
+        .from("game_results")
+        .select("id, display_name, score, rank, created_at")
+        .order("score", { ascending: false })
+        .limit(10);
+
+      setResults((top ?? []) as Result[]);
+      setSaved(true);
     })();
-  }, [score, rank.name, session.user.id]);
+  }, [score, rank.name, session.user.id, session.user.email]);
 
   return (
     <div className="min-h-screen flex items-center justify-center p-6" style={{ background: "var(--gradient-hero)" }}>
@@ -486,7 +509,30 @@ function FinishScreen({
           <div className="text-sm font-bold text-secondary-foreground/70 mb-1">TOTAL SCORE</div>
           <div className="text-6xl font-black text-secondary-foreground">{score} ⭐</div>
           <div className="mt-3 text-lg font-bold text-secondary-foreground">Rank: {rank.name}</div>
+          <div className="mt-2 text-xs font-bold text-secondary-foreground/80">
+            {saved ? "✅ Result saved to leaderboard" : "Saving result..."}
+          </div>
         </div>
+
+        {results.length > 0 && (
+          <div className="mb-6 text-left">
+            <h3 className="text-lg font-black mb-2 text-center">🏆 Top 10 Explorers</h3>
+            <div className="space-y-1 max-h-64 overflow-y-auto">
+              {results.map((r, i) => (
+                <div
+                  key={r.id}
+                  className="flex items-center justify-between px-3 py-2 rounded-lg bg-muted/50 text-sm"
+                >
+                  <span className="font-bold">
+                    {i + 1}. {r.display_name ?? "Anon"}
+                  </span>
+                  <span className="font-black">{r.score} ⭐</span>
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
+
         <button
           onClick={onReplay}
           className="w-full py-4 rounded-xl font-black text-lg bg-primary text-primary-foreground hover:opacity-90 transition mb-2"
@@ -503,3 +549,4 @@ function FinishScreen({
     </div>
   );
 }
+

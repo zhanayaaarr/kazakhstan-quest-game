@@ -14,6 +14,36 @@ export type Database = {
   }
   public: {
     Tables: {
+      game_results: {
+        Row: {
+          created_at: string
+          display_name: string | null
+          id: string
+          levels_completed: number
+          rank: string | null
+          score: number
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          display_name?: string | null
+          id?: string
+          levels_completed?: number
+          rank?: string | null
+          score?: number
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          display_name?: string | null
+          id?: string
+          levels_completed?: number
+          rank?: string | null
+          score?: number
+          user_id?: string
+        }
+        Relationships: []
+      }
       profiles: {
         Row: {
           best_score: number
