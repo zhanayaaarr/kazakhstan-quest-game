@@ -93,6 +93,8 @@ const LEVELS: Level[] = [
       { q: "What city is shown in the image?", answers: ["shymkent", "chimkent"], hint: "Third largest city of Kazakhstan." },
       { q: "What does this monument celebrate?", answers: ["independence", "freedom"], hint: "Gained in 1991." },
       { q: "In which part of Kazakhstan is it? (north/south/east/west)", answers: ["south", "southern"], hint: "Warm climate region." },
+      { q: "In what year did Kazakhstan gain independence?", answers: ["1991"], hint: "Fall of the Soviet Union." },
+      { q: "Shymkent is the ___ largest city. (number)", answers: ["3", "third", "3rd"], hint: "After Almaty and Astana." },
     ],
   },
   {
