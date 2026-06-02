@@ -18,8 +18,12 @@ export const Route = createFileRoute("/")({
       { property: "og:description", content: "Travel across Kazakhstan and learn about its cities and monuments." },
     ],
   }),
-  component: Game,
+  component: GameRoute,
 });
+
+function GameRoute() {
+  return <AuthGate>{(session) => <Game session={session} />}</AuthGate>;
+}
 
 type Question = { q: string; answers: string[]; hint: string };
 type Level = {
