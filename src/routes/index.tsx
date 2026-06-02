@@ -1,11 +1,13 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import heroBg from "@/assets/hero-bg.jpg";
 import baiterek from "@/assets/baiterek.jpg";
 import koktobe from "@/assets/koktobe.jpg";
 import turkestan from "@/assets/turkestan.jpg";
 import shymkent from "@/assets/shymkent.jpg";
 import baikonur from "@/assets/baikonur.jpg";
+import { AuthGate } from "@/components/AuthGate";
+import { supabase } from "@/integrations/supabase/client";
 
 export const Route = createFileRoute("/")({
   head: () => ({
@@ -16,8 +18,12 @@ export const Route = createFileRoute("/")({
       { property: "og:description", content: "Travel across Kazakhstan and learn about its cities and monuments." },
     ],
   }),
-  component: Game,
+  component: GameRoute,
 });
+
+function GameRoute() {
+  return <AuthGate>{(session) => <Game session={session} />}</AuthGate>;
+}
 
 type Question = { q: string; answers: string[]; hint: string };
 type Level = {
@@ -132,7 +138,7 @@ function getRank(score: number): { name: string; emoji: string } {
   return { name: "Beginner Explorer", emoji: "🌱" };
 }
 
-function Game() {
+function Game({ session }: { session: import("@supabase/supabase-js").Session }) {
   const [screen, setScreen] = useState<Screen>("start");
   const [levelIdx, setLevelIdx] = useState(0);
   const [qIdx, setQIdx] = useState(0);
@@ -260,26 +266,7 @@ function Game() {
   // ============ FINISH ============
   if (screen === "finish") {
     const rank = getRank(score);
-    return (
-      <div className="min-h-screen flex items-center justify-center p-6" style={{ background: "var(--gradient-hero)" }}>
-        <div className="bg-card rounded-3xl p-10 max-w-lg w-full text-center animate-bounce-in" style={{ boxShadow: "var(--shadow-card)" }}>
-          <div className="text-7xl mb-4 animate-float">{rank.emoji}</div>
-          <h2 className="text-4xl font-black mb-2">Journey Complete!</h2>
-          <p className="text-muted-foreground mb-6">You traveled across all of Kazakhstan 🇰🇿</p>
-          <div className="rounded-2xl p-6 mb-6" style={{ background: "var(--gradient-gold)" }}>
-            <div className="text-sm font-bold text-secondary-foreground/70 mb-1">TOTAL SCORE</div>
-            <div className="text-6xl font-black text-secondary-foreground">{score} ⭐</div>
-            <div className="mt-3 text-lg font-bold text-secondary-foreground">Rank: {rank.name}</div>
-          </div>
-          <button
-            onClick={() => setScreen("start")}
-            className="w-full py-4 rounded-xl font-black text-lg bg-primary text-primary-foreground hover:opacity-90 transition"
-          >
-            Play Again 🔄
-          </button>
-        </div>
-      </div>
-    );
+    return <FinishScreen score={score} rank={rank} session={session} onReplay={() => setScreen("start")} />;
   }
 
   // ============ LEVEL RESULT ============
@@ -444,6 +431,64 @@ function Game() {
             )}
           </div>
         </div>
+      </div>
+    </div>
+  );
+}
+
+function FinishScreen({
+  score,
+  rank,
+  session,
+  onReplay,
+}: {
+  score: number;
+  rank: { name: string; emoji: string };
+  session: import("@supabase/supabase-js").Session;
+  onReplay: () => void;
+}) {
+  useEffect(() => {
+    (async () => {
+      const userId = session.user.id;
+      const { data: existing } = await supabase
+        .from("profiles")
+        .select("best_score")
+        .eq("user_id", userId)
+        .maybeSingle();
+      const prev = existing?.best_score ?? 0;
+      if (score > prev) {
+        await supabase
+          .from("profiles")
+          .update({ best_score: score, rank: rank.name })
+          .eq("user_id", userId);
+      }
+    })();
+  }, [score, rank.name, session.user.id]);
+
+  return (
+    <div className="min-h-screen flex items-center justify-center p-6" style={{ background: "var(--gradient-hero)" }}>
+      <div className="bg-card rounded-3xl p-10 max-w-lg w-full text-center animate-bounce-in" style={{ boxShadow: "var(--shadow-card)" }}>
+        <div className="text-7xl mb-4 animate-float">{rank.emoji}</div>
+        <h2 className="text-4xl font-black mb-2">Journey Complete!</h2>
+        <p className="text-muted-foreground mb-1">You traveled across all of Kazakhstan 🇰🇿</p>
+        <p className="text-xs text-muted-foreground mb-6">Signed in as {session.user.email}</p>
+        <div className="rounded-2xl p-6 mb-6" style={{ background: "var(--gradient-gold)" }}>
+          <div className="text-sm font-bold text-secondary-foreground/70 mb-1">TOTAL SCORE</div>
+          <div className="text-6xl font-black text-secondary-foreground">{score} ⭐</div>
+          <div className="mt-3 text-lg font-bold text-secondary-foreground">Rank: {rank.name}</div>
+        </div>
+        <button
+          onClick={onReplay}
+          className="w-full py-4 rounded-xl font-black text-lg bg-primary text-primary-foreground hover:opacity-90 transition mb-2"
+        >
+          Play Again 🔄
+        </button>
+        <button
+          onClick={() => supabase.auth.signOut()}
+          className="w-full py-2 rounded-xl font-bold text-sm text-muted-foreground hover:text-foreground transition"
+        >
+          Sign out
+        </button>
       </div>
     </div>
   );
