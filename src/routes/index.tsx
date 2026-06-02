@@ -264,7 +264,7 @@ function Game({ session }: { session: import("@supabase/supabase-js").Session })
           <div className="mt-8 flex justify-center gap-6 text-white/80 text-sm font-semibold">
             <span>5 LEVELS</span>
             <span>•</span>
-            <span>15 QUESTIONS</span>
+            <span>25 QUESTIONS</span>
             <span>•</span>
             <span>1 EPIC JOURNEY</span>
           </div>
