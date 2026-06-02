@@ -48,6 +48,8 @@ const LEVELS: Level[] = [
       { q: "What city is shown in the image?", answers: ["astana", "nur-sultan", "nursultan"], hint: "It's the capital city of Kazakhstan." },
       { q: "What is this monument called?", answers: ["baiterek", "bayterek", "baiterek tower"], hint: "It means 'tall poplar tree' in Kazakh." },
       { q: "What is it famous for? (one word)", answers: ["capital", "symbol", "tower"], hint: "It is the symbol of the capital." },
+      { q: "How tall is Baiterek in meters?", answers: ["97", "97m", "97 meters"], hint: "Same as the year Astana became capital." },
+      { q: "In which year did Astana become the capital?", answers: ["1997"], hint: "Look at the tower's height." },
     ],
   },
   {
@@ -61,6 +63,8 @@ const LEVELS: Level[] = [
       { q: "What city is shown in the image?", answers: ["almaty", "alma-ata", "almata"], hint: "Means 'father of apples'." },
       { q: "What is this hill called?", answers: ["kok-tobe", "koktobe", "kok tobe"], hint: "Means 'green hill' in Kazakh." },
       { q: "What is Almaty famous for? (one word)", answers: ["apples", "mountains", "apple"], hint: "A fruit that grew here first." },
+      { q: "Which mountain range borders Almaty?", answers: ["tian shan", "tianshan", "tien shan"], hint: "Means 'celestial mountains'." },
+      { q: "Was Almaty the former capital? (yes/no)", answers: ["yes"], hint: "Until 1997." },
     ],
   },
   {
@@ -74,6 +78,8 @@ const LEVELS: Level[] = [
       { q: "What city is shown in the image?", answers: ["turkestan", "turkistan"], hint: "An ancient spiritual city." },
       { q: "Who is this mausoleum dedicated to?", answers: ["yasawi", "ahmed yasawi", "khoja ahmed yasawi", "yassawi"], hint: "A famous Sufi poet." },
       { q: "What organization protects it? (acronym)", answers: ["unesco"], hint: "World heritage organization." },
+      { q: "Which ruler built the mausoleum?", answers: ["timur", "tamerlane", "amir timur"], hint: "14th century conqueror." },
+      { q: "In which century was it built?", answers: ["14", "14th", "xiv"], hint: "1300s." },
     ],
   },
   {
@@ -87,6 +93,8 @@ const LEVELS: Level[] = [
       { q: "What city is shown in the image?", answers: ["shymkent", "chimkent"], hint: "Third largest city of Kazakhstan." },
       { q: "What does this monument celebrate?", answers: ["independence", "freedom"], hint: "Gained in 1991." },
       { q: "In which part of Kazakhstan is it? (north/south/east/west)", answers: ["south", "southern"], hint: "Warm climate region." },
+      { q: "In what year did Kazakhstan gain independence?", answers: ["1991"], hint: "Fall of the Soviet Union." },
+      { q: "Shymkent is the ___ largest city. (number)", answers: ["3", "third", "3rd"], hint: "After Almaty and Astana." },
     ],
   },
   {
@@ -100,6 +108,8 @@ const LEVELS: Level[] = [
       { q: "What place is shown in the image?", answers: ["baikonur", "baykonur"], hint: "Famous rocket launch site." },
       { q: "What is launched here?", answers: ["rockets", "rocket", "spacecraft", "spaceships"], hint: "They fly to space." },
       { q: "Who was the first human in space launched here?", answers: ["gagarin", "yuri gagarin", "yurigagarin"], hint: "Russian cosmonaut, 1961." },
+      { q: "In what year did Gagarin fly to space?", answers: ["1961"], hint: "Early 1960s." },
+      { q: "Which region hosts the cosmodrome?", answers: ["kyzylorda", "kyzyl-orda", "kyzylorda region"], hint: "Southern Kazakhstan region." },
     ],
   },
 ];
@@ -254,7 +264,7 @@ function Game({ session }: { session: import("@supabase/supabase-js").Session })
           <div className="mt-8 flex justify-center gap-6 text-white/80 text-sm font-semibold">
             <span>5 LEVELS</span>
             <span>•</span>
-            <span>15 QUESTIONS</span>
+            <span>25 QUESTIONS</span>
             <span>•</span>
             <span>1 EPIC JOURNEY</span>
           </div>
