@@ -48,6 +48,8 @@ const LEVELS: Level[] = [
       { q: "What city is shown in the image?", answers: ["astana", "nur-sultan", "nursultan"], hint: "It's the capital city of Kazakhstan." },
       { q: "What is this monument called?", answers: ["baiterek", "bayterek", "baiterek tower"], hint: "It means 'tall poplar tree' in Kazakh." },
       { q: "What is it famous for? (one word)", answers: ["capital", "symbol", "tower"], hint: "It is the symbol of the capital." },
+      { q: "How tall is Baiterek in meters?", answers: ["97", "97m", "97 meters"], hint: "Same as the year Astana became capital." },
+      { q: "In which year did Astana become the capital?", answers: ["1997"], hint: "Look at the tower's height." },
     ],
   },
   {
