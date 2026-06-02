@@ -1,11 +1,13 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import heroBg from "@/assets/hero-bg.jpg";
 import baiterek from "@/assets/baiterek.jpg";
 import koktobe from "@/assets/koktobe.jpg";
 import turkestan from "@/assets/turkestan.jpg";
 import shymkent from "@/assets/shymkent.jpg";
 import baikonur from "@/assets/baikonur.jpg";
+import { AuthGate } from "@/components/AuthGate";
+import { supabase } from "@/integrations/supabase/client";
 
 export const Route = createFileRoute("/")({
   head: () => ({
