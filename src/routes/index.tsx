@@ -78,6 +78,8 @@ const LEVELS: Level[] = [
       { q: "What city is shown in the image?", answers: ["turkestan", "turkistan"], hint: "An ancient spiritual city." },
       { q: "Who is this mausoleum dedicated to?", answers: ["yasawi", "ahmed yasawi", "khoja ahmed yasawi", "yassawi"], hint: "A famous Sufi poet." },
       { q: "What organization protects it? (acronym)", answers: ["unesco"], hint: "World heritage organization." },
+      { q: "Which ruler built the mausoleum?", answers: ["timur", "tamerlane", "amir timur"], hint: "14th century conqueror." },
+      { q: "In which century was it built?", answers: ["14", "14th", "xiv"], hint: "1300s." },
     ],
   },
   {
