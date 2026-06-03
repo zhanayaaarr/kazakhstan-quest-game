@@ -32,6 +32,37 @@ function Konzhyk({ message, size = 80 }: { message: string; size?: number }) {
   );
 }
 
+const KZ_FACTS = [
+  "Kazakhstan is the largest landlocked country in the world 🌍",
+  "Almaty's name comes from 'alma' — the apple. Wild apples originated here! 🍎",
+  "Baikonur Cosmodrome launched Yuri Gagarin, the first human in space 🚀",
+  "The Kazakh steppe stretches farther than the distance from Madrid to Moscow 🐎",
+  "Astana (now Nur-Sultan/Astana) became the capital in 1997 🏙️",
+  "Kazakhstan has 130+ ethnic groups living together 🤝",
+  "Lake Balkhash is half fresh water, half salty — split down the middle! 💧",
+  "The snow leopard is a national symbol of Kazakhstan 🐆",
+  "Shymbulak near Almaty is one of Central Asia's top ski resorts ⛷️",
+  "Beshbarmak ('five fingers') is the national dish — eaten by hand 🍖",
+  "The dombra is the iconic two-stringed Kazakh instrument 🎶",
+  "Charyn Canyon is often called the 'little brother' of the Grand Canyon 🏜️",
+];
+
+function KonzhykFacts() {
+  const [i, setI] = useState(() => Math.floor(Math.random() * KZ_FACTS.length));
+  const next = () => setI((p) => (p + 1) % KZ_FACTS.length);
+  return (
+    <div className="flex flex-col gap-3">
+      <Konzhyk message={KZ_FACTS[i]} size={96} />
+      <button
+        onClick={next}
+        className="self-start ml-[108px] text-xs font-semibold px-3 py-1.5 rounded-full bg-secondary text-secondary-foreground hover:bg-secondary/80 transition-colors border border-border"
+      >
+        🐻 Tell me another fact
+      </button>
+    </div>
+  );
+}
+
 function MiniLeaderboard() {
   const [rows, setRows] = useState<{ id: string; display_name: string | null; score: number }[]>([]);
   useEffect(() => {
@@ -350,8 +381,9 @@ function Game({ session }: { session: import("@supabase/supabase-js").Session })
               </button>
             </div>
             <div className="mt-10">
-              <Konzhyk message="Сәлем! I'm Konzhyk 🐻 Your guide through Kazakhstan — let's earn stars together!" size={96} />
+              <KonzhykFacts />
             </div>
+
           </div>
           <div className="flex flex-col gap-4">
             <div className="rounded-xl overflow-hidden border border-border" style={{ boxShadow: "var(--shadow-card)" }}>
