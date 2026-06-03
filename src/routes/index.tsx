@@ -280,6 +280,7 @@ const LEVELS: Level[] = [
     monument: "Independence Monument",
     location: "Shymkent, southern Kazakhstan",
     image: shymkent,
+    images: [shy1, shy2, shy3, shy4, shy5],
     guide: "Bolat",
     fact: "Shymkent is the third largest city of Kazakhstan and over 2,200 years old!",
     questions: [
