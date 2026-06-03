@@ -336,7 +336,7 @@ function Game({ session }: { session: import("@supabase/supabase-js").Session })
   const [qResults, setQResults] = useState<Array<"correct" | "close" | "wrong" | null>>([]);
   const [feedback, setFeedback] = useState<{ type: "correct" | "close" | "wrong"; msg: string; points: number; motivation: string; bonus: number } | null>(null);
   const [showHint, setShowHint] = useState(false);
-  const [hearts, setHearts] = useState(3);
+  const [hearts, setHearts] = useState(5);
   const [streak, setStreak] = useState<number>(() => loadStreak());
   const [timeLeft, setTimeLeft] = useState(15);
   const QUESTION_TIME = 15;
