@@ -164,6 +164,7 @@ function Game({ session }: { session: import("@supabase/supabase-js").Session })
   const question = level?.questions[qIdx];
 
   function startGame() {
+    sfx.click();
     setScreen("level");
     setLevelIdx(0);
     setQIdx(0);
