@@ -444,6 +444,19 @@ function Game({ session }: { session: import("@supabase/supabase-js").Session })
             </div>
           )}
 
+          <div className="mb-4">
+            <Konzhyk
+              message={
+                perfect
+                  ? `Жарайсың! Perfect run through ${level.city}! 🎉`
+                  : levelCorrect >= 3
+                  ? `Great job in ${level.city}! Keep going 🐾`
+                  : `Don't give up — ${level.city} has more to teach you!`
+              }
+              size={72}
+            />
+          </div>
+
           <button
             onClick={nextLevel}
             className="w-full py-4 rounded-lg font-medium bg-primary text-primary-foreground hover:bg-[#0d1218] transition-colors"
