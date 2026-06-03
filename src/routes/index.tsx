@@ -538,6 +538,34 @@ function Game({ session }: { session: import("@supabase/supabase-js").Session })
           ))}
         </div>
 
+        {/* Question progress dots */}
+        <div className="flex items-center justify-center gap-2 mb-3">
+          {level.questions.map((_, i) => {
+            const r = qResults[i];
+            const isCurrent = i === qIdx;
+            const bg =
+              r === "correct"
+                ? "bg-[hsl(142_70%_45%)] text-white border-transparent"
+                : r === "close"
+                ? "bg-[hsl(45_90%_55%)] text-black border-transparent"
+                : r === "wrong"
+                ? "bg-[hsl(0_75%_55%)] text-white border-transparent"
+                : isCurrent
+                ? "bg-card border-foreground"
+                : "bg-card border-border text-muted-foreground";
+            const symbol = r === "correct" ? "✓" : r === "wrong" || r === "close" ? "✗" : i + 1;
+            return (
+              <div
+                key={i}
+                className={`w-8 h-8 rounded-full border-2 flex items-center justify-center text-sm font-bold transition-all ${bg} ${isCurrent ? "scale-110 ring-2 ring-foreground/20" : ""}`}
+                aria-label={`Question ${i + 1} ${r ?? "pending"}`}
+              >
+                {symbol}
+              </div>
+            );
+          })}
+        </div>
+
         {/* Image card */}
         <div className="bg-card rounded-3xl overflow-hidden mb-4" style={{ boxShadow: "var(--shadow-card)" }}>
           <div className="relative">
