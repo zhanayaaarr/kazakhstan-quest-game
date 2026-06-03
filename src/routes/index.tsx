@@ -561,16 +561,18 @@ function FinishScreen({
       >
         {/* Sticky score header */}
         <div className="p-8 pb-4 shrink-0 border-b border-border bg-card rounded-t-xl">
-          <div className="text-xs uppercase tracking-wide text-muted-foreground mb-3">Journey complete</div>
-          <h2 className="text-3xl font-normal tracking-tight mb-2">You crossed Kazakhstan</h2>
-          <p className="text-muted-foreground text-sm mb-4">Signed in as {session.user.email}</p>
+          <div className="text-xs uppercase tracking-wide text-muted-foreground mb-3 animate-fade-in">Journey complete</div>
+          <h2 className="text-3xl font-normal tracking-tight mb-2 animate-fade-in" style={{ animationDelay: "80ms", animationFillMode: "backwards" }}>You crossed Kazakhstan</h2>
+          <p className="text-muted-foreground text-sm mb-4 animate-fade-in" style={{ animationDelay: "160ms", animationFillMode: "backwards" }}>Signed in as {session.user.email}</p>
 
-          <div className="rounded-xl p-5" style={{ backgroundColor: "var(--signature-navy)", color: "#fff" }}>
+          <div className="rounded-xl p-5 animate-scale-in" style={{ backgroundColor: "var(--signature-navy)", color: "#fff", animationDelay: "240ms", animationFillMode: "backwards" }}>
             <div className="text-xs uppercase tracking-wide opacity-70 mb-1">Total score</div>
-            <div className="text-5xl font-normal tracking-tight">{score}</div>
-            <div className="mt-2 text-base">{rank.emoji} {rank.name}</div>
-            <div className="mt-1 text-xs opacity-70">
-              {saved ? "Result saved to leaderboard" : "Saving result…"}
+            <div className="text-5xl font-normal tracking-tight tabular-nums">{displayScore}</div>
+            <div className="mt-2 text-base">
+              <span className="inline-block animate-[pop_0.6s_ease-out_1.2s_backwards]">{rank.emoji}</span> {rank.name}
+            </div>
+            <div className="mt-1 text-xs opacity-70 transition-opacity">
+              {saved ? "✓ Result saved to leaderboard" : "Saving result…"}
             </div>
           </div>
         </div>
