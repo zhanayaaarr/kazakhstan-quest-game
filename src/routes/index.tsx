@@ -570,7 +570,11 @@ function FinishScreen({
               <div className="px-4 py-6 text-sm text-muted-foreground text-center">Loading…</div>
             ) : (
               results.map((r, i) => (
-                <div key={r.id} className="flex items-center justify-between px-4 py-3 text-sm hover:bg-muted/50 transition-colors">
+                <div
+                  key={r.id}
+                  className="flex items-center justify-between px-4 py-3 text-sm hover:bg-muted/50 hover:translate-x-1 transition-all duration-200 opacity-0 animate-[fade-in_0.4s_ease-out_forwards]"
+                  style={{ animationDelay: `${i * 60}ms` }}
+                >
                   <span className="text-muted-foreground tabular-nums w-6">{i + 1}</span>
                   <span className="flex-1 truncate">{r.display_name ?? "Anon"}</span>
                   <span className="font-medium tabular-nums">{r.score}</span>
