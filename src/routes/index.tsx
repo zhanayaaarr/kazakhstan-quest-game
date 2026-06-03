@@ -243,46 +243,60 @@ function Game({ session }: { session: import("@supabase/supabase-js").Session })
         </nav>
 
         {/* Hero band */}
-        <section className="px-6 md:px-10 py-20 md:py-28 max-w-6xl mx-auto w-full">
-          <div className="text-xs font-medium tracking-wide text-muted-foreground mb-6 uppercase">
-            Educational adventure · 5 levels
+        <section className="px-6 md:px-10 py-16 md:py-24 max-w-6xl mx-auto w-full grid md:grid-cols-2 gap-12 items-center">
+          <div>
+            <div className="text-xs font-medium tracking-wide text-muted-foreground mb-6 uppercase">
+              Educational adventure · 5 levels
+            </div>
+            <h1 className="text-5xl md:text-6xl font-normal leading-[1.05] tracking-tight">
+              Travel across Kazakhstan.<br />
+              <span className="text-muted-foreground">Learn its cities, monuments and stories.</span>
+            </h1>
+            <p className="mt-8 text-lg text-muted-foreground max-w-xl">
+              A quiet, illustrated quest through Astana, Almaty, Turkestan, Shymkent and Baikonur — answer questions, collect facts, climb the leaderboard.
+            </p>
+            <div className="mt-10 flex flex-wrap items-center gap-3">
+              <button
+                onClick={startGame}
+                className="px-6 py-4 rounded-lg bg-primary text-primary-foreground font-medium hover:bg-[#0d1218] transition-colors"
+              >
+                Start the journey
+              </button>
+              <button
+                onClick={startGame}
+                className="px-6 py-4 rounded-lg bg-background text-foreground font-medium border border-border hover:bg-secondary transition-colors"
+              >
+                How it works
+              </button>
+            </div>
           </div>
-          <h1 className="text-5xl md:text-7xl font-normal leading-[1.05] tracking-tight max-w-4xl">
-            Travel across Kazakhstan.<br />
-            <span className="text-muted-foreground">Learn its cities, monuments and stories.</span>
-          </h1>
-          <p className="mt-8 text-lg text-muted-foreground max-w-2xl">
-            A quiet, illustrated quest through Astana, Almaty, Turkestan, Shymkent and Baikonur — answer questions, collect facts, climb the leaderboard.
-          </p>
-          <div className="mt-10 flex flex-wrap items-center gap-3">
-            <button
-              onClick={startGame}
-              className="px-6 py-4 rounded-lg bg-primary text-primary-foreground font-medium hover:bg-[#0d1218] transition-colors"
-            >
-              Start the journey
-            </button>
-            <button
-              onClick={startGame}
-              className="px-6 py-4 rounded-lg bg-background text-foreground font-medium border border-border hover:bg-secondary transition-colors"
-            >
-              How it works
-            </button>
+          <div className="rounded-xl overflow-hidden border border-border" style={{ boxShadow: "var(--shadow-card)" }}>
+            <img src={heroBg} alt="Kazakhstan panorama" className="w-full h-[420px] object-cover" />
           </div>
         </section>
 
-        {/* Signature cards row */}
+        {/* Signature cards row with city previews */}
         <section className="px-6 md:px-10 pb-24 max-w-6xl mx-auto w-full grid grid-cols-1 md:grid-cols-3 gap-4">
-          <div className="rounded-xl p-8 text-white" style={{ backgroundColor: "var(--signature-coral)" }}>
-            <div className="text-xs uppercase tracking-wide opacity-80 mb-3">01 — Cities</div>
-            <div className="text-2xl leading-tight">Five iconic places, from the steppe capital to the cosmodrome.</div>
+          <div className="rounded-xl overflow-hidden text-white" style={{ backgroundColor: "var(--signature-coral)" }}>
+            <img src={baiterek} alt="Baiterek" className="w-full h-40 object-cover" />
+            <div className="p-6">
+              <div className="text-xs uppercase tracking-wide opacity-80 mb-2">01 — Cities</div>
+              <div className="text-xl leading-tight">Five iconic places, from the steppe capital to the cosmodrome.</div>
+            </div>
           </div>
-          <div className="rounded-xl p-8 text-white" style={{ backgroundColor: "var(--signature-forest)" }}>
-            <div className="text-xs uppercase tracking-wide opacity-80 mb-3">02 — Questions</div>
-            <div className="text-2xl leading-tight">25 thoughtful prompts. Hints when you need them, points when you don't.</div>
+          <div className="rounded-xl overflow-hidden text-white" style={{ backgroundColor: "var(--signature-forest)" }}>
+            <img src={turkestan} alt="Turkestan" className="w-full h-40 object-cover" />
+            <div className="p-6">
+              <div className="text-xs uppercase tracking-wide opacity-80 mb-2">02 — Questions</div>
+              <div className="text-xl leading-tight">25 thoughtful prompts. Hints when you need them, points when you don't.</div>
+            </div>
           </div>
-          <div className="rounded-xl p-8" style={{ backgroundColor: "var(--signature-peach)", color: "#181d26" }}>
-            <div className="text-xs uppercase tracking-wide opacity-70 mb-3">03 — Ranks</div>
-            <div className="text-2xl leading-tight">From Beginner Explorer to Kazakhstan Master — your journey, recorded.</div>
+          <div className="rounded-xl overflow-hidden" style={{ backgroundColor: "var(--signature-peach)", color: "#181d26" }}>
+            <img src={koktobe} alt="Kok-Tobe" className="w-full h-40 object-cover" />
+            <div className="p-6">
+              <div className="text-xs uppercase tracking-wide opacity-70 mb-2">03 — Ranks</div>
+              <div className="text-xl leading-tight">From Beginner Explorer to Kazakhstan Master — your journey, recorded.</div>
+            </div>
           </div>
         </section>
 
@@ -292,8 +306,6 @@ function Game({ session }: { session: import("@supabase/supabase-js").Session })
           <span>5 levels · 25 questions · 1 epic journey</span>
         </div>
 
-        {/* Hidden hero image preserved for SEO/OG, not displayed */}
-        <img src={heroBg} alt="" className="hidden" />
       </div>
     );
   }
