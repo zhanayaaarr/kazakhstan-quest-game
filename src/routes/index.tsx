@@ -11,18 +11,41 @@ import { AuthGate } from "@/components/AuthGate";
 import { supabase } from "@/integrations/supabase/client";
 import { sfx } from "@/lib/sounds";
 
-function Konzhyk({ message, size = 80 }: { message: string; size?: number }) {
+type Mood = "happy" | "celebrate" | "thinking" | "sad" | "neutral";
+const MOOD_EMOJI: Record<Mood, string> = {
+  happy: "😊",
+  celebrate: "🎉",
+  thinking: "🤔",
+  sad: "🥺",
+  neutral: "",
+};
+const MOOD_RING: Record<Mood, string> = {
+  happy: "ring-4 ring-success/40",
+  celebrate: "ring-4 ring-accent/50 animate-pop",
+  thinking: "ring-4 ring-secondary/40",
+  sad: "ring-4 ring-destructive/30",
+  neutral: "",
+};
+
+function Konzhyk({ message, size = 80, mood = "neutral" }: { message: string; size?: number; mood?: Mood }) {
   return (
     <div className="flex items-end gap-3 animate-bounce-in">
-      <img
-        src={konzhyk}
-        alt="Konzhyk the bear"
-        width={size}
-        height={size}
-        loading="lazy"
-        style={{ width: size, height: size }}
-        className="drop-shadow-md shrink-0"
-      />
+      <div className="relative shrink-0">
+        <img
+          src={konzhyk}
+          alt="Konzhyk the bear"
+          width={size}
+          height={size}
+          loading="lazy"
+          style={{ width: size, height: size }}
+          className={`drop-shadow-md rounded-full ${MOOD_RING[mood]}`}
+        />
+        {MOOD_EMOJI[mood] && (
+          <span className="absolute -top-2 -right-2 text-2xl drop-shadow-sm" aria-hidden>
+            {MOOD_EMOJI[mood]}
+          </span>
+        )}
+      </div>
       <div className="relative bg-card border-2 border-border rounded-2xl px-4 py-3 text-sm font-semibold max-w-xs"
         style={{ boxShadow: "var(--shadow-card)" }}>
         <div className="absolute -left-2 bottom-4 w-4 h-4 bg-card border-l-2 border-b-2 border-border rotate-45" />
@@ -30,6 +53,44 @@ function Konzhyk({ message, size = 80 }: { message: string; size?: number }) {
       </div>
     </div>
   );
+}
+
+// ===== Streak (days in a row) — stored in localStorage =====
+function loadStreak(): number {
+  if (typeof window === "undefined") return 0;
+  try {
+    const last = localStorage.getItem("kq_lastPlay");
+    const streak = parseInt(localStorage.getItem("kq_streak") ?? "0", 10) || 0;
+    if (!last) return 0;
+    const today = new Date().toDateString();
+    const lastDate = new Date(last).toDateString();
+    if (today === lastDate) return streak;
+    const yesterday = new Date(Date.now() - 86400000).toDateString();
+    if (lastDate === yesterday) return streak;
+    return 0; // broken
+  } catch {
+    return 0;
+  }
+}
+function bumpStreak(): number {
+  if (typeof window === "undefined") return 0;
+  try {
+    const last = localStorage.getItem("kq_lastPlay");
+    let streak = parseInt(localStorage.getItem("kq_streak") ?? "0", 10) || 0;
+    const today = new Date().toDateString();
+    const lastDate = last ? new Date(last).toDateString() : null;
+    if (lastDate === today) {
+      // already counted today
+    } else {
+      const yesterday = new Date(Date.now() - 86400000).toDateString();
+      streak = lastDate === yesterday ? streak + 1 : 1;
+      localStorage.setItem("kq_streak", String(streak));
+      localStorage.setItem("kq_lastPlay", new Date().toISOString());
+    }
+    return streak;
+  } catch {
+    return 0;
+  }
 }
 
 const KZ_FACTS = [
@@ -273,20 +334,57 @@ function Game({ session }: { session: import("@supabase/supabase-js").Session })
   const [levelScore, setLevelScore] = useState(0);
   const [levelCorrect, setLevelCorrect] = useState(0);
   const [qResults, setQResults] = useState<Array<"correct" | "close" | "wrong" | null>>([]);
-  const [feedback, setFeedback] = useState<{ type: "correct" | "close" | "wrong"; msg: string; points: number; motivation: string } | null>(null);
+  const [feedback, setFeedback] = useState<{ type: "correct" | "close" | "wrong"; msg: string; points: number; motivation: string; bonus: number } | null>(null);
   const [showHint, setShowHint] = useState(false);
+  const [hearts, setHearts] = useState(3);
+  const [streak, setStreak] = useState<number>(() => loadStreak());
+  const [timeLeft, setTimeLeft] = useState(15);
+  const QUESTION_TIME = 15;
 
   const level = LEVELS[levelIdx];
   const question = level?.questions[qIdx];
 
+  // Per-question timer
+  useEffect(() => {
+    if (screen !== "level" || feedback) return;
+    setTimeLeft(QUESTION_TIME);
+    const started = Date.now();
+    const id = setInterval(() => {
+      const left = Math.max(0, QUESTION_TIME - Math.floor((Date.now() - started) / 1000));
+      setTimeLeft(left);
+      if (left <= 0) {
+        clearInterval(id);
+        // Auto-submit as wrong (timeout)
+        setFeedback({
+          type: "wrong",
+          msg: `⏰ Time's up! The answer was "${question?.answers[0] ?? ""}".`,
+          points: 0,
+          motivation: pickMotivation("wrong"),
+          bonus: 0,
+        });
+        setHearts((h) => Math.max(0, h - 1));
+        setQResults((arr) => {
+          const next = [...arr];
+          next[qIdx] = "wrong";
+          return next;
+        });
+        sfx.wrong();
+      }
+    }, 200);
+    return () => clearInterval(id);
+  }, [screen, qIdx, levelIdx, feedback, question]);
+
   function startGame() {
     sfx.click();
+    const s = bumpStreak();
+    setStreak(s);
     setScreen("level");
     setLevelIdx(0);
     setQIdx(0);
     setScore(0);
     setLevelScore(0);
     setLevelCorrect(0);
+    setHearts(3);
     setQResults(Array(LEVELS[0].questions.length).fill(null));
     setInput("");
     setFeedback(null);
@@ -296,14 +394,20 @@ function Game({ session }: { session: import("@supabase/supabase-js").Session })
   function submit() {
     if (!question || feedback) return;
     const r = checkAnswer(input, question.answers);
-    const points = r === "correct" ? 10 : r === "close" ? 5 : 0;
+    const base = r === "correct" ? 10 : r === "close" ? 5 : 0;
+    // Speed bonus: up to +5 for correct, +2 for close
+    const bonus =
+      r === "correct" ? Math.round((timeLeft / QUESTION_TIME) * 5)
+      : r === "close" ? Math.round((timeLeft / QUESTION_TIME) * 2)
+      : 0;
+    const points = base + bonus;
     const msg =
       r === "correct"
         ? `Correct! ${level.guide} says: "${question.answers[0].toUpperCase()} — well done!"`
         : r === "close"
         ? `So close! The answer was "${question.answers[0]}".`
         : `Not quite. The answer was "${question.answers[0]}".`;
-    setFeedback({ type: r, msg, points, motivation: pickMotivation(r) });
+    setFeedback({ type: r, msg, points, motivation: pickMotivation(r), bonus });
     setScore((s) => s + points);
     setLevelScore((s) => s + points);
     setQResults((arr) => {
@@ -317,6 +421,7 @@ function Game({ session }: { session: import("@supabase/supabase-js").Session })
     } else if (r === "close") {
       sfx.close();
     } else {
+      setHearts((h) => Math.max(0, h - 1));
       sfx.wrong();
     }
   }
@@ -326,6 +431,12 @@ function Game({ session }: { session: import("@supabase/supabase-js").Session })
     setFeedback(null);
     setInput("");
     setShowHint(false);
+    // Out of hearts → game over (jump straight to finish)
+    if (hearts <= 0) {
+      sfx.finish();
+      setScreen("finish");
+      return;
+    }
     if (qIdx + 1 < level.questions.length) {
       setQIdx((i) => i + 1);
     } else {
@@ -539,7 +650,7 @@ function Game({ session }: { session: import("@supabase/supabase-js").Session })
     <div className="min-h-screen bg-background p-4 md:p-6">
       <div className="max-w-3xl mx-auto">
         {/* HUD */}
-        <div className="flex items-center justify-between mb-4 bg-card rounded-2xl p-3 px-5" style={{ boxShadow: "var(--shadow-card)" }}>
+        <div className="flex items-center justify-between mb-4 bg-card rounded-2xl p-3 px-5 gap-3 flex-wrap" style={{ boxShadow: "var(--shadow-card)" }}>
           <div className="flex items-center gap-2">
             <span className="text-2xl">🇰🇿</span>
             <div>
@@ -547,10 +658,45 @@ function Game({ session }: { session: import("@supabase/supabase-js").Session })
               <div className="font-black">{level.city}</div>
             </div>
           </div>
-          <div className="text-right">
-            <div className="text-xs font-bold text-muted-foreground">SCORE</div>
-            <div className="font-black text-xl text-accent">{score} ⭐</div>
+          <div className="flex items-center gap-4">
+            {/* Hearts */}
+            <div className="flex items-center gap-0.5" title={`${hearts} lives left`} aria-label={`${hearts} hearts`}>
+              {[0, 1, 2].map((i) => (
+                <span key={i} className={`text-xl transition-all ${i < hearts ? "" : "grayscale opacity-30"}`}>
+                  {i < hearts ? "❤️" : "🖤"}
+                </span>
+              ))}
+            </div>
+            {/* Streak */}
+            {streak > 0 && (
+              <div className="flex flex-col items-center" title={`${streak}-day streak`}>
+                <div className="text-xl leading-none">🔥</div>
+                <div className="text-[10px] font-black text-muted-foreground tabular-nums">{streak}d</div>
+              </div>
+            )}
+            {/* Timer */}
+            <div
+              className={`flex flex-col items-center min-w-[44px] ${
+                feedback ? "opacity-40" : timeLeft <= 5 ? "text-destructive animate-pulse" : ""
+              }`}
+              title="Time left"
+            >
+              <div className="text-lg leading-none">⏱</div>
+              <div className="text-sm font-black tabular-nums">{timeLeft}s</div>
+            </div>
+            <div className="text-right">
+              <div className="text-xs font-bold text-muted-foreground">SCORE</div>
+              <div className="font-black text-xl text-accent">{score} ⭐</div>
+            </div>
           </div>
+        </div>
+
+        {/* Timer bar */}
+        <div className="h-1.5 mb-4 bg-muted rounded-full overflow-hidden">
+          <div
+            className={`h-full transition-all duration-200 ${timeLeft <= 5 ? "bg-destructive" : "bg-primary"}`}
+            style={{ width: `${(timeLeft / QUESTION_TIME) * 100}%` }}
+          />
         </div>
 
         {/* Progress dots */}
@@ -603,7 +749,10 @@ function Game({ session }: { session: import("@supabase/supabase-js").Session })
           <div className="p-5">
             {/* NPC guide */}
             <div className="flex items-start gap-3 mb-4 p-3 rounded-2xl bg-muted">
-              <img src={konzhyk} alt="Konzhyk" width={56} height={56} loading="lazy" style={{ width: 56, height: 56 }} className="shrink-0" />
+              <div className="relative shrink-0">
+                <img src={konzhyk} alt="Konzhyk" width={56} height={56} loading="lazy" style={{ width: 56, height: 56 }} className="rounded-full ring-2 ring-secondary/40" />
+                <span className="absolute -top-1 -right-1 text-lg" aria-hidden>🤔</span>
+              </div>
               <div className="flex-1">
                 <div className="text-xs font-bold text-muted-foreground">KONZHYK with {level.guide.toUpperCase()}</div>
                 <div className="font-bold">{question.q}</div>
@@ -659,18 +808,39 @@ function Game({ session }: { session: import("@supabase/supabase-js").Session })
                   </div>
                   <div className="text-sm font-semibold opacity-95">{feedback.msg}</div>
                   {feedback.points > 0 && (
-                    <div className="mt-2 text-lg font-black animate-pop">You earned +{feedback.points} points ⭐</div>
+                    <div className="mt-2 text-lg font-black animate-pop">
+                      +{feedback.points} ⭐
+                      {feedback.bonus > 0 && (
+                        <span className="ml-2 text-sm font-bold opacity-90">(⚡ speed bonus +{feedback.bonus})</span>
+                      )}
+                    </div>
+                  )}
+                  {feedback.type === "wrong" && (
+                    <div className="mt-2 text-sm font-bold opacity-90">💔 −1 heart · {hearts} left</div>
                   )}
                 </div>
-                <div className="flex items-start gap-3 mb-3 p-3 rounded-2xl bg-muted">
-                  <img src={konzhyk} alt="Konzhyk" width={48} height={48} style={{ width: 48, height: 48 }} className="shrink-0" />
-                  <div className="flex-1 text-sm font-semibold">{feedback.motivation}</div>
+                <div className="mb-3">
+                  <Konzhyk
+                    message={feedback.motivation}
+                    size={56}
+                    mood={
+                      feedback.type === "correct"
+                        ? (feedback.bonus >= 4 ? "celebrate" : "happy")
+                        : feedback.type === "close"
+                        ? "thinking"
+                        : "sad"
+                    }
+                  />
                 </div>
                 <button
                   onClick={next}
                   className="w-full py-4 rounded-xl font-black text-lg bg-primary text-primary-foreground hover:opacity-90 transition"
                 >
-                  {qIdx + 1 < level.questions.length ? "Next Question →" : "Finish Level →"}
+                  {hearts <= 0
+                    ? "💔 Game Over →"
+                    : qIdx + 1 < level.questions.length
+                    ? "Next Question →"
+                    : "Finish Level →"}
                 </button>
               </div>
             )}
