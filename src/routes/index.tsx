@@ -8,6 +8,7 @@ import shymkent from "@/assets/shymkent.jpg";
 import baikonur from "@/assets/baikonur.jpg";
 import { AuthGate } from "@/components/AuthGate";
 import { supabase } from "@/integrations/supabase/client";
+import { sfx } from "@/lib/sounds";
 
 export const Route = createFileRoute("/")({
   head: () => ({
