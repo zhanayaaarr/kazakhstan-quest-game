@@ -617,7 +617,7 @@ function Game({ session }: { session: import("@supabase/supabase-js").Session })
                   value={input}
                   onChange={(e) => setInput(e.target.value)}
                   onKeyDown={(e) => e.key === "Enter" && submit()}
-                  placeholder="Type your answer..."
+                  placeholder="Ответ на русском, қазақша немесе English..."
                   autoFocus
                   className="w-full px-5 py-4 rounded-2xl bg-input border-2 border-border focus:border-primary focus:outline-none text-lg font-semibold"
                 />
