@@ -221,57 +221,83 @@ function Game({ session }: { session: import("@supabase/supabase-js").Session })
   // ============ START SCREEN ============
   if (screen === "start") {
     return (
-      <div
-        className="relative min-h-screen overflow-hidden flex flex-col items-center justify-center p-6"
-        style={{
-          backgroundImage: `linear-gradient(180deg, oklch(0.4 0.15 220 / 0.55), oklch(0.3 0.1 240 / 0.7)), url(${heroBg})`,
-          backgroundSize: "cover",
-          backgroundPosition: "center",
-        }}
-      >
-        <div className="absolute top-6 left-6 text-5xl animate-float">🇰🇿</div>
-        <div className="absolute top-12 right-10 text-5xl animate-float" style={{ animationDelay: "0.5s" }}>🏛️</div>
-        <div className="absolute bottom-12 left-10 text-5xl animate-float" style={{ animationDelay: "1s" }}>🦅</div>
-        <div className="absolute bottom-8 right-8 text-5xl animate-float" style={{ animationDelay: "1.5s" }}>🚀</div>
-
-        <div className="relative text-center max-w-2xl animate-bounce-in">
-          <div className="inline-block px-4 py-1 rounded-full bg-secondary text-secondary-foreground font-bold mb-4 text-sm tracking-widest">
-            🇰🇿 EDUCATIONAL ADVENTURE
+      <div className="min-h-screen bg-background text-foreground flex flex-col">
+        {/* Top nav */}
+        <nav className="h-16 px-6 md:px-10 flex items-center justify-between border-b border-border">
+          <div className="flex items-center gap-2 font-semibold">
+            <span className="text-xl">🇰🇿</span>
+            <span>Kazakhstan Quest</span>
           </div>
-          <h1
-            className="text-6xl md:text-8xl font-black text-white mb-4 drop-shadow-2xl leading-none"
-            style={{ textShadow: "0 6px 30px rgba(0,0,0,0.6)" }}
-          >
-            KAZAKHSTAN
-            <br />
-            <span style={{ background: "var(--gradient-gold)", WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent" }}>
-              QUEST
-            </span>
-          </h1>
-          <p className="text-xl text-white/90 mb-10 font-medium">
-            City & Monument Adventure — travel, learn, and explore!
-          </p>
+          <div className="hidden md:flex items-center gap-8 text-sm text-muted-foreground">
+            <span>Levels</span>
+            <span>Cities</span>
+            <span>Leaderboard</span>
+            <span>About</span>
+          </div>
           <button
             onClick={startGame}
-            className="group relative px-12 py-5 text-2xl font-black text-secondary-foreground rounded-2xl transition-transform hover:scale-110 active:scale-95"
-            style={{
-              background: "var(--gradient-gold)",
-              boxShadow: "var(--shadow-glow)",
-            }}
+            className="hidden md:inline-flex items-center px-5 py-2.5 rounded-lg bg-primary text-primary-foreground text-sm font-medium hover:bg-[#0d1218] transition-colors"
           >
-            PLAY ▶️
+            Start playing
           </button>
-          <div className="mt-8 flex justify-center gap-6 text-white/80 text-sm font-semibold">
-            <span>5 LEVELS</span>
-            <span>•</span>
-            <span>25 QUESTIONS</span>
-            <span>•</span>
-            <span>1 EPIC JOURNEY</span>
+        </nav>
+
+        {/* Hero band */}
+        <section className="px-6 md:px-10 py-20 md:py-28 max-w-6xl mx-auto w-full">
+          <div className="text-xs font-medium tracking-wide text-muted-foreground mb-6 uppercase">
+            Educational adventure · 5 levels
           </div>
+          <h1 className="text-5xl md:text-7xl font-normal leading-[1.05] tracking-tight max-w-4xl">
+            Travel across Kazakhstan.<br />
+            <span className="text-muted-foreground">Learn its cities, monuments and stories.</span>
+          </h1>
+          <p className="mt-8 text-lg text-muted-foreground max-w-2xl">
+            A quiet, illustrated quest through Astana, Almaty, Turkestan, Shymkent and Baikonur — answer questions, collect facts, climb the leaderboard.
+          </p>
+          <div className="mt-10 flex flex-wrap items-center gap-3">
+            <button
+              onClick={startGame}
+              className="px-6 py-4 rounded-lg bg-primary text-primary-foreground font-medium hover:bg-[#0d1218] transition-colors"
+            >
+              Start the journey
+            </button>
+            <button
+              onClick={startGame}
+              className="px-6 py-4 rounded-lg bg-background text-foreground font-medium border border-border hover:bg-secondary transition-colors"
+            >
+              How it works
+            </button>
+          </div>
+        </section>
+
+        {/* Signature cards row */}
+        <section className="px-6 md:px-10 pb-24 max-w-6xl mx-auto w-full grid grid-cols-1 md:grid-cols-3 gap-4">
+          <div className="rounded-xl p-8 text-white" style={{ backgroundColor: "var(--signature-coral)" }}>
+            <div className="text-xs uppercase tracking-wide opacity-80 mb-3">01 — Cities</div>
+            <div className="text-2xl leading-tight">Five iconic places, from the steppe capital to the cosmodrome.</div>
+          </div>
+          <div className="rounded-xl p-8 text-white" style={{ backgroundColor: "var(--signature-forest)" }}>
+            <div className="text-xs uppercase tracking-wide opacity-80 mb-3">02 — Questions</div>
+            <div className="text-2xl leading-tight">25 thoughtful prompts. Hints when you need them, points when you don't.</div>
+          </div>
+          <div className="rounded-xl p-8" style={{ backgroundColor: "var(--signature-peach)", color: "#181d26" }}>
+            <div className="text-xs uppercase tracking-wide opacity-70 mb-3">03 — Ranks</div>
+            <div className="text-2xl leading-tight">From Beginner Explorer to Kazakhstan Master — your journey, recorded.</div>
+          </div>
+        </section>
+
+        {/* Footer hairline */}
+        <div className="mt-auto border-t border-border px-6 md:px-10 py-6 text-xs text-muted-foreground flex justify-between">
+          <span>© Kazakhstan Quest</span>
+          <span>5 levels · 25 questions · 1 epic journey</span>
         </div>
+
+        {/* Hidden hero image preserved for SEO/OG, not displayed */}
+        <img src={heroBg} alt="" className="hidden" />
       </div>
     );
   }
+
 
   // ============ FINISH ============
   if (screen === "finish") {
