@@ -6,9 +6,68 @@ import koktobe from "@/assets/koktobe.jpg";
 import turkestan from "@/assets/turkestan.jpg";
 import shymkent from "@/assets/shymkent.jpg";
 import baikonur from "@/assets/baikonur.jpg";
+import konzhyk from "@/assets/konzhyk.png";
 import { AuthGate } from "@/components/AuthGate";
 import { supabase } from "@/integrations/supabase/client";
 import { sfx } from "@/lib/sounds";
+
+function Konzhyk({ message, size = 80 }: { message: string; size?: number }) {
+  return (
+    <div className="flex items-end gap-3 animate-bounce-in">
+      <img
+        src={konzhyk}
+        alt="Konzhyk the bear"
+        width={size}
+        height={size}
+        loading="lazy"
+        style={{ width: size, height: size }}
+        className="drop-shadow-md shrink-0"
+      />
+      <div className="relative bg-card border-2 border-border rounded-2xl px-4 py-3 text-sm font-semibold max-w-xs"
+        style={{ boxShadow: "var(--shadow-card)" }}>
+        <div className="absolute -left-2 bottom-4 w-4 h-4 bg-card border-l-2 border-b-2 border-border rotate-45" />
+        {message}
+      </div>
+    </div>
+  );
+}
+
+function MiniLeaderboard() {
+  const [rows, setRows] = useState<{ id: string; display_name: string | null; score: number }[]>([]);
+  useEffect(() => {
+    (async () => {
+      const { data } = await supabase
+        .from("game_results")
+        .select("id, display_name, score")
+        .order("score", { ascending: false })
+        .limit(5);
+      setRows(data ?? []);
+    })();
+  }, []);
+  return (
+    <div className="rounded-xl border border-border bg-card p-5" style={{ boxShadow: "var(--shadow-card)" }}>
+      <div className="flex items-center justify-between mb-3">
+        <div className="text-xs uppercase tracking-wide text-muted-foreground">Leaderboard · Top 5</div>
+        <span className="text-lg">🏆</span>
+      </div>
+      {rows.length === 0 ? (
+        <div className="text-sm text-muted-foreground py-4 text-center">Be the first explorer!</div>
+      ) : (
+        <ol className="divide-y divide-border">
+          {rows.map((r, i) => (
+            <li key={r.id} className="flex items-center justify-between py-2 text-sm">
+              <span className="flex items-center gap-3">
+                <span className="tabular-nums w-5 text-muted-foreground">{i + 1}</span>
+                <span className="truncate max-w-[180px]">{r.display_name ?? "Anon"}</span>
+              </span>
+              <span className="font-semibold tabular-nums">{r.score} ⭐</span>
+            </li>
+          ))}
+        </ol>
+      )}
+    </div>
+  );
+}
 
 export const Route = createFileRoute("/")({
   head: () => ({
