@@ -349,7 +349,6 @@ function Game({ session }: { session: import("@supabase/supabase-js").Session })
                 How it works
               </button>
             </div>
-          </div>
             <div className="mt-10">
               <Konzhyk message="Сәлем! I'm Konzhyk 🐻 Your guide through Kazakhstan — let's earn stars together!" size={96} />
             </div>
