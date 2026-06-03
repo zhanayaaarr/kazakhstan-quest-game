@@ -221,57 +221,83 @@ function Game({ session }: { session: import("@supabase/supabase-js").Session })
   // ============ START SCREEN ============
   if (screen === "start") {
     return (
-      <div
-        className="relative min-h-screen overflow-hidden flex flex-col items-center justify-center p-6"
-        style={{
-          backgroundImage: `linear-gradient(180deg, oklch(0.4 0.15 220 / 0.55), oklch(0.3 0.1 240 / 0.7)), url(${heroBg})`,
-          backgroundSize: "cover",
-          backgroundPosition: "center",
-        }}
-      >
-        <div className="absolute top-6 left-6 text-5xl animate-float">🇰🇿</div>
-        <div className="absolute top-12 right-10 text-5xl animate-float" style={{ animationDelay: "0.5s" }}>🏛️</div>
-        <div className="absolute bottom-12 left-10 text-5xl animate-float" style={{ animationDelay: "1s" }}>🦅</div>
-        <div className="absolute bottom-8 right-8 text-5xl animate-float" style={{ animationDelay: "1.5s" }}>🚀</div>
-
-        <div className="relative text-center max-w-2xl animate-bounce-in">
-          <div className="inline-block px-4 py-1 rounded-full bg-secondary text-secondary-foreground font-bold mb-4 text-sm tracking-widest">
-            🇰🇿 EDUCATIONAL ADVENTURE
+      <div className="min-h-screen bg-background text-foreground flex flex-col">
+        {/* Top nav */}
+        <nav className="h-16 px-6 md:px-10 flex items-center justify-between border-b border-border">
+          <div className="flex items-center gap-2 font-semibold">
+            <span className="text-xl">🇰🇿</span>
+            <span>Kazakhstan Quest</span>
           </div>
-          <h1
-            className="text-6xl md:text-8xl font-black text-white mb-4 drop-shadow-2xl leading-none"
-            style={{ textShadow: "0 6px 30px rgba(0,0,0,0.6)" }}
-          >
-            KAZAKHSTAN
-            <br />
-            <span style={{ background: "var(--gradient-gold)", WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent" }}>
-              QUEST
-            </span>
-          </h1>
-          <p className="text-xl text-white/90 mb-10 font-medium">
-            City & Monument Adventure — travel, learn, and explore!
-          </p>
+          <div className="hidden md:flex items-center gap-8 text-sm text-muted-foreground">
+            <span>Levels</span>
+            <span>Cities</span>
+            <span>Leaderboard</span>
+            <span>About</span>
+          </div>
           <button
             onClick={startGame}
-            className="group relative px-12 py-5 text-2xl font-black text-secondary-foreground rounded-2xl transition-transform hover:scale-110 active:scale-95"
-            style={{
-              background: "var(--gradient-gold)",
-              boxShadow: "var(--shadow-glow)",
-            }}
+            className="hidden md:inline-flex items-center px-5 py-2.5 rounded-lg bg-primary text-primary-foreground text-sm font-medium hover:bg-[#0d1218] transition-colors"
           >
-            PLAY ▶️
+            Start playing
           </button>
-          <div className="mt-8 flex justify-center gap-6 text-white/80 text-sm font-semibold">
-            <span>5 LEVELS</span>
-            <span>•</span>
-            <span>25 QUESTIONS</span>
-            <span>•</span>
-            <span>1 EPIC JOURNEY</span>
+        </nav>
+
+        {/* Hero band */}
+        <section className="px-6 md:px-10 py-20 md:py-28 max-w-6xl mx-auto w-full">
+          <div className="text-xs font-medium tracking-wide text-muted-foreground mb-6 uppercase">
+            Educational adventure · 5 levels
           </div>
+          <h1 className="text-5xl md:text-7xl font-normal leading-[1.05] tracking-tight max-w-4xl">
+            Travel across Kazakhstan.<br />
+            <span className="text-muted-foreground">Learn its cities, monuments and stories.</span>
+          </h1>
+          <p className="mt-8 text-lg text-muted-foreground max-w-2xl">
+            A quiet, illustrated quest through Astana, Almaty, Turkestan, Shymkent and Baikonur — answer questions, collect facts, climb the leaderboard.
+          </p>
+          <div className="mt-10 flex flex-wrap items-center gap-3">
+            <button
+              onClick={startGame}
+              className="px-6 py-4 rounded-lg bg-primary text-primary-foreground font-medium hover:bg-[#0d1218] transition-colors"
+            >
+              Start the journey
+            </button>
+            <button
+              onClick={startGame}
+              className="px-6 py-4 rounded-lg bg-background text-foreground font-medium border border-border hover:bg-secondary transition-colors"
+            >
+              How it works
+            </button>
+          </div>
+        </section>
+
+        {/* Signature cards row */}
+        <section className="px-6 md:px-10 pb-24 max-w-6xl mx-auto w-full grid grid-cols-1 md:grid-cols-3 gap-4">
+          <div className="rounded-xl p-8 text-white" style={{ backgroundColor: "var(--signature-coral)" }}>
+            <div className="text-xs uppercase tracking-wide opacity-80 mb-3">01 — Cities</div>
+            <div className="text-2xl leading-tight">Five iconic places, from the steppe capital to the cosmodrome.</div>
+          </div>
+          <div className="rounded-xl p-8 text-white" style={{ backgroundColor: "var(--signature-forest)" }}>
+            <div className="text-xs uppercase tracking-wide opacity-80 mb-3">02 — Questions</div>
+            <div className="text-2xl leading-tight">25 thoughtful prompts. Hints when you need them, points when you don't.</div>
+          </div>
+          <div className="rounded-xl p-8" style={{ backgroundColor: "var(--signature-peach)", color: "#181d26" }}>
+            <div className="text-xs uppercase tracking-wide opacity-70 mb-3">03 — Ranks</div>
+            <div className="text-2xl leading-tight">From Beginner Explorer to Kazakhstan Master — your journey, recorded.</div>
+          </div>
+        </section>
+
+        {/* Footer hairline */}
+        <div className="mt-auto border-t border-border px-6 md:px-10 py-6 text-xs text-muted-foreground flex justify-between">
+          <span>© Kazakhstan Quest</span>
+          <span>5 levels · 25 questions · 1 epic journey</span>
         </div>
+
+        {/* Hidden hero image preserved for SEO/OG, not displayed */}
+        <img src={heroBg} alt="" className="hidden" />
       </div>
     );
   }
+
 
   // ============ FINISH ============
   if (screen === "finish") {
@@ -284,52 +310,53 @@ function Game({ session }: { session: import("@supabase/supabase-js").Session })
     const perfect = levelCorrect === level.questions.length;
     return (
       <div className="min-h-screen flex items-center justify-center p-6 bg-background">
-        <div className="bg-card rounded-3xl p-8 max-w-xl w-full animate-bounce-in" style={{ boxShadow: "var(--shadow-card)" }}>
-          <div className="text-center mb-4">
-            <div className="text-5xl mb-2">{perfect ? "🏆" : "✨"}</div>
-            <h2 className="text-3xl font-black">Level {levelIdx + 1} Complete!</h2>
-            <p className="text-muted-foreground">{level.city} — {level.monument}</p>
+        <div className="bg-card rounded-xl p-8 max-w-xl w-full animate-bounce-in border border-border" style={{ boxShadow: "var(--shadow-card)" }}>
+          <div className="mb-4">
+            <div className="text-xs uppercase tracking-wide text-muted-foreground mb-2">Level {levelIdx + 1} complete</div>
+            <h2 className="text-3xl font-normal tracking-tight">{level.city}</h2>
+            <p className="text-muted-foreground">{level.monument}</p>
           </div>
 
-          <img src={level.image} alt={level.monument} className="w-full h-56 object-cover rounded-2xl mb-4" width={1024} height={1024} />
+          <img src={level.image} alt={level.monument} className="w-full h-56 object-cover rounded-lg mb-4" width={1024} height={1024} />
 
-          <div className="rounded-2xl p-4 mb-4 bg-muted">
-            <div className="font-bold text-sm text-muted-foreground mb-1">📍 LOCATION</div>
-            <div className="font-bold">{level.location}</div>
+          <div className="rounded-lg p-4 mb-3 border border-border">
+            <div className="text-xs uppercase tracking-wide text-muted-foreground mb-1">Location</div>
+            <div className="font-medium">{level.location}</div>
           </div>
 
-          <div className="rounded-2xl p-4 mb-4" style={{ background: "var(--gradient-gold)" }}>
-            <div className="font-bold text-sm text-secondary-foreground/70 mb-1">💡 FUN FACT</div>
-            <div className="font-bold text-secondary-foreground">{level.fact}</div>
+          <div className="rounded-lg p-5 mb-4" style={{ backgroundColor: "var(--signature-cream)", color: "#181d26" }}>
+            <div className="text-xs uppercase tracking-wide opacity-70 mb-1">Fun fact</div>
+            <div className="text-lg leading-snug">{level.fact}</div>
           </div>
 
           <div className="grid grid-cols-2 gap-3 mb-5">
-            <div className="rounded-xl p-3 bg-muted text-center">
-              <div className="text-xs font-bold text-muted-foreground">CORRECT</div>
-              <div className="text-2xl font-black">{levelCorrect}/{level.questions.length}</div>
+            <div className="rounded-lg p-3 border border-border text-center">
+              <div className="text-xs uppercase tracking-wide text-muted-foreground">Correct</div>
+              <div className="text-2xl font-medium">{levelCorrect}/{level.questions.length}</div>
             </div>
-            <div className="rounded-xl p-3 bg-success/20 text-center">
-              <div className="text-xs font-bold text-muted-foreground">LEVEL SCORE</div>
-              <div className="text-2xl font-black">+{levelScore} ⭐</div>
+            <div className="rounded-lg p-3 text-center" style={{ backgroundColor: "var(--signature-mint)", color: "#0a2e0e" }}>
+              <div className="text-xs uppercase tracking-wide opacity-70">Level score</div>
+              <div className="text-2xl font-medium">+{levelScore}</div>
             </div>
           </div>
 
           {perfect && (
-            <div className="mb-4 p-3 rounded-xl bg-success text-success-foreground text-center font-bold">
-              🎉 PERFECT! +20 bonus points!
+            <div className="mb-4 p-3 rounded-lg text-center font-medium" style={{ backgroundColor: "var(--signature-forest)", color: "#fff" }}>
+              Perfect round — +20 bonus points
             </div>
           )}
 
           <button
             onClick={nextLevel}
-            className="w-full py-4 rounded-xl font-black text-lg bg-primary text-primary-foreground hover:opacity-90 transition"
+            className="w-full py-4 rounded-lg font-medium bg-primary text-primary-foreground hover:bg-[#0d1218] transition-colors"
           >
-            {levelIdx + 1 < LEVELS.length ? `Travel to Level ${levelIdx + 2} →` : "Finish Journey 🏁"}
+            {levelIdx + 1 < LEVELS.length ? `Continue to level ${levelIdx + 2} →` : "Finish journey →"}
           </button>
         </div>
       </div>
     );
   }
+
 
   // ============ LEVEL ============
   return (
@@ -499,34 +526,30 @@ function FinishScreen({
   }, [score, rank.name, session.user.id, session.user.email]);
 
   return (
-    <div className="min-h-screen flex items-center justify-center p-6" style={{ background: "var(--gradient-hero)" }}>
-      <div className="bg-card rounded-3xl p-10 max-w-lg w-full text-center animate-bounce-in" style={{ boxShadow: "var(--shadow-card)" }}>
-        <div className="text-7xl mb-4 animate-float">{rank.emoji}</div>
-        <h2 className="text-4xl font-black mb-2">Journey Complete!</h2>
-        <p className="text-muted-foreground mb-1">You traveled across all of Kazakhstan 🇰🇿</p>
-        <p className="text-xs text-muted-foreground mb-6">Signed in as {session.user.email}</p>
-        <div className="rounded-2xl p-6 mb-6" style={{ background: "var(--gradient-gold)" }}>
-          <div className="text-sm font-bold text-secondary-foreground/70 mb-1">TOTAL SCORE</div>
-          <div className="text-6xl font-black text-secondary-foreground">{score} ⭐</div>
-          <div className="mt-3 text-lg font-bold text-secondary-foreground">Rank: {rank.name}</div>
-          <div className="mt-2 text-xs font-bold text-secondary-foreground/80">
-            {saved ? "✅ Result saved to leaderboard" : "Saving result..."}
+    <div className="min-h-screen bg-background flex items-center justify-center p-6">
+      <div className="bg-card rounded-xl p-10 max-w-lg w-full border border-border animate-bounce-in" style={{ boxShadow: "var(--shadow-card)" }}>
+        <div className="text-xs uppercase tracking-wide text-muted-foreground mb-3">Journey complete</div>
+        <h2 className="text-4xl font-normal tracking-tight mb-2">You crossed Kazakhstan</h2>
+        <p className="text-muted-foreground text-sm mb-6">Signed in as {session.user.email}</p>
+
+        <div className="rounded-xl p-6 mb-6" style={{ backgroundColor: "var(--signature-navy)", color: "#fff" }}>
+          <div className="text-xs uppercase tracking-wide opacity-70 mb-2">Total score</div>
+          <div className="text-6xl font-normal tracking-tight">{score}</div>
+          <div className="mt-4 text-lg">{rank.emoji} {rank.name}</div>
+          <div className="mt-2 text-xs opacity-70">
+            {saved ? "Result saved to leaderboard" : "Saving result…"}
           </div>
         </div>
 
         {results.length > 0 && (
-          <div className="mb-6 text-left">
-            <h3 className="text-lg font-black mb-2 text-center">🏆 Top 10 Explorers</h3>
-            <div className="space-y-1 max-h-64 overflow-y-auto">
+          <div className="mb-6">
+            <div className="text-xs uppercase tracking-wide text-muted-foreground mb-3">Top 10 explorers</div>
+            <div className="divide-y divide-border border border-border rounded-lg overflow-hidden max-h-64 overflow-y-auto">
               {results.map((r, i) => (
-                <div
-                  key={r.id}
-                  className="flex items-center justify-between px-3 py-2 rounded-lg bg-muted/50 text-sm"
-                >
-                  <span className="font-bold">
-                    {i + 1}. {r.display_name ?? "Anon"}
-                  </span>
-                  <span className="font-black">{r.score} ⭐</span>
+                <div key={r.id} className="flex items-center justify-between px-4 py-2.5 text-sm">
+                  <span className="text-muted-foreground tabular-nums w-6">{i + 1}</span>
+                  <span className="flex-1 truncate">{r.display_name ?? "Anon"}</span>
+                  <span className="font-medium tabular-nums">{r.score}</span>
                 </div>
               ))}
             </div>
@@ -535,13 +558,13 @@ function FinishScreen({
 
         <button
           onClick={onReplay}
-          className="w-full py-4 rounded-xl font-black text-lg bg-primary text-primary-foreground hover:opacity-90 transition mb-2"
+          className="w-full py-4 rounded-lg font-medium bg-primary text-primary-foreground hover:bg-[#0d1218] transition-colors mb-2"
         >
-          Play Again 🔄
+          Play again
         </button>
         <button
           onClick={() => supabase.auth.signOut()}
-          className="w-full py-2 rounded-xl font-bold text-sm text-muted-foreground hover:text-foreground transition"
+          className="w-full py-2 rounded-lg font-medium text-sm text-muted-foreground hover:text-foreground transition-colors"
         >
           Sign out
         </button>
@@ -549,4 +572,5 @@ function FinishScreen({
     </div>
   );
 }
+
 
