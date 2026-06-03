@@ -220,6 +220,7 @@ type Level = {
   monument: string;
   location: string;
   image: string;
+  images: string[];
   guide: string;
   fact: string;
   questions: Question[];
