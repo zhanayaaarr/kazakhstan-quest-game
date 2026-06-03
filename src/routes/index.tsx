@@ -1,13 +1,48 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useEffect, useMemo, useState } from "react";
 // Реальные фотографии из Wikimedia Commons (свободные лицензии)
-const heroBg = "https://upload.wikimedia.org/wikipedia/commons/thumb/7/70/City_Gate%2C_Astana%2C_Skyline_of_Nur_Sultan.jpg/1280px-City_Gate%2C_Astana%2C_Skyline_of_Nur_Sultan.jpg";
-const baiterek = "https://upload.wikimedia.org/wikipedia/commons/thumb/3/3c/Baiterek_August.jpg/1280px-Baiterek_August.jpg";
-const koktobe = "https://upload.wikimedia.org/wikipedia/commons/thumb/f/fe/Sunset_over_the_Almaty_seen_from_Kok_Tobe_mountain%2C_pic_2.jpg/1280px-Sunset_over_the_Almaty_seen_from_Kok_Tobe_mountain%2C_pic_2.jpg";
-const turkestan = "https://upload.wikimedia.org/wikipedia/commons/thumb/f/f5/Mausoleum_of_Khoja_Ahmed_Yasavi_in_Turkestan%2C_Kazakhstan.jpg/1280px-Mausoleum_of_Khoja_Ahmed_Yasavi_in_Turkestan%2C_Kazakhstan.jpg";
-const shymkent = "https://upload.wikimedia.org/wikipedia/commons/thumb/e/e1/Ordabasy_Plaza_%28Shymkent%29.jpg/1280px-Ordabasy_Plaza_%28Shymkent%29.jpg";
-const baikonur = "https://upload.wikimedia.org/wikipedia/commons/thumb/2/23/Soyuz_TMA-09M_spacecraft_at_the_Baikonur_Cosmodrome_launch_pad_%284%29.jpg/1280px-Soyuz_TMA-09M_spacecraft_at_the_Baikonur_Cosmodrome_launch_pad_%284%29.jpg";
+const heroBg = "https://upload.wikimedia.org/wikipedia/commons/thumb/b/b0/Charyn_Canyon%2C_Kazakhstan_03.jpg/1280px-Charyn_Canyon%2C_Kazakhstan_03.jpg";
 const kzFlag = "https://upload.wikimedia.org/wikipedia/commons/d/d3/Flag_of_Kazakhstan.svg";
+
+// Astana
+const astana1 = "https://upload.wikimedia.org/wikipedia/commons/thumb/3/3c/Baiterek_August.jpg/1280px-Baiterek_August.jpg";
+const astana2 = "https://upload.wikimedia.org/wikipedia/commons/thumb/6/66/Khan_Shatyr_shopping_center.jpg/1280px-Khan_Shatyr_shopping_center.jpg";
+const astana3 = "https://upload.wikimedia.org/wikipedia/commons/thumb/a/a0/Nur_Astana_Mosque_02.jpg/1280px-Nur_Astana_Mosque_02.jpg";
+const astana4 = "https://upload.wikimedia.org/wikipedia/commons/thumb/3/39/Astana_Opera_02.jpg/1280px-Astana_Opera_02.jpg";
+const astana5 = "https://upload.wikimedia.org/wikipedia/commons/thumb/4/41/Ak_Orda_palace_panorama.jpg/1280px-Ak_Orda_palace_panorama.jpg";
+const baiterek = astana1;
+
+// Almaty
+const almaty1 = "https://upload.wikimedia.org/wikipedia/commons/thumb/f/fe/Sunset_over_the_Almaty_seen_from_Kok_Tobe_mountain%2C_pic_2.jpg/1280px-Sunset_over_the_Almaty_seen_from_Kok_Tobe_mountain%2C_pic_2.jpg";
+const almaty2 = "https://upload.wikimedia.org/wikipedia/commons/thumb/5/53/Medeu%2C_Almaty_%28P1180176%29.jpg/1280px-Medeu%2C_Almaty_%28P1180176%29.jpg";
+const almaty3 = "https://upload.wikimedia.org/wikipedia/commons/thumb/d/df/Ascension_Cathedral%2C_Almaty_%28LRM_20240402_221113-RR%29.jpg/1280px-Ascension_Cathedral%2C_Almaty_%28LRM_20240402_221113-RR%29.jpg";
+const almaty4 = "https://upload.wikimedia.org/wikipedia/commons/thumb/b/b0/Charyn_Canyon%2C_Kazakhstan_03.jpg/1280px-Charyn_Canyon%2C_Kazakhstan_03.jpg";
+const almaty5 = "https://upload.wikimedia.org/wikipedia/commons/thumb/2/20/Big_Almaty_Lake_Winter.jpg/1280px-Big_Almaty_Lake_Winter.jpg";
+const koktobe = almaty1;
+
+// Turkestan
+const turk1 = "https://upload.wikimedia.org/wikipedia/commons/thumb/f/f5/Mausoleum_of_Khoja_Ahmed_Yasavi_in_Turkestan%2C_Kazakhstan.jpg/1280px-Mausoleum_of_Khoja_Ahmed_Yasavi_in_Turkestan%2C_Kazakhstan.jpg";
+const turk2 = "https://upload.wikimedia.org/wikipedia/commons/thumb/f/f4/Arystan_Bab_mausoleum_center_02.jpg/1280px-Arystan_Bab_mausoleum_center_02.jpg";
+const turk3 = "https://upload.wikimedia.org/wikipedia/commons/thumb/1/13/Arystan_Bab_mausoleum_left_02.jpg/1280px-Arystan_Bab_mausoleum_left_02.jpg";
+const turk4 = "https://upload.wikimedia.org/wikipedia/commons/thumb/f/fb/Arystan_Bab_mausoleum_table.jpg/1280px-Arystan_Bab_mausoleum_table.jpg";
+const turk5 = "https://upload.wikimedia.org/wikipedia/commons/thumb/c/c1/Kazakhstan_P9130238_%2828303684079%29.jpg/1280px-Kazakhstan_P9130238_%2828303684079%29.jpg";
+const turkestan = turk1;
+
+// Shymkent
+const shy1 = "https://upload.wikimedia.org/wikipedia/commons/thumb/e/e1/Ordabasy_Plaza_%28Shymkent%29.jpg/1280px-Ordabasy_Plaza_%28Shymkent%29.jpg";
+const shy2 = "https://upload.wikimedia.org/wikipedia/commons/thumb/b/be/Part_of_Shymkent%27s_Panorama.jpg/1280px-Part_of_Shymkent%27s_Panorama.jpg";
+const shy3 = "https://upload.wikimedia.org/wikipedia/commons/e/e1/Shymkent_night_panorama.jpg";
+const shy4 = "https://upload.wikimedia.org/wikipedia/commons/thumb/c/c7/Mosque_in_Shymkent.jpg/1280px-Mosque_in_Shymkent.jpg";
+const shy5 = "https://upload.wikimedia.org/wikipedia/commons/thumb/d/dd/Mosque_in_Shymkent_2.jpg/1280px-Mosque_in_Shymkent_2.jpg";
+const shymkent = shy1;
+
+// Baikonur
+const bai1 = "https://upload.wikimedia.org/wikipedia/commons/thumb/2/23/Soyuz_TMA-09M_spacecraft_at_the_Baikonur_Cosmodrome_launch_pad_%284%29.jpg/1280px-Soyuz_TMA-09M_spacecraft_at_the_Baikonur_Cosmodrome_launch_pad_%284%29.jpg";
+const bai2 = "https://upload.wikimedia.org/wikipedia/commons/thumb/5/59/Soyuz_TMA-13_Edit.jpg/1280px-Soyuz_TMA-13_Edit.jpg";
+const bai3 = "https://upload.wikimedia.org/wikipedia/commons/thumb/f/f4/Soyuz_TMA-5_launch.jpg/1280px-Soyuz_TMA-5_launch.jpg";
+const bai4 = "https://upload.wikimedia.org/wikipedia/commons/thumb/7/7c/Soyuz_MS-12_backup_crew_goes_to_the_statue_of_Yuri_Gagarin_in_Baikonur.jpg/1280px-Soyuz_MS-12_backup_crew_goes_to_the_statue_of_Yuri_Gagarin_in_Baikonur.jpg";
+const bai5 = "https://upload.wikimedia.org/wikipedia/commons/2/2a/Proton_rocket_launch.jpg";
+const baikonur = bai1;
 import konzhyk from "@/assets/konzhyk.png";
 import { AuthGate } from "@/components/AuthGate";
 import { supabase } from "@/integrations/supabase/client";
