@@ -334,20 +334,57 @@ function Game({ session }: { session: import("@supabase/supabase-js").Session })
   const [levelScore, setLevelScore] = useState(0);
   const [levelCorrect, setLevelCorrect] = useState(0);
   const [qResults, setQResults] = useState<Array<"correct" | "close" | "wrong" | null>>([]);
-  const [feedback, setFeedback] = useState<{ type: "correct" | "close" | "wrong"; msg: string; points: number; motivation: string } | null>(null);
+  const [feedback, setFeedback] = useState<{ type: "correct" | "close" | "wrong"; msg: string; points: number; motivation: string; bonus: number } | null>(null);
   const [showHint, setShowHint] = useState(false);
+  const [hearts, setHearts] = useState(3);
+  const [streak, setStreak] = useState<number>(() => loadStreak());
+  const [timeLeft, setTimeLeft] = useState(15);
+  const QUESTION_TIME = 15;
 
   const level = LEVELS[levelIdx];
   const question = level?.questions[qIdx];
 
+  // Per-question timer
+  useEffect(() => {
+    if (screen !== "level" || feedback) return;
+    setTimeLeft(QUESTION_TIME);
+    const started = Date.now();
+    const id = setInterval(() => {
+      const left = Math.max(0, QUESTION_TIME - Math.floor((Date.now() - started) / 1000));
+      setTimeLeft(left);
+      if (left <= 0) {
+        clearInterval(id);
+        // Auto-submit as wrong (timeout)
+        setFeedback({
+          type: "wrong",
+          msg: `⏰ Time's up! The answer was "${question?.answers[0] ?? ""}".`,
+          points: 0,
+          motivation: pickMotivation("wrong"),
+          bonus: 0,
+        });
+        setHearts((h) => Math.max(0, h - 1));
+        setQResults((arr) => {
+          const next = [...arr];
+          next[qIdx] = "wrong";
+          return next;
+        });
+        sfx.wrong();
+      }
+    }, 200);
+    return () => clearInterval(id);
+  }, [screen, qIdx, levelIdx, feedback, question]);
+
   function startGame() {
     sfx.click();
+    const s = bumpStreak();
+    setStreak(s);
     setScreen("level");
     setLevelIdx(0);
     setQIdx(0);
     setScore(0);
     setLevelScore(0);
     setLevelCorrect(0);
+    setHearts(3);
     setQResults(Array(LEVELS[0].questions.length).fill(null));
     setInput("");
     setFeedback(null);
@@ -357,14 +394,20 @@ function Game({ session }: { session: import("@supabase/supabase-js").Session })
   function submit() {
     if (!question || feedback) return;
     const r = checkAnswer(input, question.answers);
-    const points = r === "correct" ? 10 : r === "close" ? 5 : 0;
+    const base = r === "correct" ? 10 : r === "close" ? 5 : 0;
+    // Speed bonus: up to +5 for correct, +2 for close
+    const bonus =
+      r === "correct" ? Math.round((timeLeft / QUESTION_TIME) * 5)
+      : r === "close" ? Math.round((timeLeft / QUESTION_TIME) * 2)
+      : 0;
+    const points = base + bonus;
     const msg =
       r === "correct"
         ? `Correct! ${level.guide} says: "${question.answers[0].toUpperCase()} — well done!"`
         : r === "close"
         ? `So close! The answer was "${question.answers[0]}".`
         : `Not quite. The answer was "${question.answers[0]}".`;
-    setFeedback({ type: r, msg, points, motivation: pickMotivation(r) });
+    setFeedback({ type: r, msg, points, motivation: pickMotivation(r), bonus });
     setScore((s) => s + points);
     setLevelScore((s) => s + points);
     setQResults((arr) => {
@@ -378,6 +421,7 @@ function Game({ session }: { session: import("@supabase/supabase-js").Session })
     } else if (r === "close") {
       sfx.close();
     } else {
+      setHearts((h) => Math.max(0, h - 1));
       sfx.wrong();
     }
   }
