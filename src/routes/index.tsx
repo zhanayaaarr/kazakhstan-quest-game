@@ -215,6 +215,7 @@ function Game({ session }: { session: import("@supabase/supabase-js").Session })
   }
 
   function nextLevel() {
+    sfx.click();
     if (levelIdx + 1 < LEVELS.length) {
       setLevelIdx((i) => i + 1);
       setQIdx(0);
@@ -222,6 +223,7 @@ function Game({ session }: { session: import("@supabase/supabase-js").Session })
       setLevelCorrect(0);
       setScreen("level");
     } else {
+      sfx.finish();
       setScreen("finish");
     }
   }
