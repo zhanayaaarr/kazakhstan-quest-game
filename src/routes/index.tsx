@@ -320,6 +320,7 @@ function Game({ session }: { session: import("@supabase/supabase-js").Session })
       setQIdx(0);
       setLevelScore(0);
       setLevelCorrect(0);
+      setQResults(Array(LEVELS[levelIdx + 1].questions.length).fill(null));
       setScreen("level");
     } else {
       sfx.finish();
