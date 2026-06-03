@@ -262,6 +262,7 @@ function Game({ session }: { session: import("@supabase/supabase-js").Session })
     setScore(0);
     setLevelScore(0);
     setLevelCorrect(0);
+    setQResults(Array(LEVELS[0].questions.length).fill(null));
     setInput("");
     setFeedback(null);
     setShowHint(false);
