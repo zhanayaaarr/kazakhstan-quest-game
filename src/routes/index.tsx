@@ -1,4 +1,4 @@
-import { createFileRoute } from "@tanstack/react-router";
+import { createFileRoute, Link } from "@tanstack/react-router";
 import { useEffect, useMemo, useState } from "react";
 import heroBg from "@/assets/hero-bg.jpg";
 import baiterek from "@/assets/baiterek.jpg";
@@ -246,12 +246,21 @@ function Game({ session }: { session: import("@supabase/supabase-js").Session })
             <span>Leaderboard</span>
             <span>About</span>
           </div>
-          <button
-            onClick={startGame}
-            className="hidden md:inline-flex items-center px-5 py-2.5 rounded-lg bg-primary text-primary-foreground text-sm font-medium hover:bg-[#0d1218] transition-colors"
-          >
-            Start playing
-          </button>
+          <div className="flex items-center gap-3">
+            <button
+              onClick={startGame}
+              className="hidden md:inline-flex items-center px-5 py-2.5 rounded-lg bg-primary text-primary-foreground text-sm font-medium hover:bg-[#0d1218] transition-colors"
+            >
+              Start playing
+            </button>
+            <button
+              onClick={() => supabase.auth.signOut()}
+              className="inline-flex items-center px-3 py-2 rounded-lg text-sm font-medium text-muted-foreground hover:text-foreground hover:bg-muted transition-colors"
+              title="Sign out"
+            >
+              🚪 Exit
+            </button>
+          </div>
         </nav>
 
         {/* Hero band */}
