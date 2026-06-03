@@ -51,6 +51,22 @@ export function AuthGate({ children }: { children: (session: Session) => ReactNo
     }
   }
 
+  async function signInWithGoogle() {
+    setError(null);
+    setGoogleBusy(true);
+    try {
+      const result = await lovable.auth.signInWithOAuth("google", {
+        redirect_uri: window.location.origin,
+      });
+      if (result.error) throw result.error;
+      if (result.redirected) return;
+    } catch (err: any) {
+      setError(err.message ?? "Google sign-in failed");
+    } finally {
+      setGoogleBusy(false);
+    }
+  }
+
   if (loading) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-background">
