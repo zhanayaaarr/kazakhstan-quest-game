@@ -538,48 +538,57 @@ function FinishScreen({
   }, [score, rank.name, session.user.id, session.user.email]);
 
   return (
-    <div className="min-h-screen bg-background flex items-center justify-center p-6">
-      <div className="bg-card rounded-xl p-10 max-w-lg w-full border border-border animate-bounce-in" style={{ boxShadow: "var(--shadow-card)" }}>
-        <div className="text-xs uppercase tracking-wide text-muted-foreground mb-3">Journey complete</div>
-        <h2 className="text-4xl font-normal tracking-tight mb-2">You crossed Kazakhstan</h2>
-        <p className="text-muted-foreground text-sm mb-6">Signed in as {session.user.email}</p>
+    <div className="h-screen bg-background flex items-center justify-center p-6 overflow-hidden">
+      <div
+        className="bg-card rounded-xl max-w-lg w-full border border-border animate-bounce-in flex flex-col max-h-[calc(100vh-3rem)]"
+        style={{ boxShadow: "var(--shadow-card)" }}
+      >
+        <div className="p-8 pb-4 shrink-0">
+          <div className="text-xs uppercase tracking-wide text-muted-foreground mb-3">Journey complete</div>
+          <h2 className="text-3xl font-normal tracking-tight mb-2">You crossed Kazakhstan</h2>
+          <p className="text-muted-foreground text-sm mb-4">Signed in as {session.user.email}</p>
 
-        <div className="rounded-xl p-6 mb-6" style={{ backgroundColor: "var(--signature-navy)", color: "#fff" }}>
-          <div className="text-xs uppercase tracking-wide opacity-70 mb-2">Total score</div>
-          <div className="text-6xl font-normal tracking-tight">{score}</div>
-          <div className="mt-4 text-lg">{rank.emoji} {rank.name}</div>
-          <div className="mt-2 text-xs opacity-70">
-            {saved ? "Result saved to leaderboard" : "Saving result…"}
+          <div className="rounded-xl p-5" style={{ backgroundColor: "var(--signature-navy)", color: "#fff" }}>
+            <div className="text-xs uppercase tracking-wide opacity-70 mb-1">Total score</div>
+            <div className="text-5xl font-normal tracking-tight">{score}</div>
+            <div className="mt-2 text-base">{rank.emoji} {rank.name}</div>
+            <div className="mt-1 text-xs opacity-70">
+              {saved ? "Result saved to leaderboard" : "Saving result…"}
+            </div>
           </div>
         </div>
 
-        {results.length > 0 && (
-          <div className="mb-6">
-            <div className="text-xs uppercase tracking-wide text-muted-foreground mb-3">Top 10 explorers</div>
-            <div className="divide-y divide-border border border-border rounded-lg overflow-hidden max-h-64 overflow-y-auto">
-              {results.map((r, i) => (
+        <div className="flex-1 min-h-0 px-8 overflow-hidden flex flex-col">
+          <div className="text-xs uppercase tracking-wide text-muted-foreground mb-2 shrink-0">Top 10 explorers</div>
+          <div className="flex-1 min-h-0 overflow-y-auto border border-border rounded-lg divide-y divide-border">
+            {results.length === 0 ? (
+              <div className="px-4 py-6 text-sm text-muted-foreground text-center">Loading…</div>
+            ) : (
+              results.map((r, i) => (
                 <div key={r.id} className="flex items-center justify-between px-4 py-2.5 text-sm">
                   <span className="text-muted-foreground tabular-nums w-6">{i + 1}</span>
                   <span className="flex-1 truncate">{r.display_name ?? "Anon"}</span>
                   <span className="font-medium tabular-nums">{r.score}</span>
                 </div>
-              ))}
-            </div>
+              ))
+            )}
           </div>
-        )}
+        </div>
 
-        <button
-          onClick={onReplay}
-          className="w-full py-4 rounded-lg font-medium bg-primary text-primary-foreground hover:bg-[#0d1218] transition-colors mb-2"
-        >
-          Play again
-        </button>
-        <button
-          onClick={() => supabase.auth.signOut()}
-          className="w-full py-2 rounded-lg font-medium text-sm text-muted-foreground hover:text-foreground transition-colors"
-        >
-          Sign out
-        </button>
+        <div className="p-8 pt-4 shrink-0">
+          <button
+            onClick={onReplay}
+            className="w-full py-3 rounded-lg font-medium bg-primary text-primary-foreground hover:bg-[#0d1218] transition-colors mb-2"
+          >
+            Play again
+          </button>
+          <button
+            onClick={() => supabase.auth.signOut()}
+            className="w-full py-2 rounded-lg font-medium text-sm text-muted-foreground hover:text-foreground transition-colors"
+          >
+            Sign out
+          </button>
+        </div>
       </div>
     </div>
   );
