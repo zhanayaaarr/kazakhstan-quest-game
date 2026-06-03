@@ -17,7 +17,7 @@ const almaty1 = "https://upload.wikimedia.org/wikipedia/commons/thumb/0/0b/Kok_T
 const almaty2 = "https://upload.wikimedia.org/wikipedia/commons/thumb/1/16/Almaty%2C_Kok-Tobe2.jpg/1280px-Almaty%2C_Kok-Tobe2.jpg";
 const almaty3 = "https://upload.wikimedia.org/wikipedia/commons/thumb/e/e5/Blooming_Sievers_apple_tree_%28M%C3%A1lus_siev%C3%A9rsii%29_in_the_Main_Botanical_Garden_of_Almaty.jpg/1280px-Blooming_Sievers_apple_tree_%28M%C3%A1lus_siev%C3%A9rsii%29_in_the_Main_Botanical_Garden_of_Almaty.jpg";
 const almaty4 = "https://upload.wikimedia.org/wikipedia/commons/thumb/e/e5/Big_Almaty_Lake%2C_Trans-Ili_Alatau%2C_Tian_Shan.jpg/1280px-Big_Almaty_Lake%2C_Trans-Ili_Alatau%2C_Tian_Shan.jpg";
-const almaty5 = "https://upload.wikimedia.org/wikipedia/commons/thumb/d/db/Kok_Tobe_Park%2C_June_2016.jpg/1280px-Kok_Tobe_Park%2C_June_2016.jpg";
+const almaty5 = "https://upload.wikimedia.org/wikipedia/commons/thumb/e/e5/Nurly_Tau_%28AP4M2448_1PS%29_%2828456673904%29.jpg/1280px-Nurly_Tau_%28AP4M2448_1PS%29_%2828456673904%29.jpg";
 const koktobe = almaty1;
 
 // Turkestan
