@@ -6,9 +6,68 @@ import koktobe from "@/assets/koktobe.jpg";
 import turkestan from "@/assets/turkestan.jpg";
 import shymkent from "@/assets/shymkent.jpg";
 import baikonur from "@/assets/baikonur.jpg";
+import konzhyk from "@/assets/konzhyk.png";
 import { AuthGate } from "@/components/AuthGate";
 import { supabase } from "@/integrations/supabase/client";
 import { sfx } from "@/lib/sounds";
+
+function Konzhyk({ message, size = 80 }: { message: string; size?: number }) {
+  return (
+    <div className="flex items-end gap-3 animate-bounce-in">
+      <img
+        src={konzhyk}
+        alt="Konzhyk the bear"
+        width={size}
+        height={size}
+        loading="lazy"
+        style={{ width: size, height: size }}
+        className="drop-shadow-md shrink-0"
+      />
+      <div className="relative bg-card border-2 border-border rounded-2xl px-4 py-3 text-sm font-semibold max-w-xs"
+        style={{ boxShadow: "var(--shadow-card)" }}>
+        <div className="absolute -left-2 bottom-4 w-4 h-4 bg-card border-l-2 border-b-2 border-border rotate-45" />
+        {message}
+      </div>
+    </div>
+  );
+}
+
+function MiniLeaderboard() {
+  const [rows, setRows] = useState<{ id: string; display_name: string | null; score: number }[]>([]);
+  useEffect(() => {
+    (async () => {
+      const { data } = await supabase
+        .from("game_results")
+        .select("id, display_name, score")
+        .order("score", { ascending: false })
+        .limit(5);
+      setRows(data ?? []);
+    })();
+  }, []);
+  return (
+    <div className="rounded-xl border border-border bg-card p-5" style={{ boxShadow: "var(--shadow-card)" }}>
+      <div className="flex items-center justify-between mb-3">
+        <div className="text-xs uppercase tracking-wide text-muted-foreground">Leaderboard · Top 5</div>
+        <span className="text-lg">🏆</span>
+      </div>
+      {rows.length === 0 ? (
+        <div className="text-sm text-muted-foreground py-4 text-center">Be the first explorer!</div>
+      ) : (
+        <ol className="divide-y divide-border">
+          {rows.map((r, i) => (
+            <li key={r.id} className="flex items-center justify-between py-2 text-sm">
+              <span className="flex items-center gap-3">
+                <span className="tabular-nums w-5 text-muted-foreground">{i + 1}</span>
+                <span className="truncate max-w-[180px]">{r.display_name ?? "Anon"}</span>
+              </span>
+              <span className="font-semibold tabular-nums">{r.score} ⭐</span>
+            </li>
+          ))}
+        </ol>
+      )}
+    </div>
+  );
+}
 
 export const Route = createFileRoute("/")({
   head: () => ({
@@ -290,9 +349,15 @@ function Game({ session }: { session: import("@supabase/supabase-js").Session })
                 How it works
               </button>
             </div>
+            <div className="mt-10">
+              <Konzhyk message="Сәлем! I'm Konzhyk 🐻 Your guide through Kazakhstan — let's earn stars together!" size={96} />
+            </div>
           </div>
-          <div className="rounded-xl overflow-hidden border border-border" style={{ boxShadow: "var(--shadow-card)" }}>
-            <img src={heroBg} alt="Kazakhstan panorama" className="w-full h-[420px] object-cover" />
+          <div className="flex flex-col gap-4">
+            <div className="rounded-xl overflow-hidden border border-border" style={{ boxShadow: "var(--shadow-card)" }}>
+              <img src={heroBg} alt="Kazakhstan panorama" className="w-full h-[320px] object-cover" />
+            </div>
+            <MiniLeaderboard />
           </div>
         </section>
 
@@ -379,6 +444,19 @@ function Game({ session }: { session: import("@supabase/supabase-js").Session })
             </div>
           )}
 
+          <div className="mb-4">
+            <Konzhyk
+              message={
+                perfect
+                  ? `Жарайсың! Perfect run through ${level.city}! 🎉`
+                  : levelCorrect >= 3
+                  ? `Great job in ${level.city}! Keep going 🐾`
+                  : `Don't give up — ${level.city} has more to teach you!`
+              }
+              size={72}
+            />
+          </div>
+
           <button
             onClick={nextLevel}
             className="w-full py-4 rounded-lg font-medium bg-primary text-primary-foreground hover:bg-[#0d1218] transition-colors"
@@ -432,9 +510,9 @@ function Game({ session }: { session: import("@supabase/supabase-js").Session })
           <div className="p-5">
             {/* NPC guide */}
             <div className="flex items-start gap-3 mb-4 p-3 rounded-2xl bg-muted">
-              <div className="text-3xl">🧑‍🏫</div>
+              <img src={konzhyk} alt="Konzhyk" width={56} height={56} loading="lazy" style={{ width: 56, height: 56 }} className="shrink-0" />
               <div className="flex-1">
-                <div className="text-xs font-bold text-muted-foreground">GUIDE {level.guide.toUpperCase()}</div>
+                <div className="text-xs font-bold text-muted-foreground">KONZHYK with {level.guide.toUpperCase()}</div>
                 <div className="font-bold">{question.q}</div>
               </div>
             </div>
