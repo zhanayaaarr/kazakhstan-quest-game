@@ -350,8 +350,15 @@ function Game({ session }: { session: import("@supabase/supabase-js").Session })
               </button>
             </div>
           </div>
-          <div className="rounded-xl overflow-hidden border border-border" style={{ boxShadow: "var(--shadow-card)" }}>
-            <img src={heroBg} alt="Kazakhstan panorama" className="w-full h-[420px] object-cover" />
+            <div className="mt-10">
+              <Konzhyk message="Сәлем! I'm Konzhyk 🐻 Your guide through Kazakhstan — let's earn stars together!" size={96} />
+            </div>
+          </div>
+          <div className="flex flex-col gap-4">
+            <div className="rounded-xl overflow-hidden border border-border" style={{ boxShadow: "var(--shadow-card)" }}>
+              <img src={heroBg} alt="Kazakhstan panorama" className="w-full h-[320px] object-cover" />
+            </div>
+            <MiniLeaderboard />
           </div>
         </section>
 
