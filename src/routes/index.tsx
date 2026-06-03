@@ -543,12 +543,12 @@ function FinishScreen({
         className="bg-card rounded-xl max-w-lg w-full border border-border animate-bounce-in flex flex-col max-h-[calc(100vh-3rem)]"
         style={{ boxShadow: "var(--shadow-card)" }}
       >
-        <div className="p-8 pb-4 shrink-0">
+        <div className="flex-1 min-h-0 overflow-y-auto p-8 pb-4">
           <div className="text-xs uppercase tracking-wide text-muted-foreground mb-3">Journey complete</div>
           <h2 className="text-3xl font-normal tracking-tight mb-2">You crossed Kazakhstan</h2>
           <p className="text-muted-foreground text-sm mb-4">Signed in as {session.user.email}</p>
 
-          <div className="rounded-xl p-5" style={{ backgroundColor: "var(--signature-navy)", color: "#fff" }}>
+          <div className="rounded-xl p-5 mb-6" style={{ backgroundColor: "var(--signature-navy)", color: "#fff" }}>
             <div className="text-xs uppercase tracking-wide opacity-70 mb-1">Total score</div>
             <div className="text-5xl font-normal tracking-tight">{score}</div>
             <div className="mt-2 text-base">{rank.emoji} {rank.name}</div>
@@ -556,11 +556,9 @@ function FinishScreen({
               {saved ? "Result saved to leaderboard" : "Saving result…"}
             </div>
           </div>
-        </div>
 
-        <div className="flex-1 min-h-0 px-8 overflow-hidden flex flex-col">
-          <div className="text-xs uppercase tracking-wide text-muted-foreground mb-2 shrink-0">Top 10 explorers</div>
-          <div className="flex-1 min-h-0 overflow-y-auto border border-border rounded-lg divide-y divide-border">
+          <div className="text-xs uppercase tracking-wide text-muted-foreground mb-2">Top 10 explorers</div>
+          <div className="border border-border rounded-lg divide-y divide-border">
             {results.length === 0 ? (
               <div className="px-4 py-6 text-sm text-muted-foreground text-center">Loading…</div>
             ) : (
@@ -575,7 +573,7 @@ function FinishScreen({
           </div>
         </div>
 
-        <div className="p-8 pt-4 shrink-0">
+        <div className="p-8 pt-4 shrink-0 border-t border-border">
           <button
             onClick={onReplay}
             className="w-full py-3 rounded-lg font-medium bg-primary text-primary-foreground hover:bg-[#0d1218] transition-colors mb-2"
