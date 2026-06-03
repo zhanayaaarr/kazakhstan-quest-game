@@ -188,7 +188,14 @@ function Game({ session }: { session: import("@supabase/supabase-js").Session })
     setFeedback({ type: r, msg, points });
     setScore((s) => s + points);
     setLevelScore((s) => s + points);
-    if (r === "correct") setLevelCorrect((c) => c + 1);
+    if (r === "correct") {
+      setLevelCorrect((c) => c + 1);
+      sfx.correct();
+    } else if (r === "close") {
+      sfx.close();
+    } else {
+      sfx.wrong();
+    }
   }
 
   function next() {
