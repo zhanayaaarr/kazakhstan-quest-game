@@ -248,6 +248,7 @@ const LEVELS: Level[] = [
     monument: "Kok-Tobe",
     location: "Almaty, southern Kazakhstan",
     image: koktobe,
+    images: [almaty1, almaty2, almaty3, almaty4, almaty5],
     guide: "Daulet",
     fact: "Almaty was the old capital and means 'father of apples' — apples originated here!",
     questions: [
