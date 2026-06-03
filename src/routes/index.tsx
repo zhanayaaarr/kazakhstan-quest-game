@@ -7,6 +7,7 @@ const koktobe = "https://upload.wikimedia.org/wikipedia/commons/thumb/f/fe/Sunse
 const turkestan = "https://upload.wikimedia.org/wikipedia/commons/thumb/f/f5/Mausoleum_of_Khoja_Ahmed_Yasavi_in_Turkestan%2C_Kazakhstan.jpg/1280px-Mausoleum_of_Khoja_Ahmed_Yasavi_in_Turkestan%2C_Kazakhstan.jpg";
 const shymkent = "https://upload.wikimedia.org/wikipedia/commons/thumb/e/e1/Ordabasy_Plaza_%28Shymkent%29.jpg/1280px-Ordabasy_Plaza_%28Shymkent%29.jpg";
 const baikonur = "https://upload.wikimedia.org/wikipedia/commons/thumb/2/23/Soyuz_TMA-09M_spacecraft_at_the_Baikonur_Cosmodrome_launch_pad_%284%29.jpg/1280px-Soyuz_TMA-09M_spacecraft_at_the_Baikonur_Cosmodrome_launch_pad_%284%29.jpg";
+const kzFlag = "https://upload.wikimedia.org/wikipedia/commons/d/d3/Flag_of_Kazakhstan.svg";
 import konzhyk from "@/assets/konzhyk.png";
 import { AuthGate } from "@/components/AuthGate";
 import { supabase } from "@/integrations/supabase/client";
@@ -501,6 +502,12 @@ function Game({ session }: { session: import("@supabase/supabase-js").Session })
         {/* Hero band */}
         <section className="px-6 md:px-10 py-16 md:py-24 max-w-6xl mx-auto w-full grid md:grid-cols-2 gap-12 items-center">
           <div>
+            <img
+              src={kzFlag}
+              alt="Flag of Kazakhstan"
+              className="w-32 md:w-40 rounded-lg shadow-lg mb-6 border border-border object-cover"
+              loading="eager"
+            />
             <div className="text-xs font-medium tracking-wide text-muted-foreground mb-6 uppercase">
               Educational adventure · 5 levels
             </div>
