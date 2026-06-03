@@ -264,6 +264,7 @@ const LEVELS: Level[] = [
     monument: "Khoja Ahmed Yasawi Mausoleum",
     location: "Turkestan, southern Kazakhstan",
     image: turkestan,
+    images: [turk1, turk2, turk3, turk4, turk5],
     guide: "Madina",
     fact: "This UNESCO World Heritage site was built by Timur in the 14th century!",
     questions: [
