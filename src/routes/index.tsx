@@ -14,9 +14,9 @@ const baiterek = astana1;
 
 // Almaty
 const almaty1 = "https://upload.wikimedia.org/wikipedia/commons/thumb/f/fe/Sunset_over_the_Almaty_seen_from_Kok_Tobe_mountain%2C_pic_2.jpg/1280px-Sunset_over_the_Almaty_seen_from_Kok_Tobe_mountain%2C_pic_2.jpg";
-const almaty2 = "https://upload.wikimedia.org/wikipedia/commons/thumb/5/53/Medeu%2C_Almaty_%28P1180176%29.jpg/1280px-Medeu%2C_Almaty_%28P1180176%29.jpg";
-const almaty3 = "https://upload.wikimedia.org/wikipedia/commons/thumb/d/df/Ascension_Cathedral%2C_Almaty_%28LRM_20240402_221113-RR%29.jpg/1280px-Ascension_Cathedral%2C_Almaty_%28LRM_20240402_221113-RR%29.jpg";
-const almaty4 = "https://upload.wikimedia.org/wikipedia/commons/thumb/b/b0/Charyn_Canyon%2C_Kazakhstan_03.jpg/1280px-Charyn_Canyon%2C_Kazakhstan_03.jpg";
+const almaty2 = "https://upload.wikimedia.org/wikipedia/commons/thumb/8/8a/Almaty_TV_Tower_at_Kok-Tobe.jpg/1280px-Almaty_TV_Tower_at_Kok-Tobe.jpg";
+const almaty3 = "https://upload.wikimedia.org/wikipedia/commons/thumb/5/53/Medeu%2C_Almaty_%28P1180176%29.jpg/1280px-Medeu%2C_Almaty_%28P1180176%29.jpg";
+const almaty4 = "https://upload.wikimedia.org/wikipedia/commons/thumb/d/df/Ascension_Cathedral%2C_Almaty_%28LRM_20240402_221113-RR%29.jpg/1280px-Ascension_Cathedral%2C_Almaty_%28LRM_20240402_221113-RR%29.jpg";
 const almaty5 = "https://upload.wikimedia.org/wikipedia/commons/thumb/2/20/Big_Almaty_Lake_Winter.jpg/1280px-Big_Almaty_Lake_Winter.jpg";
 const koktobe = almaty1;
 
