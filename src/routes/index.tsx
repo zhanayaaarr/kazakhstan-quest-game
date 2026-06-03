@@ -247,6 +247,7 @@ function Game({ session }: { session: import("@supabase/supabase-js").Session })
   const [score, setScore] = useState(0);
   const [levelScore, setLevelScore] = useState(0);
   const [levelCorrect, setLevelCorrect] = useState(0);
+  const [qResults, setQResults] = useState<Array<"correct" | "close" | "wrong" | null>>([]);
   const [feedback, setFeedback] = useState<{ type: "correct" | "close" | "wrong"; msg: string; points: number } | null>(null);
   const [showHint, setShowHint] = useState(false);
 
@@ -261,6 +262,7 @@ function Game({ session }: { session: import("@supabase/supabase-js").Session })
     setScore(0);
     setLevelScore(0);
     setLevelCorrect(0);
+    setQResults(Array(LEVELS[0].questions.length).fill(null));
     setInput("");
     setFeedback(null);
     setShowHint(false);
@@ -279,6 +281,11 @@ function Game({ session }: { session: import("@supabase/supabase-js").Session })
     setFeedback({ type: r, msg, points });
     setScore((s) => s + points);
     setLevelScore((s) => s + points);
+    setQResults((arr) => {
+      const next = [...arr];
+      next[qIdx] = r;
+      return next;
+    });
     if (r === "correct") {
       setLevelCorrect((c) => c + 1);
       sfx.correct();
@@ -313,6 +320,7 @@ function Game({ session }: { session: import("@supabase/supabase-js").Session })
       setQIdx(0);
       setLevelScore(0);
       setLevelCorrect(0);
+      setQResults(Array(LEVELS[levelIdx + 1].questions.length).fill(null));
       setScreen("level");
     } else {
       sfx.finish();
@@ -528,6 +536,34 @@ function Game({ session }: { session: import("@supabase/supabase-js").Session })
               className={`h-2 rounded-full transition-all ${i === levelIdx ? "w-10 bg-primary" : i < levelIdx ? "w-6 bg-success" : "w-6 bg-muted"}`}
             />
           ))}
+        </div>
+
+        {/* Question progress dots */}
+        <div className="flex items-center justify-center gap-2 mb-3">
+          {level.questions.map((_, i) => {
+            const r = qResults[i];
+            const isCurrent = i === qIdx;
+            const bg =
+              r === "correct"
+                ? "bg-[hsl(142_70%_45%)] text-white border-transparent"
+                : r === "close"
+                ? "bg-[hsl(45_90%_55%)] text-black border-transparent"
+                : r === "wrong"
+                ? "bg-[hsl(0_75%_55%)] text-white border-transparent"
+                : isCurrent
+                ? "bg-card border-foreground"
+                : "bg-card border-border text-muted-foreground";
+            const symbol = r === "correct" ? "✓" : r === "wrong" || r === "close" ? "✗" : i + 1;
+            return (
+              <div
+                key={i}
+                className={`w-8 h-8 rounded-full border-2 flex items-center justify-center text-sm font-bold transition-all ${bg} ${isCurrent ? "scale-110 ring-2 ring-foreground/20" : ""}`}
+                aria-label={`Question ${i + 1} ${r ?? "pending"}`}
+              >
+                {symbol}
+              </div>
+            );
+          })}
         </div>
 
         {/* Image card */}
