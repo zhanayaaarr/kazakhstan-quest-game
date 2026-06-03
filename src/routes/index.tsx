@@ -281,6 +281,11 @@ function Game({ session }: { session: import("@supabase/supabase-js").Session })
     setFeedback({ type: r, msg, points });
     setScore((s) => s + points);
     setLevelScore((s) => s + points);
+    setQResults((arr) => {
+      const next = [...arr];
+      next[qIdx] = r;
+      return next;
+    });
     if (r === "correct") {
       setLevelCorrect((c) => c + 1);
       sfx.correct();
