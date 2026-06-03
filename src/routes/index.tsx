@@ -1,11 +1,12 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useEffect, useMemo, useState } from "react";
-import heroBg from "@/assets/hero-bg.jpg";
-import baiterek from "@/assets/baiterek.jpg";
-import koktobe from "@/assets/koktobe.jpg";
-import turkestan from "@/assets/turkestan.jpg";
-import shymkent from "@/assets/shymkent.jpg";
-import baikonur from "@/assets/baikonur.jpg";
+// Реальные фотографии из Wikimedia Commons (свободные лицензии)
+const heroBg = "https://upload.wikimedia.org/wikipedia/commons/thumb/7/70/City_Gate%2C_Astana%2C_Skyline_of_Nur_Sultan.jpg/1280px-City_Gate%2C_Astana%2C_Skyline_of_Nur_Sultan.jpg";
+const baiterek = "https://upload.wikimedia.org/wikipedia/commons/thumb/3/3c/Baiterek_August.jpg/1280px-Baiterek_August.jpg";
+const koktobe = "https://upload.wikimedia.org/wikipedia/commons/thumb/f/fe/Sunset_over_the_Almaty_seen_from_Kok_Tobe_mountain%2C_pic_2.jpg/1280px-Sunset_over_the_Almaty_seen_from_Kok_Tobe_mountain%2C_pic_2.jpg";
+const turkestan = "https://upload.wikimedia.org/wikipedia/commons/thumb/f/f5/Mausoleum_of_Khoja_Ahmed_Yasavi_in_Turkestan%2C_Kazakhstan.jpg/1280px-Mausoleum_of_Khoja_Ahmed_Yasavi_in_Turkestan%2C_Kazakhstan.jpg";
+const shymkent = "https://upload.wikimedia.org/wikipedia/commons/thumb/e/e1/Ordabasy_Plaza_%28Shymkent%29.jpg/1280px-Ordabasy_Plaza_%28Shymkent%29.jpg";
+const baikonur = "https://upload.wikimedia.org/wikipedia/commons/thumb/2/23/Soyuz_TMA-09M_spacecraft_at_the_Baikonur_Cosmodrome_launch_pad_%284%29.jpg/1280px-Soyuz_TMA-09M_spacecraft_at_the_Baikonur_Cosmodrome_launch_pad_%284%29.jpg";
 import konzhyk from "@/assets/konzhyk.png";
 import { AuthGate } from "@/components/AuthGate";
 import { supabase } from "@/integrations/supabase/client";
