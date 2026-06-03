@@ -543,12 +543,13 @@ function FinishScreen({
         className="bg-card rounded-xl max-w-lg w-full border border-border animate-bounce-in flex flex-col max-h-[calc(100vh-3rem)]"
         style={{ boxShadow: "var(--shadow-card)" }}
       >
-        <div className="flex-1 min-h-0 overflow-y-auto p-8 pb-4">
+        {/* Sticky score header */}
+        <div className="p-8 pb-4 shrink-0 border-b border-border bg-card rounded-t-xl">
           <div className="text-xs uppercase tracking-wide text-muted-foreground mb-3">Journey complete</div>
           <h2 className="text-3xl font-normal tracking-tight mb-2">You crossed Kazakhstan</h2>
           <p className="text-muted-foreground text-sm mb-4">Signed in as {session.user.email}</p>
 
-          <div className="rounded-xl p-5 mb-6" style={{ backgroundColor: "var(--signature-navy)", color: "#fff" }}>
+          <div className="rounded-xl p-5" style={{ backgroundColor: "var(--signature-navy)", color: "#fff" }}>
             <div className="text-xs uppercase tracking-wide opacity-70 mb-1">Total score</div>
             <div className="text-5xl font-normal tracking-tight">{score}</div>
             <div className="mt-2 text-base">{rank.emoji} {rank.name}</div>
@@ -556,14 +557,20 @@ function FinishScreen({
               {saved ? "Result saved to leaderboard" : "Saving result…"}
             </div>
           </div>
+        </div>
 
-          <div className="text-xs uppercase tracking-wide text-muted-foreground mb-2">Top 10 explorers</div>
-          <div className="border border-border rounded-lg divide-y divide-border">
+        {/* Scrollable leaderboard with smooth scroll */}
+        <div className="flex-1 min-h-0 flex flex-col px-8 pt-4">
+          <div className="text-xs uppercase tracking-wide text-muted-foreground mb-2 shrink-0">Top 10 explorers</div>
+          <div
+            className="flex-1 min-h-[180px] overflow-y-auto border border-border rounded-lg divide-y divide-border scroll-smooth [scrollbar-width:thin] [scrollbar-color:var(--signature-navy)_transparent]"
+            style={{ scrollBehavior: "smooth" }}
+          >
             {results.length === 0 ? (
               <div className="px-4 py-6 text-sm text-muted-foreground text-center">Loading…</div>
             ) : (
               results.map((r, i) => (
-                <div key={r.id} className="flex items-center justify-between px-4 py-2.5 text-sm">
+                <div key={r.id} className="flex items-center justify-between px-4 py-3 text-sm hover:bg-muted/50 transition-colors">
                   <span className="text-muted-foreground tabular-nums w-6">{i + 1}</span>
                   <span className="flex-1 truncate">{r.display_name ?? "Anon"}</span>
                   <span className="font-medium tabular-nums">{r.score}</span>
@@ -573,7 +580,8 @@ function FinishScreen({
           </div>
         </div>
 
-        <div className="p-8 pt-4 shrink-0 border-t border-border">
+        {/* Sticky footer */}
+        <div className="p-8 pt-4 shrink-0 border-t border-border mt-4">
           <button
             onClick={onReplay}
             className="w-full py-3 rounded-lg font-medium bg-primary text-primary-foreground hover:bg-[#0d1218] transition-colors mb-2"
