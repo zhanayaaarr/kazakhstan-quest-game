@@ -497,9 +497,9 @@ function Game({ session }: { session: import("@supabase/supabase-js").Session })
           <div className="p-5">
             {/* NPC guide */}
             <div className="flex items-start gap-3 mb-4 p-3 rounded-2xl bg-muted">
-              <div className="text-3xl">🧑‍🏫</div>
+              <img src={konzhyk} alt="Konzhyk" width={56} height={56} loading="lazy" style={{ width: 56, height: 56 }} className="shrink-0" />
               <div className="flex-1">
-                <div className="text-xs font-bold text-muted-foreground">GUIDE {level.guide.toUpperCase()}</div>
+                <div className="text-xs font-bold text-muted-foreground">KONZHYK with {level.guide.toUpperCase()}</div>
                 <div className="font-bold">{question.q}</div>
               </div>
             </div>
