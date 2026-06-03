@@ -749,7 +749,10 @@ function Game({ session }: { session: import("@supabase/supabase-js").Session })
           <div className="p-5">
             {/* NPC guide */}
             <div className="flex items-start gap-3 mb-4 p-3 rounded-2xl bg-muted">
-              <img src={konzhyk} alt="Konzhyk" width={56} height={56} loading="lazy" style={{ width: 56, height: 56 }} className="shrink-0" />
+              <div className="relative shrink-0">
+                <img src={konzhyk} alt="Konzhyk" width={56} height={56} loading="lazy" style={{ width: 56, height: 56 }} className="rounded-full ring-2 ring-secondary/40" />
+                <span className="absolute -top-1 -right-1 text-lg" aria-hidden>🤔</span>
+              </div>
               <div className="flex-1">
                 <div className="text-xs font-bold text-muted-foreground">KONZHYK with {level.guide.toUpperCase()}</div>
                 <div className="font-bold">{question.q}</div>
@@ -805,18 +808,39 @@ function Game({ session }: { session: import("@supabase/supabase-js").Session })
                   </div>
                   <div className="text-sm font-semibold opacity-95">{feedback.msg}</div>
                   {feedback.points > 0 && (
-                    <div className="mt-2 text-lg font-black animate-pop">You earned +{feedback.points} points ⭐</div>
+                    <div className="mt-2 text-lg font-black animate-pop">
+                      +{feedback.points} ⭐
+                      {feedback.bonus > 0 && (
+                        <span className="ml-2 text-sm font-bold opacity-90">(⚡ speed bonus +{feedback.bonus})</span>
+                      )}
+                    </div>
+                  )}
+                  {feedback.type === "wrong" && (
+                    <div className="mt-2 text-sm font-bold opacity-90">💔 −1 heart · {hearts} left</div>
                   )}
                 </div>
-                <div className="flex items-start gap-3 mb-3 p-3 rounded-2xl bg-muted">
-                  <img src={konzhyk} alt="Konzhyk" width={48} height={48} style={{ width: 48, height: 48 }} className="shrink-0" />
-                  <div className="flex-1 text-sm font-semibold">{feedback.motivation}</div>
+                <div className="mb-3">
+                  <Konzhyk
+                    message={feedback.motivation}
+                    size={56}
+                    mood={
+                      feedback.type === "correct"
+                        ? (feedback.bonus >= 4 ? "celebrate" : "happy")
+                        : feedback.type === "close"
+                        ? "thinking"
+                        : "sad"
+                    }
+                  />
                 </div>
                 <button
                   onClick={next}
                   className="w-full py-4 rounded-xl font-black text-lg bg-primary text-primary-foreground hover:opacity-90 transition"
                 >
-                  {qIdx + 1 < level.questions.length ? "Next Question →" : "Finish Level →"}
+                  {hearts <= 0
+                    ? "💔 Game Over →"
+                    : qIdx + 1 < level.questions.length
+                    ? "Next Question →"
+                    : "Finish Level →"}
                 </button>
               </div>
             )}
