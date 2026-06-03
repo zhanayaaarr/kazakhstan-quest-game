@@ -1,6 +1,7 @@
 @import "tailwindcss" source(none);
 @source "../src";
 @import "tw-animate-css";
+@import url("https://fonts.googleapis.com/css2?family=Inter:wght@400;475;500;600;700&display=swap");
 
 @custom-variant dark (&:is(.dark *));
 
@@ -28,37 +29,51 @@
   --color-border: var(--border);
   --color-input: var(--input);
   --color-ring: var(--ring);
-  --font-display: "Fredoka", system-ui, sans-serif;
+  --color-signature-coral: var(--signature-coral);
+  --color-signature-forest: var(--signature-forest);
+  --color-signature-cream: var(--signature-cream);
+  --color-signature-peach: var(--signature-peach);
+  --color-signature-navy: var(--signature-navy);
+  --color-signature-mint: var(--signature-mint);
+  --color-signature-yellow: var(--signature-yellow);
+  --font-display: "Inter", system-ui, sans-serif;
 }
 
 :root {
-  --radius: 1rem;
-  /* Kazakhstan flag inspired: turquoise + gold */
-  --background: oklch(0.97 0.03 200);
-  --foreground: oklch(0.2 0.05 240);
-  --card: oklch(1 0 0);
-  --card-foreground: oklch(0.2 0.05 240);
-  --primary: oklch(0.7 0.15 200); /* turquoise */
-  --primary-foreground: oklch(1 0 0);
-  --secondary: oklch(0.85 0.18 85); /* gold */
-  --secondary-foreground: oklch(0.25 0.08 60);
-  --muted: oklch(0.94 0.02 200);
-  --muted-foreground: oklch(0.45 0.04 240);
-  --accent: oklch(0.78 0.2 50); /* warm orange accent */
-  --accent-foreground: oklch(1 0 0);
-  --success: oklch(0.7 0.18 145);
-  --success-foreground: oklch(1 0 0);
-  --destructive: oklch(0.65 0.22 25);
-  --destructive-foreground: oklch(1 0 0);
-  --border: oklch(0.88 0.04 200);
-  --input: oklch(0.92 0.03 200);
-  --ring: oklch(0.7 0.15 200);
+  /* Airtable-inspired sober editorial system */
+  --radius: 0.625rem;
+  --background: #ffffff;
+  --foreground: #181d26;
+  --card: #ffffff;
+  --card-foreground: #181d26;
+  --primary: #181d26;            /* near-black pill CTA */
+  --primary-foreground: #ffffff;
+  --secondary: #f8fafc;          /* surface soft */
+  --secondary-foreground: #181d26;
+  --muted: #f8fafc;
+  --muted-foreground: #41454d;
+  --accent: #fcab79;             /* signature peach accent */
+  --accent-foreground: #181d26;
+  --success: #006400;
+  --success-foreground: #ffffff;
+  --destructive: #aa2d00;
+  --destructive-foreground: #ffffff;
+  --border: #dddddd;
+  --input: #ffffff;
+  --ring: #181d26;
 
-  --gradient-sky: linear-gradient(180deg, oklch(0.75 0.13 220), oklch(0.85 0.1 200));
-  --gradient-gold: linear-gradient(135deg, oklch(0.88 0.18 85), oklch(0.78 0.2 60));
-  --gradient-hero: linear-gradient(135deg, oklch(0.55 0.18 215) 0%, oklch(0.7 0.18 195) 50%, oklch(0.85 0.18 85) 100%);
-  --shadow-card: 0 12px 40px -12px oklch(0.4 0.15 215 / 0.35);
-  --shadow-glow: 0 0 60px oklch(0.85 0.18 85 / 0.6);
+  /* Signature palette */
+  --signature-coral: #aa2d00;
+  --signature-forest: #0a2e0e;
+  --signature-cream: #f5e9d4;
+  --signature-peach: #fcab79;
+  --signature-navy: #1d1f25;
+  --signature-mint: #a8d8c4;
+  --signature-yellow: #f4d35e;
+
+  --hairline: #dddddd;
+  --shadow-card: 0 1px 0 #eaeaea, 0 12px 32px -16px rgba(24,29,38,0.18);
+  --shadow-soft: 0 1px 2px rgba(24,29,38,0.06);
 }
 
 @layer base {
@@ -67,27 +82,25 @@
     background-color: var(--color-background);
     color: var(--color-foreground);
     font-family: var(--font-display);
+    font-feature-settings: "ss01", "cv11";
+    -webkit-font-smoothing: antialiased;
   }
+  h1, h2, h3 { letter-spacing: -0.01em; }
 }
 
 @keyframes bounce-in {
-  0% { transform: scale(0.3); opacity: 0; }
-  60% { transform: scale(1.1); }
-  100% { transform: scale(1); opacity: 1; }
+  0% { transform: translateY(8px); opacity: 0; }
+  100% { transform: translateY(0); opacity: 1; }
 }
 @keyframes float {
   0%, 100% { transform: translateY(0px); }
-  50% { transform: translateY(-12px); }
+  50% { transform: translateY(-8px); }
 }
 @keyframes pop {
   0% { transform: scale(1); }
-  50% { transform: scale(1.15); }
+  50% { transform: scale(1.06); }
   100% { transform: scale(1); }
 }
-@keyframes shimmer {
-  0% { background-position: -200% 0; }
-  100% { background-position: 200% 0; }
-}
-.animate-bounce-in { animation: bounce-in 0.5s ease-out; }
+.animate-bounce-in { animation: bounce-in 0.35s ease-out; }
 .animate-float { animation: float 3s ease-in-out infinite; }
-.animate-pop { animation: pop 0.4s ease-out; }
+.animate-pop { animation: pop 0.3s ease-out; }
