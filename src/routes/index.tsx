@@ -789,7 +789,7 @@ function Game({ session }: { session: import("@supabase/supabase-js").Session })
         {/* Image card */}
         <div className="bg-card rounded-3xl overflow-hidden mb-4" style={{ boxShadow: "var(--shadow-card)" }}>
           <div className="relative">
-            <img key={`${levelIdx}-${qIdx}`} src={level.images[qIdx] ?? level.image} alt="Mystery location" className="w-full h-72 md:h-96 object-cover" width={1024} height={1024} loading="eager" />
+            <img key={`${levelIdx}-${qIdx}`} src={level.images[qIdx] ?? level.image} alt="Mystery location" className="w-full h-72 md:h-96 object-contain bg-muted" width={1024} height={1024} loading="eager" />
             <div className="absolute top-3 left-3 bg-card/90 backdrop-blur px-3 py-1 rounded-full text-sm font-bold">
               📷 Question {qIdx + 1} / {level.questions.length}
             </div>
