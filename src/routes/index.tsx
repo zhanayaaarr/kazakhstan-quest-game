@@ -14,8 +14,8 @@ const baiterek = astana1;
 
 // Almaty — все фото Кок-Тобе
 const almaty1 = "https://upload.wikimedia.org/wikipedia/commons/thumb/0/0b/Kok_Tobe%2C_Kazakhstan.jpg/1280px-Kok_Tobe%2C_Kazakhstan.jpg";
-const almaty2 = "https://upload.wikimedia.org/wikipedia/commons/thumb/6/67/View_of_Kok-Tobe_amusement_part_and_Almaty_T.V_Tower..JPG/1280px-View_of_Kok-Tobe_amusement_part_and_Almaty_T.V_Tower..JPG";
-const almaty3 = "https://upload.wikimedia.org/wikipedia/commons/thumb/1/15/Red_Apple.jpg/1280px-Red_Apple.jpg";
+const almaty2 = "https://upload.wikimedia.org/wikipedia/commons/thumb/1/16/Almaty%2C_Kok-Tobe2.jpg/1280px-Almaty%2C_Kok-Tobe2.jpg";
+const almaty3 = "https://upload.wikimedia.org/wikipedia/commons/thumb/e/e5/Blooming_Sievers_apple_tree_%28M%C3%A1lus_siev%C3%A9rsii%29_in_the_Main_Botanical_Garden_of_Almaty.jpg/1280px-Blooming_Sievers_apple_tree_%28M%C3%A1lus_siev%C3%A9rsii%29_in_the_Main_Botanical_Garden_of_Almaty.jpg";
 const almaty4 = "https://upload.wikimedia.org/wikipedia/commons/thumb/e/e5/Big_Almaty_Lake%2C_Trans-Ili_Alatau%2C_Tian_Shan.jpg/1280px-Big_Almaty_Lake%2C_Trans-Ili_Alatau%2C_Tian_Shan.jpg";
 const almaty5 = "https://upload.wikimedia.org/wikipedia/commons/thumb/d/db/Kok_Tobe_Park%2C_June_2016.jpg/1280px-Kok_Tobe_Park%2C_June_2016.jpg";
 const koktobe = almaty1;
