@@ -232,7 +232,7 @@ const LEVELS: Level[] = [
     monument: "Baiterek Tower",
     location: "Astana, capital of Kazakhstan",
     image: baiterek,
-    images: [astana1, astana2, astana3, astana4, astana5],
+    images: [astana2, astana1, astana3, astana4, astana5],
     guide: "Aisha",
     fact: "Baiterek is 97 meters tall — symbolizing 1997, the year Astana became the capital!",
     questions: [
