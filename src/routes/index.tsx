@@ -650,7 +650,7 @@ function Game({ session }: { session: import("@supabase/supabase-js").Session })
     <div className="min-h-screen bg-background p-4 md:p-6">
       <div className="max-w-3xl mx-auto">
         {/* HUD */}
-        <div className="flex items-center justify-between mb-4 bg-card rounded-2xl p-3 px-5" style={{ boxShadow: "var(--shadow-card)" }}>
+        <div className="flex items-center justify-between mb-4 bg-card rounded-2xl p-3 px-5 gap-3 flex-wrap" style={{ boxShadow: "var(--shadow-card)" }}>
           <div className="flex items-center gap-2">
             <span className="text-2xl">🇰🇿</span>
             <div>
@@ -658,10 +658,45 @@ function Game({ session }: { session: import("@supabase/supabase-js").Session })
               <div className="font-black">{level.city}</div>
             </div>
           </div>
-          <div className="text-right">
-            <div className="text-xs font-bold text-muted-foreground">SCORE</div>
-            <div className="font-black text-xl text-accent">{score} ⭐</div>
+          <div className="flex items-center gap-4">
+            {/* Hearts */}
+            <div className="flex items-center gap-0.5" title={`${hearts} lives left`} aria-label={`${hearts} hearts`}>
+              {[0, 1, 2].map((i) => (
+                <span key={i} className={`text-xl transition-all ${i < hearts ? "" : "grayscale opacity-30"}`}>
+                  {i < hearts ? "❤️" : "🖤"}
+                </span>
+              ))}
+            </div>
+            {/* Streak */}
+            {streak > 0 && (
+              <div className="flex flex-col items-center" title={`${streak}-day streak`}>
+                <div className="text-xl leading-none">🔥</div>
+                <div className="text-[10px] font-black text-muted-foreground tabular-nums">{streak}d</div>
+              </div>
+            )}
+            {/* Timer */}
+            <div
+              className={`flex flex-col items-center min-w-[44px] ${
+                feedback ? "opacity-40" : timeLeft <= 5 ? "text-destructive animate-pulse" : ""
+              }`}
+              title="Time left"
+            >
+              <div className="text-lg leading-none">⏱</div>
+              <div className="text-sm font-black tabular-nums">{timeLeft}s</div>
+            </div>
+            <div className="text-right">
+              <div className="text-xs font-bold text-muted-foreground">SCORE</div>
+              <div className="font-black text-xl text-accent">{score} ⭐</div>
+            </div>
           </div>
+        </div>
+
+        {/* Timer bar */}
+        <div className="h-1.5 mb-4 bg-muted rounded-full overflow-hidden">
+          <div
+            className={`h-full transition-all duration-200 ${timeLeft <= 5 ? "bg-destructive" : "bg-primary"}`}
+            style={{ width: `${(timeLeft / QUESTION_TIME) * 100}%` }}
+          />
         </div>
 
         {/* Progress dots */}
