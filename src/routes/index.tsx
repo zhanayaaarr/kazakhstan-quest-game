@@ -296,6 +296,7 @@ const LEVELS: Level[] = [
     monument: "Baikonur Cosmodrome",
     location: "Baikonur, Kyzylorda Region",
     image: baikonur,
+    images: [bai1, bai2, bai3, bai4, bai5],
     guide: "Saule",
     fact: "The first human in space, Yuri Gagarin, launched from Baikonur in 1961!",
     questions: [
