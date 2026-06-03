@@ -11,18 +11,41 @@ import { AuthGate } from "@/components/AuthGate";
 import { supabase } from "@/integrations/supabase/client";
 import { sfx } from "@/lib/sounds";
 
-function Konzhyk({ message, size = 80 }: { message: string; size?: number }) {
+type Mood = "happy" | "celebrate" | "thinking" | "sad" | "neutral";
+const MOOD_EMOJI: Record<Mood, string> = {
+  happy: "😊",
+  celebrate: "🎉",
+  thinking: "🤔",
+  sad: "🥺",
+  neutral: "",
+};
+const MOOD_RING: Record<Mood, string> = {
+  happy: "ring-4 ring-success/40",
+  celebrate: "ring-4 ring-accent/50 animate-pop",
+  thinking: "ring-4 ring-secondary/40",
+  sad: "ring-4 ring-destructive/30",
+  neutral: "",
+};
+
+function Konzhyk({ message, size = 80, mood = "neutral" }: { message: string; size?: number; mood?: Mood }) {
   return (
     <div className="flex items-end gap-3 animate-bounce-in">
-      <img
-        src={konzhyk}
-        alt="Konzhyk the bear"
-        width={size}
-        height={size}
-        loading="lazy"
-        style={{ width: size, height: size }}
-        className="drop-shadow-md shrink-0"
-      />
+      <div className="relative shrink-0">
+        <img
+          src={konzhyk}
+          alt="Konzhyk the bear"
+          width={size}
+          height={size}
+          loading="lazy"
+          style={{ width: size, height: size }}
+          className={`drop-shadow-md rounded-full ${MOOD_RING[mood]}`}
+        />
+        {MOOD_EMOJI[mood] && (
+          <span className="absolute -top-2 -right-2 text-2xl drop-shadow-sm" aria-hidden>
+            {MOOD_EMOJI[mood]}
+          </span>
+        )}
+      </div>
       <div className="relative bg-card border-2 border-border rounded-2xl px-4 py-3 text-sm font-semibold max-w-xs"
         style={{ boxShadow: "var(--shadow-card)" }}>
         <div className="absolute -left-2 bottom-4 w-4 h-4 bg-card border-l-2 border-b-2 border-border rotate-45" />
@@ -30,6 +53,44 @@ function Konzhyk({ message, size = 80 }: { message: string; size?: number }) {
       </div>
     </div>
   );
+}
+
+// ===== Streak (days in a row) — stored in localStorage =====
+function loadStreak(): number {
+  if (typeof window === "undefined") return 0;
+  try {
+    const last = localStorage.getItem("kq_lastPlay");
+    const streak = parseInt(localStorage.getItem("kq_streak") ?? "0", 10) || 0;
+    if (!last) return 0;
+    const today = new Date().toDateString();
+    const lastDate = new Date(last).toDateString();
+    if (today === lastDate) return streak;
+    const yesterday = new Date(Date.now() - 86400000).toDateString();
+    if (lastDate === yesterday) return streak;
+    return 0; // broken
+  } catch {
+    return 0;
+  }
+}
+function bumpStreak(): number {
+  if (typeof window === "undefined") return 0;
+  try {
+    const last = localStorage.getItem("kq_lastPlay");
+    let streak = parseInt(localStorage.getItem("kq_streak") ?? "0", 10) || 0;
+    const today = new Date().toDateString();
+    const lastDate = last ? new Date(last).toDateString() : null;
+    if (lastDate === today) {
+      // already counted today
+    } else {
+      const yesterday = new Date(Date.now() - 86400000).toDateString();
+      streak = lastDate === yesterday ? streak + 1 : 1;
+      localStorage.setItem("kq_streak", String(streak));
+      localStorage.setItem("kq_lastPlay", new Date().toISOString());
+    }
+    return streak;
+  } catch {
+    return 0;
+  }
 }
 
 const KZ_FACTS = [
