@@ -381,8 +381,9 @@ function Game({ session }: { session: import("@supabase/supabase-js").Session })
               </button>
             </div>
             <div className="mt-10">
-              <Konzhyk message="Сәлем! I'm Konzhyk 🐻 Your guide through Kazakhstan — let's earn stars together!" size={96} />
+              <KonzhykFacts />
             </div>
+
           </div>
           <div className="flex flex-col gap-4">
             <div className="rounded-xl overflow-hidden border border-border" style={{ boxShadow: "var(--shadow-card)" }}>
