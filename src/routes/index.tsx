@@ -8,6 +8,7 @@ import shymkent from "@/assets/shymkent.jpg";
 import baikonur from "@/assets/baikonur.jpg";
 import { AuthGate } from "@/components/AuthGate";
 import { supabase } from "@/integrations/supabase/client";
+import { sfx } from "@/lib/sounds";
 
 export const Route = createFileRoute("/")({
   head: () => ({
@@ -163,6 +164,7 @@ function Game({ session }: { session: import("@supabase/supabase-js").Session })
   const question = level?.questions[qIdx];
 
   function startGame() {
+    sfx.click();
     setScreen("level");
     setLevelIdx(0);
     setQIdx(0);
@@ -187,10 +189,18 @@ function Game({ session }: { session: import("@supabase/supabase-js").Session })
     setFeedback({ type: r, msg, points });
     setScore((s) => s + points);
     setLevelScore((s) => s + points);
-    if (r === "correct") setLevelCorrect((c) => c + 1);
+    if (r === "correct") {
+      setLevelCorrect((c) => c + 1);
+      sfx.correct();
+    } else if (r === "close") {
+      sfx.close();
+    } else {
+      sfx.wrong();
+    }
   }
 
   function next() {
+    sfx.click();
     setFeedback(null);
     setInput("");
     setShowHint(false);
@@ -207,6 +217,7 @@ function Game({ session }: { session: import("@supabase/supabase-js").Session })
   }
 
   function nextLevel() {
+    sfx.click();
     if (levelIdx + 1 < LEVELS.length) {
       setLevelIdx((i) => i + 1);
       setQIdx(0);
@@ -214,6 +225,7 @@ function Game({ session }: { session: import("@supabase/supabase-js").Session })
       setLevelCorrect(0);
       setScreen("level");
     } else {
+      sfx.finish();
       setScreen("finish");
     }
   }
