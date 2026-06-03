@@ -431,6 +431,12 @@ function Game({ session }: { session: import("@supabase/supabase-js").Session })
     setFeedback(null);
     setInput("");
     setShowHint(false);
+    // Out of hearts → game over (jump straight to finish)
+    if (hearts <= 0) {
+      sfx.finish();
+      setScreen("finish");
+      return;
+    }
     if (qIdx + 1 < level.questions.length) {
       setQIdx((i) => i + 1);
     } else {
