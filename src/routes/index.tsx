@@ -136,11 +136,11 @@ const LEVELS: Level[] = [
     guide: "Aisha",
     fact: "Baiterek is 97 meters tall — symbolizing 1997, the year Astana became the capital!",
     questions: [
-      { q: "What city is shown in the image?", answers: ["astana", "nur-sultan", "nursultan"], hint: "It's the capital city of Kazakhstan." },
-      { q: "What is this monument called?", answers: ["baiterek", "bayterek", "baiterek tower"], hint: "It means 'tall poplar tree' in Kazakh." },
-      { q: "What is it famous for? (one word)", answers: ["capital", "symbol", "tower"], hint: "It is the symbol of the capital." },
-      { q: "How tall is Baiterek in meters?", answers: ["97", "97m", "97 meters"], hint: "Same as the year Astana became capital." },
-      { q: "In which year did Astana become the capital?", answers: ["1997"], hint: "Look at the tower's height." },
+      { q: "What city is shown in the image? / Какой это город?", answers: ["astana", "nur-sultan", "nursultan", "астана", "нур-султан", "нурсултан"], hint: "It's the capital city of Kazakhstan. / Столица Казахстана." },
+      { q: "What is this monument called? / Как называется этот памятник?", answers: ["baiterek", "bayterek", "baiterek tower", "байтерек", "бәйтерек"], hint: "It means 'tall poplar tree' in Kazakh. / Означает 'высокий тополь'." },
+      { q: "What is it famous for? (one word) / Чем он знаменит? (одно слово)", answers: ["capital", "symbol", "tower", "столица", "символ", "башня", "астана"], hint: "It is the symbol of the capital." },
+      { q: "How tall is Baiterek in meters? / Какова высота Байтерека в метрах?", answers: ["97", "97m", "97 meters", "97 метров"], hint: "Same as the year Astana became capital." },
+      { q: "In which year did Astana become the capital? / В каком году Астана стала столицей?", answers: ["1997"], hint: "Look at the tower's height." },
     ],
   },
   {
@@ -151,11 +151,11 @@ const LEVELS: Level[] = [
     guide: "Daulet",
     fact: "Almaty was the old capital and means 'father of apples' — apples originated here!",
     questions: [
-      { q: "What city is shown in the image?", answers: ["almaty", "alma-ata", "almata"], hint: "Means 'father of apples'." },
-      { q: "What is this hill called?", answers: ["kok-tobe", "koktobe", "kok tobe"], hint: "Means 'green hill' in Kazakh." },
-      { q: "What does the name 'Almaty' mean? (one word)", answers: ["apple", "apples"], hint: "A fruit that originated here." },
-      { q: "Which mountain range borders Almaty?", answers: ["tian shan", "tianshan", "tien shan"], hint: "Means 'celestial mountains'." },
-      { q: "Was Almaty the former capital? (yes/no)", answers: ["yes"], hint: "Until 1997." },
+      { q: "What city is shown in the image? / Какой это город?", answers: ["almaty", "alma-ata", "almata", "алматы", "алма-ата", "алмата"], hint: "Means 'father of apples'. / 'Отец яблок'." },
+      { q: "What is this hill called? / Как называется этот холм?", answers: ["kok-tobe", "koktobe", "kok tobe", "көктөбе", "кок-тобе", "коктобе"], hint: "Means 'green hill' in Kazakh. / 'Зелёный холм'." },
+      { q: "What does the name 'Almaty' mean? (one word) / Что значит 'Алматы'? (одно слово)", answers: ["apple", "apples", "яблоко", "яблоки", "алма"], hint: "A fruit that originated here." },
+      { q: "Which mountain range borders Almaty? / Какие горы рядом с Алматы?", answers: ["tian shan", "tianshan", "tien shan", "тянь-шань", "тянь шань", "тяньшань"], hint: "Means 'celestial mountains'." },
+      { q: "Was Almaty the former capital? (yes/no) / Алматы была столицей? (да/нет)", answers: ["yes", "да", "иә"], hint: "Until 1997." },
     ],
   },
   {
@@ -166,11 +166,11 @@ const LEVELS: Level[] = [
     guide: "Madina",
     fact: "This UNESCO World Heritage site was built by Timur in the 14th century!",
     questions: [
-      { q: "What city is shown in the image?", answers: ["turkestan", "turkistan"], hint: "An ancient spiritual city." },
-      { q: "Who is this mausoleum dedicated to?", answers: ["yasawi", "ahmed yasawi", "khoja ahmed yasawi", "yassawi"], hint: "A famous Sufi poet." },
-      { q: "What organization protects it? (acronym)", answers: ["unesco"], hint: "World heritage organization." },
-      { q: "Which ruler built the mausoleum?", answers: ["timur", "tamerlane", "amir timur"], hint: "14th century conqueror." },
-      { q: "In which century was it built?", answers: ["14", "14th", "xiv"], hint: "1300s." },
+      { q: "What city is shown in the image? / Какой это город?", answers: ["turkestan", "turkistan", "туркестан", "түркістан", "туркистан"], hint: "An ancient spiritual city." },
+      { q: "Who is this mausoleum dedicated to? / Кому посвящён этот мавзолей?", answers: ["yasawi", "ahmed yasawi", "khoja ahmed yasawi", "yassawi", "ясави", "ахмед ясави", "ходжа ахмед ясави", "яссауи"], hint: "A famous Sufi poet." },
+      { q: "What organization protects it? (acronym) / Какая организация его охраняет? (аббревиатура)", answers: ["unesco", "юнеско"], hint: "World heritage organization." },
+      { q: "Which ruler built the mausoleum? / Какой правитель построил мавзолей?", answers: ["timur", "tamerlane", "amir timur", "тимур", "тамерлан", "әмір темір", "амир тимур"], hint: "14th century conqueror." },
+      { q: "In which century was it built? / В каком веке его построили?", answers: ["14", "14th", "xiv", "14 век", "xiv век", "14-й"], hint: "1300s." },
     ],
   },
   {
@@ -181,11 +181,11 @@ const LEVELS: Level[] = [
     guide: "Bolat",
     fact: "Shymkent is the third largest city of Kazakhstan and over 2,200 years old!",
     questions: [
-      { q: "What city is shown in the image?", answers: ["shymkent", "chimkent"], hint: "Third largest city of Kazakhstan." },
-      { q: "What does this monument celebrate?", answers: ["independence", "freedom"], hint: "Gained in 1991." },
-      { q: "In which part of Kazakhstan is it? (north/south/east/west)", answers: ["south", "southern"], hint: "Warm climate region." },
-      { q: "In what year did Kazakhstan gain independence?", answers: ["1991"], hint: "Fall of the Soviet Union." },
-      { q: "Shymkent is the ___ largest city. (number)", answers: ["3", "third", "3rd"], hint: "After Almaty and Astana." },
+      { q: "What city is shown in the image? / Какой это город?", answers: ["shymkent", "chimkent", "шымкент", "чимкент"], hint: "Third largest city of Kazakhstan." },
+      { q: "What does this monument celebrate? / Что отмечает этот памятник?", answers: ["independence", "freedom", "независимость", "свобода", "тәуелсіздік"], hint: "Gained in 1991." },
+      { q: "In which part of Kazakhstan is it? (north/south/east/west) / В какой части Казахстана? (север/юг/восток/запад)", answers: ["south", "southern", "юг", "южная", "оңтүстік"], hint: "Warm climate region." },
+      { q: "In what year did Kazakhstan gain independence? / В каком году Казахстан получил независимость?", answers: ["1991"], hint: "Fall of the Soviet Union." },
+      { q: "Shymkent is the ___ largest city. (number) / Шымкент — ___ по величине город. (число)", answers: ["3", "third", "3rd", "третий", "3-й", "үшінші"], hint: "After Almaty and Astana." },
     ],
   },
   {
@@ -196,11 +196,11 @@ const LEVELS: Level[] = [
     guide: "Saule",
     fact: "The first human in space, Yuri Gagarin, launched from Baikonur in 1961!",
     questions: [
-      { q: "What place is shown in the image?", answers: ["baikonur", "baykonur"], hint: "Famous rocket launch site." },
-      { q: "What is launched here?", answers: ["rockets", "rocket", "spacecraft", "spaceships"], hint: "They fly to space." },
-      { q: "Who was the first human in space launched here?", answers: ["gagarin", "yuri gagarin", "yurigagarin"], hint: "Russian cosmonaut, 1961." },
-      { q: "In what year did Gagarin fly to space?", answers: ["1961"], hint: "Early 1960s." },
-      { q: "Which region hosts the cosmodrome?", answers: ["kyzylorda", "kyzyl-orda", "kyzylorda region"], hint: "Southern Kazakhstan region." },
+      { q: "What place is shown in the image? / Какое это место?", answers: ["baikonur", "baykonur", "байконур", "байқоңыр"], hint: "Famous rocket launch site." },
+      { q: "What is launched here? / Что отсюда запускают?", answers: ["rockets", "rocket", "spacecraft", "spaceships", "ракеты", "ракета", "космические корабли", "зымыран"], hint: "They fly to space." },
+      { q: "Who was the first human in space launched here? / Кто был первым человеком в космосе?", answers: ["gagarin", "yuri gagarin", "yurigagarin", "гагарин", "юрий гагарин"], hint: "Russian cosmonaut, 1961." },
+      { q: "In what year did Gagarin fly to space? / В каком году Гагарин полетел в космос?", answers: ["1961"], hint: "Early 1960s." },
+      { q: "Which region hosts the cosmodrome? / В какой области находится космодром?", answers: ["kyzylorda", "kyzyl-orda", "kyzylorda region", "кызылорда", "кызылординская", "қызылорда"], hint: "Southern Kazakhstan region." },
     ],
   },
 ];
@@ -208,7 +208,32 @@ const LEVELS: Level[] = [
 type Screen = "start" | "level" | "result" | "finish";
 
 function normalize(s: string) {
-  return s.trim().toLowerCase().replace(/[^a-z0-9 -]/g, "");
+  return s.trim().toLowerCase().replace(/ё/g, "е").replace(/[^a-z0-9а-яәіңғүұқөһ -]/gi, "");
+}
+
+const MOTIVATIONS = {
+  correct: [
+    "Молодец! Қонжық гордится тобой! 🐻",
+    "Жарайсың! Ты настоящий знаток!",
+    "Ого! Қонжық хлопает лапами! 🎉",
+    "Так держать! Тебе покорится вся степь!",
+  ],
+  close: [
+    "Почти! Қонжық верит — в следующий раз получится!",
+    "Совсем рядом! Не сдавайся, дружок!",
+    "Ты на верном пути! Қонжық подсказывает: попробуй ещё!",
+  ],
+  wrong: [
+    "Не беда! Қонжық тоже когда-то учился. Идём дальше!",
+    "Ошибки — часть пути. Қонжық с тобой! 🐻",
+    "Не расстраивайся! Қазақстан большой — всего не запомнить сразу.",
+    "Қонжық обнимает тебя 🫂 — двигаемся к следующему!",
+  ],
+};
+
+function pickMotivation(type: "correct" | "close" | "wrong") {
+  const arr = MOTIVATIONS[type];
+  return arr[Math.floor(Math.random() * arr.length)];
 }
 
 function checkAnswer(input: string, answers: string[]): "correct" | "close" | "wrong" {
@@ -248,7 +273,7 @@ function Game({ session }: { session: import("@supabase/supabase-js").Session })
   const [levelScore, setLevelScore] = useState(0);
   const [levelCorrect, setLevelCorrect] = useState(0);
   const [qResults, setQResults] = useState<Array<"correct" | "close" | "wrong" | null>>([]);
-  const [feedback, setFeedback] = useState<{ type: "correct" | "close" | "wrong"; msg: string; points: number } | null>(null);
+  const [feedback, setFeedback] = useState<{ type: "correct" | "close" | "wrong"; msg: string; points: number; motivation: string } | null>(null);
   const [showHint, setShowHint] = useState(false);
 
   const level = LEVELS[levelIdx];
@@ -278,7 +303,7 @@ function Game({ session }: { session: import("@supabase/supabase-js").Session })
         : r === "close"
         ? `So close! The answer was "${question.answers[0]}".`
         : `Not quite. The answer was "${question.answers[0]}".`;
-    setFeedback({ type: r, msg, points });
+    setFeedback({ type: r, msg, points, motivation: pickMotivation(r) });
     setScore((s) => s + points);
     setLevelScore((s) => s + points);
     setQResults((arr) => {
@@ -592,7 +617,7 @@ function Game({ session }: { session: import("@supabase/supabase-js").Session })
                   value={input}
                   onChange={(e) => setInput(e.target.value)}
                   onKeyDown={(e) => e.key === "Enter" && submit()}
-                  placeholder="Type your answer..."
+                  placeholder="Ответ на русском, қазақша немесе English..."
                   autoFocus
                   className="w-full px-5 py-4 rounded-2xl bg-input border-2 border-border focus:border-primary focus:outline-none text-lg font-semibold"
                 />
@@ -636,6 +661,10 @@ function Game({ session }: { session: import("@supabase/supabase-js").Session })
                   {feedback.points > 0 && (
                     <div className="mt-2 text-lg font-black animate-pop">You earned +{feedback.points} points ⭐</div>
                   )}
+                </div>
+                <div className="flex items-start gap-3 mb-3 p-3 rounded-2xl bg-muted">
+                  <img src={konzhyk} alt="Konzhyk" width={48} height={48} style={{ width: 48, height: 48 }} className="shrink-0" />
+                  <div className="flex-1 text-sm font-semibold">{feedback.motivation}</div>
                 </div>
                 <button
                   onClick={next}
