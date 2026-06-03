@@ -303,7 +303,7 @@ function Game({ session }: { session: import("@supabase/supabase-js").Session })
         : r === "close"
         ? `So close! The answer was "${question.answers[0]}".`
         : `Not quite. The answer was "${question.answers[0]}".`;
-    setFeedback({ type: r, msg, points });
+    setFeedback({ type: r, msg, points, motivation: pickMotivation(r) });
     setScore((s) => s + points);
     setLevelScore((s) => s + points);
     setQResults((arr) => {
