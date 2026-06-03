@@ -63,7 +63,7 @@ const LEVELS: Level[] = [
     questions: [
       { q: "What city is shown in the image?", answers: ["almaty", "alma-ata", "almata"], hint: "Means 'father of apples'." },
       { q: "What is this hill called?", answers: ["kok-tobe", "koktobe", "kok tobe"], hint: "Means 'green hill' in Kazakh." },
-      { q: "What is Almaty famous for? (one word)", answers: ["apples", "mountains", "apple"], hint: "A fruit that grew here first." },
+      { q: "What does the name 'Almaty' mean? (one word)", answers: ["apple", "apples"], hint: "A fruit that originated here." },
       { q: "Which mountain range borders Almaty?", answers: ["tian shan", "tianshan", "tien shan"], hint: "Means 'celestial mountains'." },
       { q: "Was Almaty the former capital? (yes/no)", answers: ["yes"], hint: "Until 1997." },
     ],
