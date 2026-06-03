@@ -662,6 +662,10 @@ function Game({ session }: { session: import("@supabase/supabase-js").Session })
                     <div className="mt-2 text-lg font-black animate-pop">You earned +{feedback.points} points ⭐</div>
                   )}
                 </div>
+                <div className="flex items-start gap-3 mb-3 p-3 rounded-2xl bg-muted">
+                  <img src={konzhyk} alt="Konzhyk" width={48} height={48} style={{ width: 48, height: 48 }} className="shrink-0" />
+                  <div className="flex-1 text-sm font-semibold">{feedback.motivation}</div>
+                </div>
                 <button
                   onClick={next}
                   className="w-full py-4 rounded-xl font-black text-lg bg-primary text-primary-foreground hover:opacity-90 transition"
