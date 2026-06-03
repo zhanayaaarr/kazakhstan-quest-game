@@ -502,6 +502,12 @@ function Game({ session }: { session: import("@supabase/supabase-js").Session })
         {/* Hero band */}
         <section className="px-6 md:px-10 py-16 md:py-24 max-w-6xl mx-auto w-full grid md:grid-cols-2 gap-12 items-center">
           <div>
+            <img
+              src={kzFlag}
+              alt="Flag of Kazakhstan"
+              className="w-32 md:w-40 rounded-lg shadow-lg mb-6 border border-border object-cover"
+              loading="eager"
+            />
             <div className="text-xs font-medium tracking-wide text-muted-foreground mb-6 uppercase">
               Educational adventure · 5 levels
             </div>
