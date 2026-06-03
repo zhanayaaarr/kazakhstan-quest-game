@@ -247,6 +247,7 @@ function Game({ session }: { session: import("@supabase/supabase-js").Session })
   const [score, setScore] = useState(0);
   const [levelScore, setLevelScore] = useState(0);
   const [levelCorrect, setLevelCorrect] = useState(0);
+  const [qResults, setQResults] = useState<Array<"correct" | "close" | "wrong" | null>>([]);
   const [feedback, setFeedback] = useState<{ type: "correct" | "close" | "wrong"; msg: string; points: number } | null>(null);
   const [showHint, setShowHint] = useState(false);
 
