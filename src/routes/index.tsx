@@ -310,52 +310,53 @@ function Game({ session }: { session: import("@supabase/supabase-js").Session })
     const perfect = levelCorrect === level.questions.length;
     return (
       <div className="min-h-screen flex items-center justify-center p-6 bg-background">
-        <div className="bg-card rounded-3xl p-8 max-w-xl w-full animate-bounce-in" style={{ boxShadow: "var(--shadow-card)" }}>
-          <div className="text-center mb-4">
-            <div className="text-5xl mb-2">{perfect ? "🏆" : "✨"}</div>
-            <h2 className="text-3xl font-black">Level {levelIdx + 1} Complete!</h2>
-            <p className="text-muted-foreground">{level.city} — {level.monument}</p>
+        <div className="bg-card rounded-xl p-8 max-w-xl w-full animate-bounce-in border border-border" style={{ boxShadow: "var(--shadow-card)" }}>
+          <div className="mb-4">
+            <div className="text-xs uppercase tracking-wide text-muted-foreground mb-2">Level {levelIdx + 1} complete</div>
+            <h2 className="text-3xl font-normal tracking-tight">{level.city}</h2>
+            <p className="text-muted-foreground">{level.monument}</p>
           </div>
 
-          <img src={level.image} alt={level.monument} className="w-full h-56 object-cover rounded-2xl mb-4" width={1024} height={1024} />
+          <img src={level.image} alt={level.monument} className="w-full h-56 object-cover rounded-lg mb-4" width={1024} height={1024} />
 
-          <div className="rounded-2xl p-4 mb-4 bg-muted">
-            <div className="font-bold text-sm text-muted-foreground mb-1">📍 LOCATION</div>
-            <div className="font-bold">{level.location}</div>
+          <div className="rounded-lg p-4 mb-3 border border-border">
+            <div className="text-xs uppercase tracking-wide text-muted-foreground mb-1">Location</div>
+            <div className="font-medium">{level.location}</div>
           </div>
 
-          <div className="rounded-2xl p-4 mb-4" style={{ background: "var(--gradient-gold)" }}>
-            <div className="font-bold text-sm text-secondary-foreground/70 mb-1">💡 FUN FACT</div>
-            <div className="font-bold text-secondary-foreground">{level.fact}</div>
+          <div className="rounded-lg p-5 mb-4" style={{ backgroundColor: "var(--signature-cream)", color: "#181d26" }}>
+            <div className="text-xs uppercase tracking-wide opacity-70 mb-1">Fun fact</div>
+            <div className="text-lg leading-snug">{level.fact}</div>
           </div>
 
           <div className="grid grid-cols-2 gap-3 mb-5">
-            <div className="rounded-xl p-3 bg-muted text-center">
-              <div className="text-xs font-bold text-muted-foreground">CORRECT</div>
-              <div className="text-2xl font-black">{levelCorrect}/{level.questions.length}</div>
+            <div className="rounded-lg p-3 border border-border text-center">
+              <div className="text-xs uppercase tracking-wide text-muted-foreground">Correct</div>
+              <div className="text-2xl font-medium">{levelCorrect}/{level.questions.length}</div>
             </div>
-            <div className="rounded-xl p-3 bg-success/20 text-center">
-              <div className="text-xs font-bold text-muted-foreground">LEVEL SCORE</div>
-              <div className="text-2xl font-black">+{levelScore} ⭐</div>
+            <div className="rounded-lg p-3 text-center" style={{ backgroundColor: "var(--signature-mint)", color: "#0a2e0e" }}>
+              <div className="text-xs uppercase tracking-wide opacity-70">Level score</div>
+              <div className="text-2xl font-medium">+{levelScore}</div>
             </div>
           </div>
 
           {perfect && (
-            <div className="mb-4 p-3 rounded-xl bg-success text-success-foreground text-center font-bold">
-              🎉 PERFECT! +20 bonus points!
+            <div className="mb-4 p-3 rounded-lg text-center font-medium" style={{ backgroundColor: "var(--signature-forest)", color: "#fff" }}>
+              Perfect round — +20 bonus points
             </div>
           )}
 
           <button
             onClick={nextLevel}
-            className="w-full py-4 rounded-xl font-black text-lg bg-primary text-primary-foreground hover:opacity-90 transition"
+            className="w-full py-4 rounded-lg font-medium bg-primary text-primary-foreground hover:bg-[#0d1218] transition-colors"
           >
-            {levelIdx + 1 < LEVELS.length ? `Travel to Level ${levelIdx + 2} →` : "Finish Journey 🏁"}
+            {levelIdx + 1 < LEVELS.length ? `Continue to level ${levelIdx + 2} →` : "Finish journey →"}
           </button>
         </div>
       </div>
     );
   }
+
 
   // ============ LEVEL ============
   return (
