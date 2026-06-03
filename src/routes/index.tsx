@@ -381,8 +381,8 @@ function Game({ session }: { session: import("@supabase/supabase-js").Session })
   const [showHint, setShowHint] = useState(false);
   const [hearts, setHearts] = useState(5);
   const [streak, setStreak] = useState<number>(() => loadStreak());
-  const [timeLeft, setTimeLeft] = useState(15);
-  const QUESTION_TIME = 15;
+  const [timeLeft, setTimeLeft] = useState(25);
+  const QUESTION_TIME = 25;
 
   const level = LEVELS[levelIdx];
   const question = level?.questions[qIdx];
@@ -427,7 +427,7 @@ function Game({ session }: { session: import("@supabase/supabase-js").Session })
     setScore(0);
     setLevelScore(0);
     setLevelCorrect(0);
-    setHearts(3);
+    setHearts(5);
     setQResults(Array(LEVELS[0].questions.length).fill(null));
     setInput("");
     setFeedback(null);
