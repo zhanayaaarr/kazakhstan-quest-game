@@ -500,6 +500,22 @@ function FinishScreen({
 }) {
   const [results, setResults] = useState<Result[]>([]);
   const [saved, setSaved] = useState(false);
+  const [displayScore, setDisplayScore] = useState(0);
+
+  // Animated count-up for the score
+  useEffect(() => {
+    const duration = 1200;
+    const start = performance.now();
+    let raf = 0;
+    const tick = (now: number) => {
+      const t = Math.min(1, (now - start) / duration);
+      const eased = 1 - Math.pow(1 - t, 3);
+      setDisplayScore(Math.round(score * eased));
+      if (t < 1) raf = requestAnimationFrame(tick);
+    };
+    raf = requestAnimationFrame(tick);
+    return () => cancelAnimationFrame(raf);
+  }, [score]);
 
   useEffect(() => {
     (async () => {
