@@ -200,6 +200,7 @@ function Game({ session }: { session: import("@supabase/supabase-js").Session })
   }
 
   function next() {
+    sfx.click();
     setFeedback(null);
     setInput("");
     setShowHint(false);
