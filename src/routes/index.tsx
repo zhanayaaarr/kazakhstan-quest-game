@@ -208,7 +208,32 @@ const LEVELS: Level[] = [
 type Screen = "start" | "level" | "result" | "finish";
 
 function normalize(s: string) {
-  return s.trim().toLowerCase().replace(/[^a-z0-9 -]/g, "");
+  return s.trim().toLowerCase().replace(/ё/g, "е").replace(/[^a-z0-9а-яәіңғүұқөһ -]/gi, "");
+}
+
+const MOTIVATIONS = {
+  correct: [
+    "Молодец! Қонжық гордится тобой! 🐻",
+    "Жарайсың! Ты настоящий знаток!",
+    "Ого! Қонжық хлопает лапами! 🎉",
+    "Так держать! Тебе покорится вся степь!",
+  ],
+  close: [
+    "Почти! Қонжық верит — в следующий раз получится!",
+    "Совсем рядом! Не сдавайся, дружок!",
+    "Ты на верном пути! Қонжық подсказывает: попробуй ещё!",
+  ],
+  wrong: [
+    "Не беда! Қонжық тоже когда-то учился. Идём дальше!",
+    "Ошибки — часть пути. Қонжық с тобой! 🐻",
+    "Не расстраивайся! Қазақстан большой — всего не запомнить сразу.",
+    "Қонжық обнимает тебя 🫂 — двигаемся к следующему!",
+  ],
+};
+
+function pickMotivation(type: "correct" | "close" | "wrong") {
+  const arr = MOTIVATIONS[type];
+  return arr[Math.floor(Math.random() * arr.length)];
 }
 
 function checkAnswer(input: string, answers: string[]): "correct" | "close" | "wrong" {
