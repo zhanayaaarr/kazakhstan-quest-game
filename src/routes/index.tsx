@@ -22,10 +22,10 @@ const koktobe = almaty1;
 
 // Turkestan
 const turk1 = "https://upload.wikimedia.org/wikipedia/commons/thumb/f/f5/Mausoleum_of_Khoja_Ahmed_Yasavi_in_Turkestan%2C_Kazakhstan.jpg/1280px-Mausoleum_of_Khoja_Ahmed_Yasavi_in_Turkestan%2C_Kazakhstan.jpg";
-const turk2 = "https://upload.wikimedia.org/wikipedia/commons/thumb/f/f4/Arystan_Bab_mausoleum_center_02.jpg/1280px-Arystan_Bab_mausoleum_center_02.jpg";
-const turk3 = "https://upload.wikimedia.org/wikipedia/commons/thumb/1/13/Arystan_Bab_mausoleum_left_02.jpg/1280px-Arystan_Bab_mausoleum_left_02.jpg";
-const turk4 = "https://upload.wikimedia.org/wikipedia/commons/thumb/f/fb/Arystan_Bab_mausoleum_table.jpg/1280px-Arystan_Bab_mausoleum_table.jpg";
-const turk5 = "https://upload.wikimedia.org/wikipedia/commons/thumb/c/c1/Kazakhstan_P9130238_%2828303684079%29.jpg/1280px-Kazakhstan_P9130238_%2828303684079%29.jpg";
+const turk2 = "https://upload.wikimedia.org/wikipedia/commons/thumb/4/4c/Mausoleum_of_Khoja_Ahmed_Yasawi.jpg/1280px-Mausoleum_of_Khoja_Ahmed_Yasawi.jpg";
+const turk3 = "https://upload.wikimedia.org/wikipedia/commons/thumb/6/6c/Mausoleum_of_Khoja_Ahmed_Yasawi_in_Hazrat-e_Turkestan%2C_Kazakhstan.jpg/1280px-Mausoleum_of_Khoja_Ahmed_Yasawi_in_Hazrat-e_Turkestan%2C_Kazakhstan.jpg";
+const turk4 = "https://upload.wikimedia.org/wikipedia/commons/thumb/7/75/Mausoleum_of_Khoja_Ahmed_Yasawi_in_Turkistan_2.jpg/1280px-Mausoleum_of_Khoja_Ahmed_Yasawi_in_Turkistan_2.jpg";
+const turk5 = "https://upload.wikimedia.org/wikipedia/commons/thumb/d/d6/Mausoleum_of_Khoja_Ahmed_Yasawi_in_Turkistan_5.jpg/1280px-Mausoleum_of_Khoja_Ahmed_Yasawi_in_Turkistan_5.jpg";
 const turkestan = turk1;
 
 // Shymkent
