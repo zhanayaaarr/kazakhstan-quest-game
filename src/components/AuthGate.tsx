@@ -1,7 +1,6 @@
 import { useEffect, useState, type ReactNode } from "react";
 import type { Session } from "@supabase/supabase-js";
 import { supabase } from "@/integrations/supabase/client";
-import { lovable } from "@/integrations/lovable";
 
 type Mode = "login" | "signup";
 
@@ -55,11 +54,16 @@ export function AuthGate({ children }: { children: (session: Session) => ReactNo
     setError(null);
     setGoogleBusy(true);
     try {
-      const result = await lovable.auth.signInWithOAuth("google", {
-        redirect_uri: window.location.origin,
+      const { error } = await supabase.auth.signInWithOAuth({
+        provider: "google",
+        options: {
+          redirectTo: window.location.origin,
+          queryParams: {
+            prompt: "select_account",
+          },
+        },
       });
-      if (result.error) throw result.error;
-      if (result.redirected) return;
+      if (error) throw error;
     } catch (err: any) {
       setError(err.message ?? "Google sign-in failed");
     } finally {
