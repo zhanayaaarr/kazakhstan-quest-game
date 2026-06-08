@@ -238,7 +238,7 @@ const LEVELS: Level[] = [
     questions: [
       { q: "What city is shown in the image? / Какой это город?", answers: ["astana", "nur-sultan", "nursultan", "астана", "нур-султан", "нурсултан"], hint: "It's the capital city of Kazakhstan. / Столица Казахстана." },
       { q: "What is this monument called? / Как называется этот памятник?", answers: ["baiterek", "bayterek", "baiterek tower", "байтерек", "бәйтерек"], hint: "It means 'tall poplar tree' in Kazakh. / Означает 'высокий тополь'." },
-      { q: "What is it famous for? (one word) / Чем он знаменит? (одно слово)", answers: ["capital", "symbol", "tower", "столица", "символ", "башня", "астана"], hint: "It is the symbol of the capital." },
+      { q: "What is Baiterek a symbol of? / Символом чего является Байтерек?", answers: ["capital", "astana", "kazakhstan capital", "столица", "астана", "столица казахстана"], hint: "It is the symbol of Astana, Kazakhstan's capital." },
       { q: "How tall is Baiterek in meters? / Какова высота Байтерека в метрах?", answers: ["97", "97m", "97 meters", "97 метров"], hint: "Same as the year Astana became capital." },
       { q: "In which year did Astana become the capital? / В каком году Астана стала столицей?", answers: ["1997"], hint: "Look at the tower's height." },
     ],
