@@ -46,6 +46,7 @@ const baikonur = bai1;
 import konzhyk from "@/assets/konzhyk.png";
 import { AuthGate } from "@/components/AuthGate";
 import { supabase } from "@/integrations/supabase/client";
+import { getAiHint } from "@/lib/api/gemini.functions";
 import { sfx } from "@/lib/sounds";
 
 type Mood = "happy" | "celebrate" | "thinking" | "sad" | "neutral";
@@ -369,6 +370,7 @@ function getRank(score: number): { name: string; emoji: string } {
 }
 
 function Game({ session }: { session: import("@supabase/supabase-js").Session }) {
+  const userEmail = session.user.email ?? "Signed-in user";
   const [screen, setScreen] = useState<Screen>("start");
   const [levelIdx, setLevelIdx] = useState(0);
   const [qIdx, setQIdx] = useState(0);
@@ -379,6 +381,9 @@ function Game({ session }: { session: import("@supabase/supabase-js").Session })
   const [qResults, setQResults] = useState<Array<"correct" | "close" | "wrong" | null>>([]);
   const [feedback, setFeedback] = useState<{ type: "correct" | "close" | "wrong"; msg: string; points: number; motivation: string; bonus: number } | null>(null);
   const [showHint, setShowHint] = useState(false);
+  const [aiHint, setAiHint] = useState<string | null>(null);
+  const [aiBusy, setAiBusy] = useState(false);
+  const [aiError, setAiError] = useState<string | null>(null);
   const [hearts, setHearts] = useState(5);
   const [streak, setStreak] = useState<number>(() => loadStreak());
   const [timeLeft, setTimeLeft] = useState(25);
@@ -432,6 +437,41 @@ function Game({ session }: { session: import("@supabase/supabase-js").Session })
     setInput("");
     setFeedback(null);
     setShowHint(false);
+    setAiHint(null);
+    setAiError(null);
+    setAiBusy(false);
+  }
+
+  async function askAiCoach() {
+    if (!question || aiBusy) return;
+    setAiError(null);
+    setAiBusy(true);
+    try {
+      const result = await getAiHint({
+        data: {
+          city: level.city,
+          monument: level.monument,
+          question: question.q,
+          currentHint: question.hint,
+        },
+      });
+      setAiHint(result.hint);
+    } catch (err: any) {
+      setAiError(err.message ?? "AI hint is unavailable right now.");
+    } finally {
+      setAiBusy(false);
+    }
+  }
+
+  function backToMenu() {
+    sfx.click();
+    setFeedback(null);
+    setInput("");
+    setShowHint(false);
+    setAiHint(null);
+    setAiError(null);
+    setAiBusy(false);
+    setScreen("start");
   }
 
   function submit() {
@@ -474,6 +514,9 @@ function Game({ session }: { session: import("@supabase/supabase-js").Session })
     setFeedback(null);
     setInput("");
     setShowHint(false);
+    setAiHint(null);
+    setAiError(null);
+    setAiBusy(false);
     // Out of hearts → game over (jump straight to finish)
     if (hearts <= 0) {
       sfx.finish();
@@ -500,6 +543,9 @@ function Game({ session }: { session: import("@supabase/supabase-js").Session })
       setLevelScore(0);
       setLevelCorrect(0);
       setQResults(Array(LEVELS[levelIdx + 1].questions.length).fill(null));
+      setAiHint(null);
+      setAiError(null);
+      setAiBusy(false);
       setScreen("level");
     } else {
       sfx.finish();
@@ -524,6 +570,9 @@ function Game({ session }: { session: import("@supabase/supabase-js").Session })
             <span>About</span>
           </div>
           <div className="flex items-center gap-3">
+            <div className="hidden sm:block max-w-[220px] truncate text-xs text-muted-foreground" title={userEmail}>
+              Signed in as {userEmail}
+            </div>
             <button
               onClick={startGame}
               className="hidden md:inline-flex items-center px-5 py-2.5 rounded-lg bg-primary text-primary-foreground text-sm font-medium hover:bg-[#0d1218] transition-colors"
@@ -688,6 +737,12 @@ function Game({ session }: { session: import("@supabase/supabase-js").Session })
           >
             {levelIdx + 1 < LEVELS.length ? `Continue to level ${levelIdx + 2} →` : "Finish journey →"}
           </button>
+          <button
+            onClick={backToMenu}
+            className="w-full mt-2 py-3 rounded-lg font-medium text-sm text-muted-foreground hover:text-foreground hover:bg-muted transition-colors"
+          >
+            Back to menu
+          </button>
         </div>
       </div>
     );
@@ -705,9 +760,18 @@ function Game({ session }: { session: import("@supabase/supabase-js").Session })
             <div>
               <div className="text-xs font-bold text-muted-foreground">LEVEL {levelIdx + 1} / {LEVELS.length}</div>
               <div className="font-black">{level.city}</div>
+              <div className="max-w-[180px] truncate text-[11px] text-muted-foreground" title={userEmail}>
+                {userEmail}
+              </div>
             </div>
           </div>
           <div className="flex items-center gap-4">
+            <button
+              onClick={backToMenu}
+              className="px-4 py-2 rounded-lg text-sm font-semibold bg-muted text-foreground hover:bg-secondary transition-colors"
+            >
+              Back to menu
+            </button>
             {/* Hearts */}
             <div className="flex items-center gap-0.5" title={`${hearts} lives left`} aria-label={`${hearts} hearts`}>
               {[0, 1, 2].map((i) => (
@@ -824,7 +888,17 @@ function Game({ session }: { session: import("@supabase/supabase-js").Session })
                     💡 Hint: {question.hint}
                   </div>
                 )}
-                <div className="flex gap-3 mt-4">
+                {aiHint && (
+                  <div className="mt-3 p-3 rounded-xl border border-border bg-card text-sm font-semibold animate-bounce-in">
+                    AI coach: {aiHint}
+                  </div>
+                )}
+                {aiError && (
+                  <div className="mt-3 p-3 rounded-xl bg-destructive/15 text-destructive text-sm font-semibold">
+                    {aiError}
+                  </div>
+                )}
+                <div className="flex flex-wrap gap-3 mt-4">
                   <button
                     onClick={() => setShowHint(true)}
                     disabled={showHint}
@@ -833,9 +907,16 @@ function Game({ session }: { session: import("@supabase/supabase-js").Session })
                     💡 Hint
                   </button>
                   <button
+                    onClick={askAiCoach}
+                    disabled={aiBusy}
+                    className="px-5 py-3 rounded-xl font-bold bg-secondary text-secondary-foreground hover:opacity-90 transition disabled:opacity-50"
+                  >
+                    {aiBusy ? "AI..." : "AI coach"}
+                  </button>
+                  <button
                     onClick={submit}
                     disabled={!input.trim()}
-                    className="flex-1 py-3 rounded-xl font-black text-lg bg-primary text-primary-foreground hover:opacity-90 transition disabled:opacity-40"
+                    className="flex-1 min-w-[180px] py-3 rounded-xl font-black text-lg bg-primary text-primary-foreground hover:opacity-90 transition disabled:opacity-40"
                   >
                     Submit Answer
                   </button>
@@ -1023,7 +1104,7 @@ function FinishScreen({
             onClick={onReplay}
             className="w-full py-3 rounded-lg font-medium bg-primary text-primary-foreground hover:bg-[#0d1218] transition-colors mb-2"
           >
-            Play again
+            Back to menu
           </button>
           <button
             onClick={() => supabase.auth.signOut()}

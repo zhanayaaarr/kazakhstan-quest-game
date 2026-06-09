@@ -12,6 +12,8 @@ export function AuthGate({ children }: { children: (session: Session) => ReactNo
   const [password, setPassword] = useState("");
   const [displayName, setDisplayName] = useState("");
   const [error, setError] = useState<string | null>(null);
+  const [message, setMessage] = useState<string | null>(null);
+  const [authUrlError, setAuthUrlError] = useState(false);
   const [busy, setBusy] = useState(false);
   const [googleBusy, setGoogleBusy] = useState(false);
 
@@ -24,13 +26,33 @@ export function AuthGate({ children }: { children: (session: Session) => ReactNo
     return () => sub.subscription.unsubscribe();
   }, []);
 
+  useEffect(() => {
+    if (typeof window === "undefined") return;
+    const params = new URLSearchParams(window.location.search);
+    const authError = params.get("error_description") || params.get("error");
+    if (!authError) return;
+    setAuthUrlError(true);
+    setError(authError.replace(/\+/g, " "));
+    setMode("login");
+  }, []);
+
+  function clearAuthUrlError() {
+    setAuthUrlError(false);
+    setError(null);
+    setMessage(null);
+    if (typeof window !== "undefined") {
+      window.history.replaceState({}, "", window.location.pathname);
+    }
+  }
+
   async function submit(e: React.FormEvent) {
     e.preventDefault();
     setError(null);
+    setMessage(null);
     setBusy(true);
     try {
       if (mode === "signup") {
-        const { error } = await supabase.auth.signUp({
+        const { data, error } = await supabase.auth.signUp({
           email,
           password,
           options: {
@@ -39,6 +61,9 @@ export function AuthGate({ children }: { children: (session: Session) => ReactNo
           },
         });
         if (error) throw error;
+        if (!data.session) {
+          setMessage("Account created. Check your email to confirm your sign-up, then log in.");
+        }
       } else {
         const { error } = await supabase.auth.signInWithPassword({ email, password });
         if (error) throw error;
@@ -52,6 +77,7 @@ export function AuthGate({ children }: { children: (session: Session) => ReactNo
 
   async function signInWithGoogle() {
     setError(null);
+    setMessage(null);
     setGoogleBusy(true);
     try {
       const { error } = await supabase.auth.signInWithOAuth({
@@ -132,6 +158,22 @@ export function AuthGate({ children }: { children: (session: Session) => ReactNo
             </div>
           )}
 
+          {authUrlError && (
+            <button
+              type="button"
+              onClick={clearAuthUrlError}
+              className="w-full py-3 rounded-xl font-bold bg-secondary text-secondary-foreground hover:opacity-90 transition"
+            >
+              Back to login
+            </button>
+          )}
+
+          {message && (
+            <div className="p-3 rounded-xl bg-secondary/30 text-secondary-foreground text-sm font-semibold">
+              {message}
+            </div>
+          )}
+
           <button
             type="submit"
             disabled={busy}
@@ -180,6 +222,7 @@ export function AuthGate({ children }: { children: (session: Session) => ReactNo
           onClick={() => {
             setMode(mode === "signup" ? "login" : "signup");
             setError(null);
+            setMessage(null);
           }}
           className="w-full mt-4 text-sm font-semibold text-primary hover:underline"
         >
