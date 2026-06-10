@@ -638,6 +638,53 @@ function accuracy(stat: CityStat) {
   return stat.questions > 0 ? Math.round((stat.correct / stat.questions) * 100) : 0;
 }
 
+const QUESTION_IMAGES_KEY = "kq_last_question_images";
+
+function getQuestionImagePool(level: Level, questionIndex: number) {
+  if (level.city === "Astana") {
+    if (questionIndex === 0) return level.images;
+    if (questionIndex === 1 || questionIndex === 2 || questionIndex === 3 || questionIndex === 4) return [astana1];
+  }
+
+  if (level.city === "Almaty") {
+    if (questionIndex === 1) return [almaty1, almaty2];
+    if (questionIndex === 2) return [almaty3];
+    if (questionIndex === 3) return [almaty4];
+    return level.images;
+  }
+
+  return level.images.length > 0 ? level.images : [level.image];
+}
+
+function pickImage(pool: string[], previous?: string) {
+  const unique = [...new Set(pool.filter(Boolean))];
+  const choices = previous && unique.length > 1 ? unique.filter((image) => image !== previous) : unique;
+  return choices[Math.floor(Math.random() * choices.length)] ?? unique[0] ?? "";
+}
+
+function createQuestionImages() {
+  let previous: string[][] = [];
+  if (typeof window !== "undefined") {
+    try {
+      previous = JSON.parse(localStorage.getItem(QUESTION_IMAGES_KEY) ?? "[]");
+    } catch {
+      previous = [];
+    }
+  }
+
+  const next = LEVELS.map((level, levelIndex) =>
+    level.questions.map((_, questionIndex) =>
+      pickImage(getQuestionImagePool(level, questionIndex), previous[levelIndex]?.[questionIndex]),
+    ),
+  );
+
+  if (typeof window !== "undefined") {
+    localStorage.setItem(QUESTION_IMAGES_KEY, JSON.stringify(next));
+  }
+
+  return next;
+}
+
 function Game({ session }: { session: import("@supabase/supabase-js").Session }) {
   const userEmail = session.user.email ?? "Signed-in user";
   const [lang, setLang] = useState<Lang>(() => {
@@ -646,6 +693,9 @@ function Game({ session }: { session: import("@supabase/supabase-js").Session })
     return saved === "kk" || saved === "ru" || saved === "en" ? saved : "en";
   });
   const [screen, setScreen] = useState<Screen>("start");
+  const [questionImages, setQuestionImages] = useState<string[][]>(() =>
+    LEVELS.map((level) => level.questions.map((_, questionIndex) => level.images[questionIndex] ?? level.image)),
+  );
   const [levelIdx, setLevelIdx] = useState(0);
   const [qIdx, setQIdx] = useState(0);
   const [input, setInput] = useState("");
@@ -727,6 +777,7 @@ function Game({ session }: { session: import("@supabase/supabase-js").Session })
   function startGame() {
     sfx.click();
     const s = bumpStreak();
+    setQuestionImages(createQuestionImages());
     setStreak(s);
     setScreen("level");
     setLevelIdx(0);
@@ -1218,7 +1269,7 @@ function Game({ session }: { session: import("@supabase/supabase-js").Session })
             <p className="text-muted-foreground">{level.monument}</p>
           </div>
 
-          <img src={level.image} alt={level.monument} className="w-full h-44 sm:h-56 object-cover rounded-lg mb-4" width={1024} height={1024} />
+          <img src={questionImages[levelIdx]?.[0] ?? level.image} alt={level.monument} className="w-full h-44 sm:h-56 object-cover rounded-lg mb-4" width={1024} height={1024} />
 
           <div className="rounded-lg p-4 mb-3 border border-border">
             <div className="text-xs uppercase tracking-wide text-muted-foreground mb-1">Location</div>
@@ -1382,7 +1433,7 @@ function Game({ session }: { session: import("@supabase/supabase-js").Session })
         {/* Image card */}
         <div className="bg-card rounded-xl sm:rounded-3xl overflow-hidden mb-4" style={{ boxShadow: "var(--shadow-card)" }}>
           <div className="relative">
-            <img key={`${levelIdx}-${qIdx}`} src={level.images[qIdx] ?? level.image} alt="Mystery location" className="w-full h-56 sm:h-72 md:h-96 object-contain bg-muted" width={1024} height={1024} loading="eager" />
+            <img key={`${levelIdx}-${qIdx}-${questionImages[levelIdx]?.[qIdx] ?? ""}`} src={questionImages[levelIdx]?.[qIdx] ?? level.images[qIdx] ?? level.image} alt="Mystery location" className="w-full h-56 sm:h-72 md:h-96 object-contain bg-muted" width={1024} height={1024} loading="eager" />
             <div className="absolute top-3 left-3 bg-card/90 backdrop-blur px-3 py-1 rounded-full text-sm font-bold">
               📷 {t.question} {qIdx + 1} / {level.questions.length}
             </div>
