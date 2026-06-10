@@ -46,7 +46,7 @@ const baikonur = bai1;
 import konzhyk from "@/assets/konzhyk.png";
 import { AuthGate } from "@/components/AuthGate";
 import { supabase } from "@/integrations/supabase/client";
-import { getAiHint, getKazHistoryQuestion, getStudyMaterials } from "@/lib/api/gemini.functions";
+import { getAiHint, getAiJourney, getKazHistoryQuestion, getStudyMaterials } from "@/lib/api/gemini.functions";
 import { sfx } from "@/lib/sounds";
 
 type Mood = "happy" | "celebrate" | "thinking" | "sad" | "neutral";
@@ -662,7 +662,7 @@ function pickImage(pool: string[], previous?: string) {
   return choices[Math.floor(Math.random() * choices.length)] ?? unique[0] ?? "";
 }
 
-function createQuestionImages() {
+function createQuestionImages(levels: Level[]) {
   let previous: string[][] = [];
   if (typeof window !== "undefined") {
     try {
@@ -672,7 +672,7 @@ function createQuestionImages() {
     }
   }
 
-  const next = LEVELS.map((level, levelIndex) =>
+  const next = levels.map((level, levelIndex) =>
     level.questions.map((_, questionIndex) =>
       pickImage(getQuestionImagePool(level, questionIndex), previous[levelIndex]?.[questionIndex]),
     ),
@@ -693,6 +693,9 @@ function Game({ session }: { session: import("@supabase/supabase-js").Session })
     return saved === "kk" || saved === "ru" || saved === "en" ? saved : "en";
   });
   const [screen, setScreen] = useState<Screen>("start");
+  const [journeyLevels, setJourneyLevels] = useState<Level[]>(LEVELS);
+  const [journeyBusy, setJourneyBusy] = useState(false);
+  const [journeyError, setJourneyError] = useState<string | null>(null);
   const [questionImages, setQuestionImages] = useState<string[][]>(() =>
     LEVELS.map((level) => level.questions.map((_, questionIndex) => level.images[questionIndex] ?? level.image)),
   );
@@ -729,7 +732,7 @@ function Game({ session }: { session: import("@supabase/supabase-js").Session })
   const [timeLeft, setTimeLeft] = useState(25);
   const QUESTION_TIME = 25;
 
-  const level = LEVELS[levelIdx];
+  const level = journeyLevels[levelIdx] ?? LEVELS[0];
   const question = level?.questions[qIdx];
   const t = I18N[lang];
 
@@ -774,10 +777,54 @@ function Game({ session }: { session: import("@supabase/supabase-js").Session })
     return () => clearInterval(id);
   }, [screen, qIdx, levelIdx, feedback, question]);
 
-  function startGame() {
+  function rememberJourneyCities(levels: Level[]) {
+    if (typeof window === "undefined") return;
+    try {
+      const previous = JSON.parse(localStorage.getItem("kq_ai_journey_cities") ?? "[]");
+      const current = Array.isArray(previous) ? previous : [];
+      const next = [...levels.map((item) => item.city), ...current].filter(Boolean).slice(0, 20);
+      localStorage.setItem("kq_ai_journey_cities", JSON.stringify([...new Set(next)]));
+    } catch {
+      localStorage.setItem("kq_ai_journey_cities", JSON.stringify(levels.map((item) => item.city)));
+    }
+  }
+
+  function loadJourneyCityHistory() {
+    if (typeof window === "undefined") return [];
+    try {
+      const previous = JSON.parse(localStorage.getItem("kq_ai_journey_cities") ?? "[]");
+      return Array.isArray(previous) ? previous.filter((item) => typeof item === "string") : [];
+    } catch {
+      return [];
+    }
+  }
+
+  async function startGame() {
+    if (journeyBusy) return;
     sfx.click();
+    setJourneyBusy(true);
+    setJourneyError(null);
+    let nextLevels = LEVELS;
+    try {
+      const result = await getAiJourney({
+        data: {
+          language: lang,
+          excludeCities: loadJourneyCityHistory(),
+        },
+      });
+      nextLevels = result.levels as Level[];
+      setJourneyLevels(nextLevels);
+      rememberJourneyCities(nextLevels);
+    } catch (err: any) {
+      setJourneyError(err.message ?? "AI journey is unavailable right now. Starting the classic journey.");
+      setJourneyLevels(LEVELS);
+      nextLevels = LEVELS;
+    } finally {
+      setJourneyBusy(false);
+    }
+
     const s = bumpStreak();
-    setQuestionImages(createQuestionImages());
+    setQuestionImages(createQuestionImages(nextLevels));
     setStreak(s);
     setScreen("level");
     setLevelIdx(0);
@@ -786,7 +833,7 @@ function Game({ session }: { session: import("@supabase/supabase-js").Session })
     setLevelScore(0);
     setLevelCorrect(0);
     setHearts(5);
-    setQResults(Array(LEVELS[0].questions.length).fill(null));
+    setQResults(Array(nextLevels[0].questions.length).fill(null));
     setInput("");
     setFeedback(null);
     setShowHint(false);
@@ -957,12 +1004,12 @@ function Game({ session }: { session: import("@supabase/supabase-js").Session })
 
   function nextLevel() {
     sfx.click();
-    if (levelIdx + 1 < LEVELS.length) {
+    if (levelIdx + 1 < journeyLevels.length) {
       setLevelIdx((i) => i + 1);
       setQIdx(0);
       setLevelScore(0);
       setLevelCorrect(0);
-      setQResults(Array(LEVELS[levelIdx + 1].questions.length).fill(null));
+      setQResults(Array(journeyLevels[levelIdx + 1].questions.length).fill(null));
       setAiHint(null);
       setAiError(null);
       setAiBusy(false);
@@ -1007,9 +1054,10 @@ function Game({ session }: { session: import("@supabase/supabase-js").Session })
             </div>
             <button
               onClick={startGame}
-              className="hidden md:inline-flex items-center px-5 py-2.5 rounded-lg bg-primary text-primary-foreground text-sm font-medium hover:bg-[#0d1218] transition-colors"
+              disabled={journeyBusy}
+              className="hidden md:inline-flex items-center px-5 py-2.5 rounded-lg bg-primary text-primary-foreground text-sm font-medium hover:bg-[#0d1218] transition-colors disabled:opacity-60"
             >
-              {t.startPlaying}
+              {journeyBusy ? t.generating : t.startPlaying}
             </button>
             <button
               onClick={() => setProfileOpen(true)}
@@ -1049,11 +1097,17 @@ function Game({ session }: { session: import("@supabase/supabase-js").Session })
             <div className="mt-10 flex flex-wrap items-center gap-3">
               <button
                 onClick={startGame}
-                className="w-full sm:w-auto px-6 py-4 rounded-lg bg-primary text-primary-foreground font-medium hover:bg-[#0d1218] transition-colors"
+                disabled={journeyBusy}
+                className="w-full sm:w-auto px-6 py-4 rounded-lg bg-primary text-primary-foreground font-medium hover:bg-[#0d1218] transition-colors disabled:opacity-60"
               >
-                {t.startJourney}
+                {journeyBusy ? t.generating : t.startJourney}
               </button>
             </div>
+            {journeyError && (
+              <div className="mt-4 max-w-xl rounded-lg bg-destructive/15 p-3 text-sm font-semibold text-destructive">
+                {journeyError}
+              </div>
+            )}
             <div className="mt-4">
               <button
                 onClick={openHistoryTest}
@@ -1224,7 +1278,7 @@ function Game({ session }: { session: import("@supabase/supabase-js").Session })
   // ============ FINISH ============
   if (screen === "finish") {
     const rank = getRank(score);
-    return <FinishScreen score={score} rank={rank} session={session} lang={lang} onReplay={() => setScreen("start")} />;
+    return <FinishScreen score={score} rank={rank} session={session} lang={lang} levelsCompleted={journeyLevels.length} onReplay={() => setScreen("start")} />;
   }
 
   // ============ LEVEL RESULT ============
@@ -1285,7 +1339,7 @@ function Game({ session }: { session: import("@supabase/supabase-js").Session })
             onClick={nextLevel}
             className="w-full py-4 rounded-lg font-medium bg-primary text-primary-foreground hover:bg-[#0d1218] transition-colors"
           >
-            {levelIdx + 1 < LEVELS.length ? `${t.nextQuestion} ${levelIdx + 2} →` : `${t.finishLevel} →`}
+            {levelIdx + 1 < journeyLevels.length ? `${t.nextQuestion} ${levelIdx + 2} →` : `${t.finishLevel} →`}
           </button>
           <button
             onClick={backToMenu}
@@ -1314,7 +1368,7 @@ function Game({ session }: { session: import("@supabase/supabase-js").Session })
           <div className="flex items-center gap-2 min-w-0">
             <span className="text-2xl">🇰🇿</span>
             <div>
-              <div className="text-xs font-bold text-muted-foreground">{t.level.toUpperCase()} {levelIdx + 1} / {LEVELS.length}</div>
+              <div className="text-xs font-bold text-muted-foreground">{t.level.toUpperCase()} {levelIdx + 1} / {journeyLevels.length}</div>
               <div className="font-black">{level.city}</div>
               <div className="max-w-[180px] truncate text-[11px] text-muted-foreground" title={userEmail}>
                 {userEmail}
@@ -1364,7 +1418,7 @@ function Game({ session }: { session: import("@supabase/supabase-js").Session })
 
         {/* Progress dots */}
         <div className="flex gap-2 mb-4 justify-start sm:justify-center overflow-x-auto pb-1">
-          {LEVELS.map((_, i) => (
+          {journeyLevels.map((_, i) => (
             <div
               key={i}
               className={`h-2 rounded-full transition-all ${i === levelIdx ? "w-10 bg-primary" : i < levelIdx ? "w-6 bg-success" : "w-6 bg-muted"}`}
@@ -1773,12 +1827,14 @@ function FinishScreen({
   rank,
   session,
   lang,
+  levelsCompleted,
   onReplay,
 }: {
   score: number;
   rank: { name: string; emoji: string };
   session: import("@supabase/supabase-js").Session;
   lang: Lang;
+  levelsCompleted: number;
   onReplay: () => void;
 }) {
   const t = I18N[lang];
@@ -1823,7 +1879,7 @@ function FinishScreen({
         display_name: profile?.display_name ?? session.user.email,
         score,
         rank: rank.name,
-        levels_completed: LEVELS.length,
+        levels_completed: levelsCompleted,
       });
 
       const { data: top } = await supabase
@@ -1835,7 +1891,7 @@ function FinishScreen({
       setResults((top ?? []) as Result[]);
       setSaved(true);
     })();
-  }, [score, rank.name, session.user.id, session.user.email]);
+  }, [score, rank.name, session.user.id, session.user.email, levelsCompleted]);
 
   return (
     <div className="min-h-screen bg-background flex items-center justify-center p-4 sm:p-6">
