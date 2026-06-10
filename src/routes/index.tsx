@@ -1052,44 +1052,12 @@ function Game({ session }: { session: import("@supabase/supabase-js").Session })
             <p className="mt-8 text-lg text-muted-foreground max-w-xl">
               {t.heroCopy}
             </p>
-            <div className="mt-8 flex flex-wrap items-center gap-2">
-              <span className="text-sm font-medium text-muted-foreground">{t.language}</span>
-              {(Object.keys(LANGUAGE_LABELS) as Lang[]).map((code) => (
-                <button
-                  key={code}
-                  onClick={() => changeLanguage(code)}
-                  className={`rounded-lg border px-3 py-2 text-sm font-semibold transition ${
-                    lang === code ? "border-primary bg-primary text-primary-foreground" : "border-border bg-background hover:bg-secondary"
-                  }`}
-                >
-                  {LANGUAGE_LABELS[code]}
-                </button>
-              ))}
-            </div>
             <div className="mt-10 flex flex-wrap items-center gap-3">
               <button
                 onClick={startGame}
                 className="w-full sm:w-auto px-6 py-4 rounded-lg bg-primary text-primary-foreground font-medium hover:bg-[#0d1218] transition-colors"
               >
                 {t.startJourney}
-              </button>
-              <button
-                onClick={openHistoryTest}
-                className="w-full sm:w-auto px-6 py-4 rounded-lg bg-secondary text-secondary-foreground font-medium hover:opacity-90 transition-colors"
-              >
-                {t.aiTest}
-              </button>
-              <button
-                onClick={() => setProfileOpen(true)}
-                className="w-full sm:w-auto px-6 py-4 rounded-lg bg-background text-foreground font-medium border border-border hover:bg-secondary transition-colors"
-              >
-                {PROFILE_COPY[lang].account}
-              </button>
-              <button
-                onClick={startGame}
-                className="w-full sm:w-auto px-6 py-4 rounded-lg bg-background text-foreground font-medium border border-border hover:bg-secondary transition-colors"
-              >
-                {t.howItWorks}
               </button>
             </div>
             <div className="mt-10">
