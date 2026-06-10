@@ -10,6 +10,7 @@ const aiHintInput = z.object({
 
 const historyQuestionInput = z.object({
   excludeQuestions: z.array(z.string().min(1).max(300)).max(30).default([]),
+  language: z.enum(["en", "kk", "ru"]).default("en"),
 });
 
 type GeminiGenerateContentResponse = {
@@ -120,15 +121,17 @@ export const getKazHistoryQuestion = createServerFn({ method: "POST" })
     const excluded = data.excludeQuestions.length
       ? data.excludeQuestions.map((question, index) => `${index + 1}. ${question}`).join("\n")
       : "None";
+    const languageName = data.language === "kk" ? "Kazakh" : data.language === "ru" ? "Russian" : "English";
 
     const prompt = [
       "Create one Kazakhstan history quiz question for a student.",
       "Avoid repeating or closely rephrasing any excluded question.",
       "Use factual topics: Kazakh Khanate, Silk Road, Golden Horde, Alash movement, independence, capitals, historical figures, UNESCO sites, or space history.",
+      `Write all JSON string values in ${languageName}.`,
       "Return only valid JSON with this exact shape:",
       '{"question":"...","options":["...","...","...","..."],"answer":"...","hint":"...","explanation":"..."}',
       "Rules:",
-      "- Write in simple English.",
+      `- Write in simple ${languageName}.`,
       "- Use exactly 4 answer options.",
       "- The answer must exactly match one option.",
       "- Hint must help but not reveal the answer.",

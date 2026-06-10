@@ -318,6 +318,154 @@ type AiHistoryQuestion = {
   hint: string;
   explanation: string;
 };
+type Lang = "en" | "kk" | "ru";
+
+const LANGUAGE_LABELS: Record<Lang, string> = {
+  en: "English",
+  kk: "Қазақша",
+  ru: "Русский",
+};
+
+const I18N: Record<Lang, Record<string, string>> = {
+  en: {
+    levels: "Levels",
+    cities: "Cities",
+    leaderboard: "Leaderboard",
+    about: "About",
+    signedInAs: "Signed in as",
+    startPlaying: "Start playing",
+    exit: "Exit",
+    language: "Language",
+    educational: "Educational adventure · 5 levels",
+    heroTitleA: "Travel across Kazakhstan.",
+    heroTitleB: "Learn its cities, monuments and stories.",
+    heroCopy: "A quiet, illustrated quest through Astana, Almaty, Turkestan, Shymkent and Baikonur — answer questions, collect facts, climb the leaderboard.",
+    startJourney: "Start the journey",
+    howItWorks: "How it works",
+    aiTest: "AI test",
+    question: "Question",
+    questions: "Questions",
+    score: "Score",
+    level: "Level",
+    hint: "Hint",
+    aiCoach: "AI coach",
+    submitAnswer: "Submit Answer",
+    nextQuestion: "Next Question",
+    finishLevel: "Finish Level",
+    gameOver: "Game Over",
+    backToMenu: "Back to menu",
+    close: "Close",
+    generating: "Generating a new question...",
+    correct: "Correct",
+    closeAnswer: "Close",
+    notQuite: "Not quite",
+    correctAnswer: "Correct answer",
+    nextAiQuestion: "Next question",
+    resetHistory: "Reset history",
+    aiHistoryTitle: "AI history test",
+    kazHistory: "Kazakhstan history",
+    answerPlaceholder: "Answer in English, қазақша немесе русском...",
+    resultSaved: "Result saved to leaderboard",
+    savingResult: "Saving result...",
+    journeyComplete: "Journey complete",
+    topExplorers: "Top 10 explorers",
+    loading: "Loading...",
+  },
+  kk: {
+    levels: "Деңгейлер",
+    cities: "Қалалар",
+    leaderboard: "Көшбасшылар",
+    about: "Туралы",
+    signedInAs: "Кірген аккаунт",
+    startPlaying: "Ойынды бастау",
+    exit: "Шығу",
+    language: "Тіл",
+    educational: "Оқу саяхаты · 5 деңгей",
+    heroTitleA: "Қазақстанды арала.",
+    heroTitleB: "Қалаларын, ескерткіштерін және тарихын үйрен.",
+    heroCopy: "Астана, Алматы, Түркістан, Шымкент және Байқоңыр бойынша тыныш оқу квесті — сұрақтарға жауап бер, деректер жина, көшбасшыларға көтеріл.",
+    startJourney: "Саяхатты бастау",
+    howItWorks: "Қалай ойнау",
+    aiTest: "AI тест",
+    question: "Сұрақ",
+    questions: "Сұрақтар",
+    score: "Ұпай",
+    level: "Деңгей",
+    hint: "Көмек",
+    aiCoach: "AI көмекші",
+    submitAnswer: "Жауап беру",
+    nextQuestion: "Келесі сұрақ",
+    finishLevel: "Деңгейді аяқтау",
+    gameOver: "Ойын аяқталды",
+    backToMenu: "Мәзірге қайту",
+    close: "Жабу",
+    generating: "Жаңа сұрақ жасалып жатыр...",
+    correct: "Дұрыс",
+    closeAnswer: "Жақын",
+    notQuite: "Дұрыс емес",
+    correctAnswer: "Дұрыс жауап",
+    nextAiQuestion: "Келесі сұрақ",
+    resetHistory: "Тарихты тазалау",
+    aiHistoryTitle: "AI тарих тесті",
+    kazHistory: "Қазақстан тарихы",
+    answerPlaceholder: "Жауапты қазақша, English немесе русском жазыңыз...",
+    resultSaved: "Нәтиже көшбасшылар тізіміне сақталды",
+    savingResult: "Нәтиже сақталуда...",
+    journeyComplete: "Саяхат аяқталды",
+    topExplorers: "Үздік 10 ойыншы",
+    loading: "Жүктелуде...",
+  },
+  ru: {
+    levels: "Уровни",
+    cities: "Города",
+    leaderboard: "Лидеры",
+    about: "О проекте",
+    signedInAs: "Вход выполнен",
+    startPlaying: "Начать игру",
+    exit: "Выйти",
+    language: "Язык",
+    educational: "Обучающее приключение · 5 уровней",
+    heroTitleA: "Путешествуй по Казахстану.",
+    heroTitleB: "Изучай города, памятники и истории.",
+    heroCopy: "Спокойный иллюстрированный квест по Астане, Алматы, Туркестану, Шымкенту и Байконуру — отвечай на вопросы, собирай факты, поднимайся в таблице лидеров.",
+    startJourney: "Начать путешествие",
+    howItWorks: "Как играть",
+    aiTest: "AI тест",
+    question: "Вопрос",
+    questions: "Вопросы",
+    score: "Счет",
+    level: "Уровень",
+    hint: "Подсказка",
+    aiCoach: "AI помощник",
+    submitAnswer: "Ответить",
+    nextQuestion: "Следующий вопрос",
+    finishLevel: "Завершить уровень",
+    gameOver: "Игра окончена",
+    backToMenu: "Назад в меню",
+    close: "Закрыть",
+    generating: "Генерирую новый вопрос...",
+    correct: "Верно",
+    closeAnswer: "Почти",
+    notQuite: "Не совсем",
+    correctAnswer: "Правильный ответ",
+    nextAiQuestion: "Следующий вопрос",
+    resetHistory: "Сбросить историю",
+    aiHistoryTitle: "AI тест по истории",
+    kazHistory: "История Казахстана",
+    answerPlaceholder: "Ответ на русском, қазақша немесе English...",
+    resultSaved: "Результат сохранен в таблицу лидеров",
+    savingResult: "Сохраняю результат...",
+    journeyComplete: "Путешествие завершено",
+    topExplorers: "Топ-10 игроков",
+    loading: "Загрузка...",
+  },
+};
+
+function splitQuestionText(text: string, lang: Lang) {
+  const [en, other] = text.split(" / ");
+  if (lang === "en") return en;
+  return other || en;
+}
 
 function normalize(s: string) {
   return s.trim().toLowerCase().replace(/ё/g, "е").replace(/[^a-z0-9а-яәіңғүұқөһ -]/gi, "");
@@ -378,6 +526,11 @@ function getRank(score: number): { name: string; emoji: string } {
 
 function Game({ session }: { session: import("@supabase/supabase-js").Session }) {
   const userEmail = session.user.email ?? "Signed-in user";
+  const [lang, setLang] = useState<Lang>(() => {
+    if (typeof window === "undefined") return "en";
+    const saved = localStorage.getItem("kq_language");
+    return saved === "kk" || saved === "ru" || saved === "en" ? saved : "en";
+  });
   const [screen, setScreen] = useState<Screen>("start");
   const [levelIdx, setLevelIdx] = useState(0);
   const [qIdx, setQIdx] = useState(0);
@@ -413,6 +566,18 @@ function Game({ session }: { session: import("@supabase/supabase-js").Session })
 
   const level = LEVELS[levelIdx];
   const question = level?.questions[qIdx];
+  const t = I18N[lang];
+
+  function changeLanguage(nextLang: Lang) {
+    setLang(nextLang);
+    if (typeof window !== "undefined") {
+      localStorage.setItem("kq_language", nextLang);
+    }
+    setHistoryQuestion(null);
+    setHistorySelected(null);
+    setHistoryAnswered(false);
+    setHistoryShowHint(false);
+  }
 
   // Per-question timer
   useEffect(() => {
@@ -505,6 +670,7 @@ function Game({ session }: { session: import("@supabase/supabase-js").Session })
       const result = await getKazHistoryQuestion({
         data: {
           excludeQuestions: excludeOverride ?? historySeen,
+          language: lang,
         },
       });
       setHistoryQuestion(result);
@@ -572,10 +738,10 @@ function Game({ session }: { session: import("@supabase/supabase-js").Session })
     const points = base + bonus;
     const msg =
       r === "correct"
-        ? `Correct! ${level.guide} says: "${question.answers[0].toUpperCase()} — well done!"`
+        ? `${t.correct}! ${level.guide}: "${question.answers[0].toUpperCase()}"`
         : r === "close"
-        ? `So close! The answer was "${question.answers[0]}".`
-        : `Not quite. The answer was "${question.answers[0]}".`;
+        ? `${t.closeAnswer}! ${t.correctAnswer}: "${question.answers[0]}".`
+        : `${t.notQuite}. ${t.correctAnswer}: "${question.answers[0]}".`;
     setFeedback({ type: r, msg, points, motivation: pickMotivation(r), bonus });
     setScore((s) => s + points);
     setLevelScore((s) => s + points);
@@ -650,33 +816,45 @@ function Game({ session }: { session: import("@supabase/supabase-js").Session })
             <span>Kazakhstan Quest</span>
           </div>
           <div className="hidden md:flex items-center gap-8 text-sm text-muted-foreground">
-            <span>Levels</span>
-            <span>Cities</span>
-            <span>Leaderboard</span>
-            <span>About</span>
+            <span>{t.levels}</span>
+            <span>{t.cities}</span>
+            <span>{t.leaderboard}</span>
+            <span>{t.about}</span>
           </div>
           <div className="flex items-center gap-3">
+            <select
+              value={lang}
+              onChange={(event) => changeLanguage(event.target.value as Lang)}
+              className="rounded-lg border border-border bg-background px-2 py-2 text-sm font-medium"
+              aria-label={t.language}
+            >
+              {(Object.keys(LANGUAGE_LABELS) as Lang[]).map((code) => (
+                <option key={code} value={code}>
+                  {LANGUAGE_LABELS[code]}
+                </option>
+              ))}
+            </select>
             <div className="hidden sm:block max-w-[220px] truncate text-xs text-muted-foreground" title={userEmail}>
-              Signed in as {userEmail}
+              {t.signedInAs} {userEmail}
             </div>
             <button
               onClick={startGame}
               className="hidden md:inline-flex items-center px-5 py-2.5 rounded-lg bg-primary text-primary-foreground text-sm font-medium hover:bg-[#0d1218] transition-colors"
             >
-              Start playing
+              {t.startPlaying}
             </button>
             <button
               onClick={openHistoryTest}
               className="hidden md:inline-flex items-center px-5 py-2.5 rounded-lg bg-secondary text-secondary-foreground text-sm font-medium hover:opacity-90 transition-colors"
             >
-              AI test
+              {t.aiTest}
             </button>
             <button
               onClick={() => supabase.auth.signOut()}
               className="inline-flex items-center px-3 py-2 rounded-lg text-sm font-medium text-muted-foreground hover:text-foreground hover:bg-muted transition-colors"
               title="Sign out"
             >
-              🚪 Exit
+              🚪 {t.exit}
             </button>
           </div>
         </nav>
@@ -691,33 +869,47 @@ function Game({ session }: { session: import("@supabase/supabase-js").Session })
               loading="eager"
             />
             <div className="text-xs font-medium tracking-wide text-muted-foreground mb-6 uppercase">
-              Educational adventure · 5 levels
+              {t.educational}
             </div>
             <h1 className="text-5xl md:text-6xl font-normal leading-[1.05] tracking-tight">
-              Travel across Kazakhstan.<br />
-              <span className="text-muted-foreground">Learn its cities, monuments and stories.</span>
+              {t.heroTitleA}<br />
+              <span className="text-muted-foreground">{t.heroTitleB}</span>
             </h1>
             <p className="mt-8 text-lg text-muted-foreground max-w-xl">
-              A quiet, illustrated quest through Astana, Almaty, Turkestan, Shymkent and Baikonur — answer questions, collect facts, climb the leaderboard.
+              {t.heroCopy}
             </p>
+            <div className="mt-8 flex flex-wrap items-center gap-2">
+              <span className="text-sm font-medium text-muted-foreground">{t.language}</span>
+              {(Object.keys(LANGUAGE_LABELS) as Lang[]).map((code) => (
+                <button
+                  key={code}
+                  onClick={() => changeLanguage(code)}
+                  className={`rounded-lg border px-3 py-2 text-sm font-semibold transition ${
+                    lang === code ? "border-primary bg-primary text-primary-foreground" : "border-border bg-background hover:bg-secondary"
+                  }`}
+                >
+                  {LANGUAGE_LABELS[code]}
+                </button>
+              ))}
+            </div>
             <div className="mt-10 flex flex-wrap items-center gap-3">
               <button
                 onClick={startGame}
                 className="px-6 py-4 rounded-lg bg-primary text-primary-foreground font-medium hover:bg-[#0d1218] transition-colors"
               >
-                Start the journey
+                {t.startJourney}
               </button>
               <button
                 onClick={openHistoryTest}
                 className="px-6 py-4 rounded-lg bg-secondary text-secondary-foreground font-medium hover:opacity-90 transition-colors"
               >
-                AI test
+                {t.aiTest}
               </button>
               <button
                 onClick={startGame}
                 className="px-6 py-4 rounded-lg bg-background text-foreground font-medium border border-border hover:bg-secondary transition-colors"
               >
-                How it works
+                {t.howItWorks}
               </button>
             </div>
             <div className="mt-10">
@@ -763,21 +955,21 @@ function Game({ session }: { session: import("@supabase/supabase-js").Session })
             <div className="w-full max-w-2xl rounded-xl border border-border bg-card p-6 shadow-2xl">
               <div className="mb-5 flex items-start justify-between gap-4">
                 <div>
-                  <div className="text-xs uppercase tracking-wide text-muted-foreground mb-1">AI history test</div>
-                  <h2 className="text-2xl font-medium tracking-tight">Kazakhstan history</h2>
+                  <div className="text-xs uppercase tracking-wide text-muted-foreground mb-1">{t.aiHistoryTitle}</div>
+                  <h2 className="text-2xl font-medium tracking-tight">{t.kazHistory}</h2>
                 </div>
                 <button
                   onClick={closeHistoryTest}
                   className="rounded-lg px-3 py-2 text-sm font-medium text-muted-foreground hover:bg-muted hover:text-foreground"
-                  aria-label="Close AI test"
+                  aria-label={t.close}
                 >
-                  Close
+                  {t.close}
                 </button>
               </div>
 
               {historyBusy && (
                 <div className="rounded-lg border border-border bg-muted p-5 text-sm font-medium">
-                  Generating a new question...
+                  {t.generating}
                 </div>
               )}
 
@@ -818,14 +1010,14 @@ function Game({ session }: { session: import("@supabase/supabase-js").Session })
 
                   {historyShowHint && (
                     <div className="rounded-lg bg-secondary/30 p-3 text-sm font-semibold">
-                      Hint: {historyQuestion.hint}
+                      {t.hint}: {historyQuestion.hint}
                     </div>
                   )}
 
                   {historyAnswered && (
                     <div className="rounded-lg border border-border p-3 text-sm">
                       <div className="font-semibold">
-                        {historySelected === historyQuestion.answer ? "Correct." : `Correct answer: ${historyQuestion.answer}`}
+                        {historySelected === historyQuestion.answer ? `${t.correct}.` : `${t.correctAnswer}: ${historyQuestion.answer}`}
                       </div>
                       <div className="mt-1 text-muted-foreground">{historyQuestion.explanation}</div>
                     </div>
@@ -837,21 +1029,21 @@ function Game({ session }: { session: import("@supabase/supabase-js").Session })
                       disabled={historyShowHint || historyAnswered}
                       className="rounded-lg bg-muted px-4 py-2 text-sm font-semibold hover:bg-secondary disabled:opacity-50"
                     >
-                      Hint
+                      {t.hint}
                     </button>
                     <button
                       onClick={() => loadHistoryQuestion()}
                       disabled={historyBusy}
                       className="rounded-lg bg-primary px-4 py-2 text-sm font-semibold text-primary-foreground hover:opacity-90 disabled:opacity-50"
                     >
-                      Next question
+                      {t.nextAiQuestion}
                     </button>
                     <button
                       onClick={resetHistoryQuestions}
                       disabled={historyBusy}
                       className="rounded-lg px-4 py-2 text-sm font-semibold text-muted-foreground hover:bg-muted hover:text-foreground disabled:opacity-50"
                     >
-                      Reset history
+                      {t.resetHistory}
                     </button>
                   </div>
                 </div>
@@ -874,7 +1066,7 @@ function Game({ session }: { session: import("@supabase/supabase-js").Session })
   // ============ FINISH ============
   if (screen === "finish") {
     const rank = getRank(score);
-    return <FinishScreen score={score} rank={rank} session={session} onReplay={() => setScreen("start")} />;
+    return <FinishScreen score={score} rank={rank} session={session} lang={lang} onReplay={() => setScreen("start")} />;
   }
 
   // ============ LEVEL RESULT ============
@@ -884,7 +1076,7 @@ function Game({ session }: { session: import("@supabase/supabase-js").Session })
       <div className="min-h-screen flex items-center justify-center p-6 bg-background">
         <div className="bg-card rounded-xl p-8 max-w-xl w-full animate-bounce-in border border-border" style={{ boxShadow: "var(--shadow-card)" }}>
           <div className="mb-4">
-            <div className="text-xs uppercase tracking-wide text-muted-foreground mb-2">Level {levelIdx + 1} complete</div>
+            <div className="text-xs uppercase tracking-wide text-muted-foreground mb-2">{t.level} {levelIdx + 1}</div>
             <h2 className="text-3xl font-normal tracking-tight">{level.city}</h2>
             <p className="text-muted-foreground">{level.monument}</p>
           </div>
@@ -907,7 +1099,7 @@ function Game({ session }: { session: import("@supabase/supabase-js").Session })
               <div className="text-2xl font-medium">{levelCorrect}/{level.questions.length}</div>
             </div>
             <div className="rounded-lg p-3 text-center" style={{ backgroundColor: "var(--signature-mint)", color: "#0a2e0e" }}>
-              <div className="text-xs uppercase tracking-wide opacity-70">Level score</div>
+              <div className="text-xs uppercase tracking-wide opacity-70">{t.score}</div>
               <div className="text-2xl font-medium">+{levelScore}</div>
             </div>
           </div>
@@ -935,13 +1127,13 @@ function Game({ session }: { session: import("@supabase/supabase-js").Session })
             onClick={nextLevel}
             className="w-full py-4 rounded-lg font-medium bg-primary text-primary-foreground hover:bg-[#0d1218] transition-colors"
           >
-            {levelIdx + 1 < LEVELS.length ? `Continue to level ${levelIdx + 2} →` : "Finish journey →"}
+            {levelIdx + 1 < LEVELS.length ? `${t.nextQuestion} ${levelIdx + 2} →` : `${t.finishLevel} →`}
           </button>
           <button
             onClick={backToMenu}
             className="w-full mt-2 py-3 rounded-lg font-medium text-sm text-muted-foreground hover:text-foreground hover:bg-muted transition-colors"
           >
-            Back to menu
+            {t.backToMenu}
           </button>
         </div>
       </div>
@@ -958,7 +1150,7 @@ function Game({ session }: { session: import("@supabase/supabase-js").Session })
           <div className="flex items-center gap-2">
             <span className="text-2xl">🇰🇿</span>
             <div>
-              <div className="text-xs font-bold text-muted-foreground">LEVEL {levelIdx + 1} / {LEVELS.length}</div>
+              <div className="text-xs font-bold text-muted-foreground">{t.level.toUpperCase()} {levelIdx + 1} / {LEVELS.length}</div>
               <div className="font-black">{level.city}</div>
               <div className="max-w-[180px] truncate text-[11px] text-muted-foreground" title={userEmail}>
                 {userEmail}
@@ -970,7 +1162,7 @@ function Game({ session }: { session: import("@supabase/supabase-js").Session })
               onClick={backToMenu}
               className="px-4 py-2 rounded-lg text-sm font-semibold bg-muted text-foreground hover:bg-secondary transition-colors"
             >
-              Back to menu
+              {t.backToMenu}
             </button>
             {/* Hearts */}
             <div className="flex items-center gap-0.5" title={`${hearts} lives left`} aria-label={`${hearts} hearts`}>
@@ -998,7 +1190,7 @@ function Game({ session }: { session: import("@supabase/supabase-js").Session })
               <div className="text-sm font-black tabular-nums">{timeLeft}s</div>
             </div>
             <div className="text-right">
-              <div className="text-xs font-bold text-muted-foreground">SCORE</div>
+              <div className="text-xs font-bold text-muted-foreground">{t.score.toUpperCase()}</div>
               <div className="font-black text-xl text-accent">{score} ⭐</div>
             </div>
           </div>
@@ -1055,7 +1247,7 @@ function Game({ session }: { session: import("@supabase/supabase-js").Session })
           <div className="relative">
             <img key={`${levelIdx}-${qIdx}`} src={level.images[qIdx] ?? level.image} alt="Mystery location" className="w-full h-72 md:h-96 object-contain bg-muted" width={1024} height={1024} loading="eager" />
             <div className="absolute top-3 left-3 bg-card/90 backdrop-blur px-3 py-1 rounded-full text-sm font-bold">
-              📷 Question {qIdx + 1} / {level.questions.length}
+              📷 {t.question} {qIdx + 1} / {level.questions.length}
             </div>
           </div>
 
@@ -1068,7 +1260,7 @@ function Game({ session }: { session: import("@supabase/supabase-js").Session })
               </div>
               <div className="flex-1">
                 <div className="text-xs font-bold text-muted-foreground">KONZHYK with {level.guide.toUpperCase()}</div>
-                <div className="font-bold">{question.q}</div>
+                <div className="font-bold">{splitQuestionText(question.q, lang)}</div>
               </div>
             </div>
 
@@ -1079,18 +1271,18 @@ function Game({ session }: { session: import("@supabase/supabase-js").Session })
                   value={input}
                   onChange={(e) => setInput(e.target.value)}
                   onKeyDown={(e) => e.key === "Enter" && submit()}
-                  placeholder="Ответ на русском, қазақша немесе English..."
+                  placeholder={t.answerPlaceholder}
                   autoFocus
                   className="w-full px-5 py-4 rounded-2xl bg-input border-2 border-border focus:border-primary focus:outline-none text-lg font-semibold"
                 />
                 {showHint && (
                   <div className="mt-3 p-3 rounded-xl bg-secondary/30 text-sm font-semibold animate-bounce-in">
-                    💡 Hint: {question.hint}
+                    💡 {t.hint}: {question.hint}
                   </div>
                 )}
                 {aiHint && (
                   <div className="mt-3 p-3 rounded-xl border border-border bg-card text-sm font-semibold animate-bounce-in">
-                    AI coach: {aiHint}
+                    {t.aiCoach}: {aiHint}
                   </div>
                 )}
                 {aiError && (
@@ -1104,21 +1296,21 @@ function Game({ session }: { session: import("@supabase/supabase-js").Session })
                     disabled={showHint}
                     className="px-5 py-3 rounded-xl font-bold bg-muted hover:bg-secondary/40 transition disabled:opacity-50"
                   >
-                    💡 Hint
+                    💡 {t.hint}
                   </button>
                   <button
                     onClick={askAiCoach}
                     disabled={aiBusy}
                     className="px-5 py-3 rounded-xl font-bold bg-secondary text-secondary-foreground hover:opacity-90 transition disabled:opacity-50"
                   >
-                    {aiBusy ? "AI..." : "AI coach"}
+                    {aiBusy ? "AI..." : t.aiCoach}
                   </button>
                   <button
                     onClick={submit}
                     disabled={!input.trim()}
                     className="flex-1 min-w-[180px] py-3 rounded-xl font-black text-lg bg-primary text-primary-foreground hover:opacity-90 transition disabled:opacity-40"
                   >
-                    Submit Answer
+                    {t.submitAnswer}
                   </button>
                 </div>
               </>
@@ -1134,7 +1326,7 @@ function Game({ session }: { session: import("@supabase/supabase-js").Session })
                   }`}
                 >
                   <div className="text-2xl mb-1">
-                    {feedback.type === "correct" ? "✅ Correct!" : feedback.type === "close" ? "🤏 Close!" : "❌ Not quite"}
+                    {feedback.type === "correct" ? `✅ ${t.correct}!` : feedback.type === "close" ? `🤏 ${t.closeAnswer}!` : `❌ ${t.notQuite}`}
                   </div>
                   <div className="text-sm font-semibold opacity-95">{feedback.msg}</div>
                   {feedback.points > 0 && (
@@ -1167,10 +1359,10 @@ function Game({ session }: { session: import("@supabase/supabase-js").Session })
                   className="w-full py-4 rounded-xl font-black text-lg bg-primary text-primary-foreground hover:opacity-90 transition"
                 >
                   {hearts <= 0
-                    ? "💔 Game Over →"
+                    ? `💔 ${t.gameOver} →`
                     : qIdx + 1 < level.questions.length
-                    ? "Next Question →"
-                    : "Finish Level →"}
+                    ? `${t.nextQuestion} →`
+                    : `${t.finishLevel} →`}
                 </button>
               </div>
             )}
@@ -1187,13 +1379,16 @@ function FinishScreen({
   score,
   rank,
   session,
+  lang,
   onReplay,
 }: {
   score: number;
   rank: { name: string; emoji: string };
   session: import("@supabase/supabase-js").Session;
+  lang: Lang;
   onReplay: () => void;
 }) {
+  const t = I18N[lang];
   const [results, setResults] = useState<Result[]>([]);
   const [saved, setSaved] = useState(false);
   const [displayScore, setDisplayScore] = useState(0);
@@ -1257,12 +1452,12 @@ function FinishScreen({
       >
         {/* Sticky score header */}
         <div className="p-8 pb-4 shrink-0 border-b border-border bg-card rounded-t-xl">
-          <div className="text-xs uppercase tracking-wide text-muted-foreground mb-3 animate-fade-in">Journey complete</div>
+          <div className="text-xs uppercase tracking-wide text-muted-foreground mb-3 animate-fade-in">{t.journeyComplete}</div>
           <h2 className="text-3xl font-normal tracking-tight mb-2 animate-fade-in" style={{ animationDelay: "80ms", animationFillMode: "backwards" }}>You crossed Kazakhstan</h2>
-          <p className="text-muted-foreground text-sm mb-4 animate-fade-in" style={{ animationDelay: "160ms", animationFillMode: "backwards" }}>Signed in as {session.user.email}</p>
+          <p className="text-muted-foreground text-sm mb-4 animate-fade-in" style={{ animationDelay: "160ms", animationFillMode: "backwards" }}>{t.signedInAs} {session.user.email}</p>
 
           <div className="rounded-xl p-5 animate-scale-in" style={{ backgroundColor: "var(--signature-navy)", color: "#fff", animationDelay: "240ms", animationFillMode: "backwards" }}>
-            <div className="text-xs uppercase tracking-wide opacity-70 mb-1">Total score</div>
+            <div className="text-xs uppercase tracking-wide opacity-70 mb-1">{t.score}</div>
             <div className="text-5xl font-normal tracking-tight tabular-nums">{displayScore}</div>
             <div className="mt-2 text-base">
               <span className="inline-block animate-[pop_0.6s_ease-out_1.2s_backwards]">{rank.emoji}</span> {rank.name}
@@ -1275,7 +1470,7 @@ function FinishScreen({
 
         {/* Scrollable leaderboard with smooth scroll */}
         <div className="flex-1 min-h-0 flex flex-col px-8 pt-4">
-          <div className="text-xs uppercase tracking-wide text-muted-foreground mb-2 shrink-0">Top 10 explorers</div>
+          <div className="text-xs uppercase tracking-wide text-muted-foreground mb-2 shrink-0">{t.topExplorers}</div>
           <div
             className="flex-1 min-h-[180px] overflow-y-auto border border-border rounded-lg divide-y divide-border scroll-smooth [scrollbar-width:thin] [scrollbar-color:var(--signature-navy)_transparent]"
             style={{ scrollBehavior: "smooth" }}
@@ -1304,13 +1499,13 @@ function FinishScreen({
             onClick={onReplay}
             className="w-full py-3 rounded-lg font-medium bg-primary text-primary-foreground hover:bg-[#0d1218] transition-colors mb-2"
           >
-            Back to menu
+            {t.backToMenu}
           </button>
           <button
             onClick={() => supabase.auth.signOut()}
             className="w-full py-2 rounded-lg font-medium text-sm text-muted-foreground hover:text-foreground transition-colors"
           >
-            Sign out
+            {t.exit}
           </button>
         </div>
       </div>
