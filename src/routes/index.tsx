@@ -67,7 +67,7 @@ const MOOD_RING: Record<Mood, string> = {
 
 function Konzhyk({ message, size = 80, mood = "neutral" }: { message: string; size?: number; mood?: Mood }) {
   return (
-    <div className="flex items-end gap-3 animate-bounce-in">
+    <div className="flex items-end gap-3 animate-bounce-in min-w-0">
       <div className="relative shrink-0">
         <img
           src={konzhyk}
@@ -84,10 +84,10 @@ function Konzhyk({ message, size = 80, mood = "neutral" }: { message: string; si
           </span>
         )}
       </div>
-      <div className="relative bg-card border-2 border-border rounded-2xl px-4 py-3 text-sm font-semibold max-w-xs"
+      <div className="relative bg-card border-2 border-border rounded-2xl px-4 py-3 text-sm font-semibold max-w-xs min-w-0"
         style={{ boxShadow: "var(--shadow-card)" }}>
         <div className="absolute -left-2 bottom-4 w-4 h-4 bg-card border-l-2 border-b-2 border-border rotate-45" />
-        {message}
+        <span className="break-words">{message}</span>
       </div>
     </div>
   );
@@ -154,7 +154,7 @@ function KonzhykFacts() {
       <Konzhyk message={KZ_FACTS[i]} size={96} />
       <button
         onClick={next}
-        className="self-start ml-[108px] text-xs font-semibold px-3 py-1.5 rounded-full bg-secondary text-secondary-foreground hover:bg-secondary/80 transition-colors border border-border"
+        className="self-start sm:ml-[108px] text-xs font-semibold px-3 py-1.5 rounded-full bg-secondary text-secondary-foreground hover:bg-secondary/80 transition-colors border border-border"
       >
         🐻 Tell me another fact
       </button>
@@ -188,7 +188,7 @@ function MiniLeaderboard() {
             <li key={r.id} className="flex items-center justify-between py-2 text-sm">
               <span className="flex items-center gap-3">
                 <span className="tabular-nums w-5 text-muted-foreground">{i + 1}</span>
-                <span className="truncate max-w-[180px]">{r.display_name ?? "Anon"}</span>
+                <span className="truncate max-w-[140px] sm:max-w-[180px]">{r.display_name ?? "Anon"}</span>
               </span>
               <span className="font-semibold tabular-nums">{r.score} ⭐</span>
             </li>
@@ -810,7 +810,7 @@ function Game({ session }: { session: import("@supabase/supabase-js").Session })
     return (
       <div className="min-h-screen bg-background text-foreground flex flex-col">
         {/* Top nav */}
-        <nav className="h-16 px-6 md:px-10 flex items-center justify-between border-b border-border">
+        <nav className="min-h-16 px-4 py-3 md:px-10 flex flex-wrap items-center justify-between gap-3 border-b border-border">
           <div className="flex items-center gap-2 font-semibold">
             <span className="text-xl">🇰🇿</span>
             <span>Kazakhstan Quest</span>
@@ -821,7 +821,7 @@ function Game({ session }: { session: import("@supabase/supabase-js").Session })
             <span>{t.leaderboard}</span>
             <span>{t.about}</span>
           </div>
-          <div className="flex items-center gap-3">
+          <div className="flex flex-wrap items-center justify-end gap-2 sm:gap-3">
             <select
               value={lang}
               onChange={(event) => changeLanguage(event.target.value as Lang)}
@@ -860,7 +860,7 @@ function Game({ session }: { session: import("@supabase/supabase-js").Session })
         </nav>
 
         {/* Hero band */}
-        <section className="px-6 md:px-10 py-16 md:py-24 max-w-6xl mx-auto w-full grid md:grid-cols-2 gap-12 items-center">
+        <section className="px-4 sm:px-6 md:px-10 py-10 sm:py-14 md:py-24 max-w-6xl mx-auto w-full grid md:grid-cols-2 gap-8 md:gap-12 items-center">
           <div>
             <img
               src={kzFlag}
@@ -871,7 +871,7 @@ function Game({ session }: { session: import("@supabase/supabase-js").Session })
             <div className="text-xs font-medium tracking-wide text-muted-foreground mb-6 uppercase">
               {t.educational}
             </div>
-            <h1 className="text-5xl md:text-6xl font-normal leading-[1.05] tracking-tight">
+            <h1 className="text-4xl sm:text-5xl md:text-6xl font-normal leading-[1.08] tracking-tight">
               {t.heroTitleA}<br />
               <span className="text-muted-foreground">{t.heroTitleB}</span>
             </h1>
@@ -895,19 +895,19 @@ function Game({ session }: { session: import("@supabase/supabase-js").Session })
             <div className="mt-10 flex flex-wrap items-center gap-3">
               <button
                 onClick={startGame}
-                className="px-6 py-4 rounded-lg bg-primary text-primary-foreground font-medium hover:bg-[#0d1218] transition-colors"
+                className="w-full sm:w-auto px-6 py-4 rounded-lg bg-primary text-primary-foreground font-medium hover:bg-[#0d1218] transition-colors"
               >
                 {t.startJourney}
               </button>
               <button
                 onClick={openHistoryTest}
-                className="px-6 py-4 rounded-lg bg-secondary text-secondary-foreground font-medium hover:opacity-90 transition-colors"
+                className="w-full sm:w-auto px-6 py-4 rounded-lg bg-secondary text-secondary-foreground font-medium hover:opacity-90 transition-colors"
               >
                 {t.aiTest}
               </button>
               <button
                 onClick={startGame}
-                className="px-6 py-4 rounded-lg bg-background text-foreground font-medium border border-border hover:bg-secondary transition-colors"
+                className="w-full sm:w-auto px-6 py-4 rounded-lg bg-background text-foreground font-medium border border-border hover:bg-secondary transition-colors"
               >
                 {t.howItWorks}
               </button>
@@ -919,14 +919,14 @@ function Game({ session }: { session: import("@supabase/supabase-js").Session })
           </div>
           <div className="flex flex-col gap-4">
             <div className="rounded-xl overflow-hidden border border-border" style={{ boxShadow: "var(--shadow-card)" }}>
-              <img src={heroBg} alt="Kazakhstan panorama" className="w-full h-[320px] object-cover" />
+              <img src={heroBg} alt="Kazakhstan panorama" className="w-full h-56 sm:h-[320px] object-cover" />
             </div>
             <MiniLeaderboard />
           </div>
         </section>
 
         {/* Signature cards row with city previews */}
-        <section className="px-6 md:px-10 pb-24 max-w-6xl mx-auto w-full grid grid-cols-1 md:grid-cols-3 gap-4">
+        <section className="px-4 sm:px-6 md:px-10 pb-16 sm:pb-24 max-w-6xl mx-auto w-full grid grid-cols-1 md:grid-cols-3 gap-4">
           <div className="rounded-xl overflow-hidden text-white" style={{ backgroundColor: "var(--signature-coral)" }}>
             <img src={baiterek} alt="Baiterek" className="w-full h-40 object-cover" />
             <div className="p-6">
@@ -951,8 +951,8 @@ function Game({ session }: { session: import("@supabase/supabase-js").Session })
         </section>
 
         {historyTestOpen && (
-          <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/45 p-4">
-            <div className="w-full max-w-2xl rounded-xl border border-border bg-card p-6 shadow-2xl">
+          <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/45 p-3 sm:p-4">
+            <div className="max-h-[calc(100vh-1.5rem)] w-full max-w-2xl overflow-y-auto rounded-xl border border-border bg-card p-4 sm:p-6 shadow-2xl">
               <div className="mb-5 flex items-start justify-between gap-4">
                 <div>
                   <div className="text-xs uppercase tracking-wide text-muted-foreground mb-1">{t.aiHistoryTitle}</div>
@@ -1053,7 +1053,7 @@ function Game({ session }: { session: import("@supabase/supabase-js").Session })
         )}
 
         {/* Footer hairline */}
-        <div className="mt-auto border-t border-border px-6 md:px-10 py-6 text-xs text-muted-foreground flex justify-between">
+        <div className="mt-auto border-t border-border px-4 sm:px-6 md:px-10 py-6 text-xs text-muted-foreground flex flex-col sm:flex-row gap-2 sm:justify-between">
           <span>© Kazakhstan Quest</span>
           <span>5 levels · 25 questions · 1 epic journey</span>
         </div>
@@ -1073,15 +1073,15 @@ function Game({ session }: { session: import("@supabase/supabase-js").Session })
   if (screen === "result") {
     const perfect = levelCorrect === level.questions.length;
     return (
-      <div className="min-h-screen flex items-center justify-center p-6 bg-background">
-        <div className="bg-card rounded-xl p-8 max-w-xl w-full animate-bounce-in border border-border" style={{ boxShadow: "var(--shadow-card)" }}>
+      <div className="min-h-screen flex items-center justify-center p-4 sm:p-6 bg-background">
+        <div className="bg-card rounded-xl p-5 sm:p-8 max-w-xl w-full animate-bounce-in border border-border" style={{ boxShadow: "var(--shadow-card)" }}>
           <div className="mb-4">
             <div className="text-xs uppercase tracking-wide text-muted-foreground mb-2">{t.level} {levelIdx + 1}</div>
             <h2 className="text-3xl font-normal tracking-tight">{level.city}</h2>
             <p className="text-muted-foreground">{level.monument}</p>
           </div>
 
-          <img src={level.image} alt={level.monument} className="w-full h-56 object-cover rounded-lg mb-4" width={1024} height={1024} />
+          <img src={level.image} alt={level.monument} className="w-full h-44 sm:h-56 object-cover rounded-lg mb-4" width={1024} height={1024} />
 
           <div className="rounded-lg p-4 mb-3 border border-border">
             <div className="text-xs uppercase tracking-wide text-muted-foreground mb-1">Location</div>
@@ -1093,7 +1093,7 @@ function Game({ session }: { session: import("@supabase/supabase-js").Session })
             <div className="text-lg leading-snug">{level.fact}</div>
           </div>
 
-          <div className="grid grid-cols-2 gap-3 mb-5">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 mb-5">
             <div className="rounded-lg p-3 border border-border text-center">
               <div className="text-xs uppercase tracking-wide text-muted-foreground">Correct</div>
               <div className="text-2xl font-medium">{levelCorrect}/{level.questions.length}</div>
@@ -1143,11 +1143,11 @@ function Game({ session }: { session: import("@supabase/supabase-js").Session })
 
   // ============ LEVEL ============
   return (
-    <div className="min-h-screen bg-background p-4 md:p-6">
+    <div className="min-h-screen bg-background p-3 sm:p-4 md:p-6">
       <div className="max-w-3xl mx-auto">
         {/* HUD */}
-        <div className="flex items-center justify-between mb-4 bg-card rounded-2xl p-3 px-5 gap-3 flex-wrap" style={{ boxShadow: "var(--shadow-card)" }}>
-          <div className="flex items-center gap-2">
+        <div className="flex items-start sm:items-center justify-between mb-4 bg-card rounded-2xl p-3 sm:px-5 gap-3 flex-wrap" style={{ boxShadow: "var(--shadow-card)" }}>
+          <div className="flex items-center gap-2 min-w-0">
             <span className="text-2xl">🇰🇿</span>
             <div>
               <div className="text-xs font-bold text-muted-foreground">{t.level.toUpperCase()} {levelIdx + 1} / {LEVELS.length}</div>
@@ -1157,10 +1157,10 @@ function Game({ session }: { session: import("@supabase/supabase-js").Session })
               </div>
             </div>
           </div>
-          <div className="flex items-center gap-4">
+          <div className="flex w-full sm:w-auto items-center justify-between sm:justify-end gap-2 sm:gap-4 flex-wrap">
             <button
               onClick={backToMenu}
-              className="px-4 py-2 rounded-lg text-sm font-semibold bg-muted text-foreground hover:bg-secondary transition-colors"
+              className="px-3 sm:px-4 py-2 rounded-lg text-sm font-semibold bg-muted text-foreground hover:bg-secondary transition-colors"
             >
               {t.backToMenu}
             </button>
@@ -1205,7 +1205,7 @@ function Game({ session }: { session: import("@supabase/supabase-js").Session })
         </div>
 
         {/* Progress dots */}
-        <div className="flex gap-2 mb-4 justify-center">
+        <div className="flex gap-2 mb-4 justify-start sm:justify-center overflow-x-auto pb-1">
           {LEVELS.map((_, i) => (
             <div
               key={i}
@@ -1215,7 +1215,7 @@ function Game({ session }: { session: import("@supabase/supabase-js").Session })
         </div>
 
         {/* Question progress dots */}
-        <div className="flex items-center justify-center gap-2 mb-3">
+        <div className="flex items-center justify-start sm:justify-center gap-2 mb-3 overflow-x-auto pb-1">
           {level.questions.map((_, i) => {
             const r = qResults[i];
             const isCurrent = i === qIdx;
@@ -1243,15 +1243,15 @@ function Game({ session }: { session: import("@supabase/supabase-js").Session })
         </div>
 
         {/* Image card */}
-        <div className="bg-card rounded-3xl overflow-hidden mb-4" style={{ boxShadow: "var(--shadow-card)" }}>
+        <div className="bg-card rounded-xl sm:rounded-3xl overflow-hidden mb-4" style={{ boxShadow: "var(--shadow-card)" }}>
           <div className="relative">
-            <img key={`${levelIdx}-${qIdx}`} src={level.images[qIdx] ?? level.image} alt="Mystery location" className="w-full h-72 md:h-96 object-contain bg-muted" width={1024} height={1024} loading="eager" />
+            <img key={`${levelIdx}-${qIdx}`} src={level.images[qIdx] ?? level.image} alt="Mystery location" className="w-full h-56 sm:h-72 md:h-96 object-contain bg-muted" width={1024} height={1024} loading="eager" />
             <div className="absolute top-3 left-3 bg-card/90 backdrop-blur px-3 py-1 rounded-full text-sm font-bold">
               📷 {t.question} {qIdx + 1} / {level.questions.length}
             </div>
           </div>
 
-          <div className="p-5">
+          <div className="p-4 sm:p-5">
             {/* NPC guide */}
             <div className="flex items-start gap-3 mb-4 p-3 rounded-2xl bg-muted">
               <div className="relative shrink-0">
@@ -1273,7 +1273,7 @@ function Game({ session }: { session: import("@supabase/supabase-js").Session })
                   onKeyDown={(e) => e.key === "Enter" && submit()}
                   placeholder={t.answerPlaceholder}
                   autoFocus
-                  className="w-full px-5 py-4 rounded-2xl bg-input border-2 border-border focus:border-primary focus:outline-none text-lg font-semibold"
+                  className="w-full px-4 sm:px-5 py-3 sm:py-4 rounded-2xl bg-input border-2 border-border focus:border-primary focus:outline-none text-base sm:text-lg font-semibold"
                 />
                 {showHint && (
                   <div className="mt-3 p-3 rounded-xl bg-secondary/30 text-sm font-semibold animate-bounce-in">
@@ -1294,21 +1294,21 @@ function Game({ session }: { session: import("@supabase/supabase-js").Session })
                   <button
                     onClick={() => setShowHint(true)}
                     disabled={showHint}
-                    className="px-5 py-3 rounded-xl font-bold bg-muted hover:bg-secondary/40 transition disabled:opacity-50"
+                    className="w-full sm:w-auto px-5 py-3 rounded-xl font-bold bg-muted hover:bg-secondary/40 transition disabled:opacity-50"
                   >
                     💡 {t.hint}
                   </button>
                   <button
                     onClick={askAiCoach}
                     disabled={aiBusy}
-                    className="px-5 py-3 rounded-xl font-bold bg-secondary text-secondary-foreground hover:opacity-90 transition disabled:opacity-50"
+                    className="w-full sm:w-auto px-5 py-3 rounded-xl font-bold bg-secondary text-secondary-foreground hover:opacity-90 transition disabled:opacity-50"
                   >
                     {aiBusy ? "AI..." : t.aiCoach}
                   </button>
                   <button
                     onClick={submit}
                     disabled={!input.trim()}
-                    className="flex-1 min-w-[180px] py-3 rounded-xl font-black text-lg bg-primary text-primary-foreground hover:opacity-90 transition disabled:opacity-40"
+                    className="w-full sm:flex-1 sm:min-w-[180px] py-3 rounded-xl font-black text-lg bg-primary text-primary-foreground hover:opacity-90 transition disabled:opacity-40"
                   >
                     {t.submitAnswer}
                   </button>
@@ -1445,20 +1445,20 @@ function FinishScreen({
   }, [score, rank.name, session.user.id, session.user.email]);
 
   return (
-    <div className="h-screen bg-background flex items-center justify-center p-6 overflow-hidden">
+    <div className="min-h-screen bg-background flex items-center justify-center p-4 sm:p-6">
       <div
-        className="bg-card rounded-xl max-w-lg w-full border border-border animate-bounce-in flex flex-col max-h-[calc(100vh-3rem)]"
+        className="bg-card rounded-xl max-w-lg w-full border border-border animate-bounce-in flex flex-col max-h-none sm:max-h-[calc(100vh-3rem)]"
         style={{ boxShadow: "var(--shadow-card)" }}
       >
         {/* Sticky score header */}
-        <div className="p-8 pb-4 shrink-0 border-b border-border bg-card rounded-t-xl">
+        <div className="p-5 sm:p-8 pb-4 shrink-0 border-b border-border bg-card rounded-t-xl">
           <div className="text-xs uppercase tracking-wide text-muted-foreground mb-3 animate-fade-in">{t.journeyComplete}</div>
           <h2 className="text-3xl font-normal tracking-tight mb-2 animate-fade-in" style={{ animationDelay: "80ms", animationFillMode: "backwards" }}>You crossed Kazakhstan</h2>
           <p className="text-muted-foreground text-sm mb-4 animate-fade-in" style={{ animationDelay: "160ms", animationFillMode: "backwards" }}>{t.signedInAs} {session.user.email}</p>
 
           <div className="rounded-xl p-5 animate-scale-in" style={{ backgroundColor: "var(--signature-navy)", color: "#fff", animationDelay: "240ms", animationFillMode: "backwards" }}>
             <div className="text-xs uppercase tracking-wide opacity-70 mb-1">{t.score}</div>
-            <div className="text-5xl font-normal tracking-tight tabular-nums">{displayScore}</div>
+            <div className="text-4xl sm:text-5xl font-normal tracking-tight tabular-nums">{displayScore}</div>
             <div className="mt-2 text-base">
               <span className="inline-block animate-[pop_0.6s_ease-out_1.2s_backwards]">{rank.emoji}</span> {rank.name}
             </div>
@@ -1469,7 +1469,7 @@ function FinishScreen({
         </div>
 
         {/* Scrollable leaderboard with smooth scroll */}
-        <div className="flex-1 min-h-0 flex flex-col px-8 pt-4">
+        <div className="flex-1 min-h-0 flex flex-col px-5 sm:px-8 pt-4">
           <div className="text-xs uppercase tracking-wide text-muted-foreground mb-2 shrink-0">{t.topExplorers}</div>
           <div
             className="flex-1 min-h-[180px] overflow-y-auto border border-border rounded-lg divide-y divide-border scroll-smooth [scrollbar-width:thin] [scrollbar-color:var(--signature-navy)_transparent]"
@@ -1494,7 +1494,7 @@ function FinishScreen({
         </div>
 
         {/* Sticky footer */}
-        <div className="p-8 pt-4 shrink-0 border-t border-border mt-4">
+        <div className="p-5 sm:p-8 pt-4 shrink-0 border-t border-border mt-4">
           <button
             onClick={onReplay}
             className="w-full py-3 rounded-lg font-medium bg-primary text-primary-foreground hover:bg-[#0d1218] transition-colors mb-2"
