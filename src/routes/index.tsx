@@ -46,7 +46,7 @@ const baikonur = bai1;
 import konzhyk from "@/assets/konzhyk.png";
 import { AuthGate } from "@/components/AuthGate";
 import { supabase } from "@/integrations/supabase/client";
-import { getAiHint, getKazHistoryQuestion } from "@/lib/api/gemini.functions";
+import { getAiHint, getKazHistoryQuestion, getStudyMaterials } from "@/lib/api/gemini.functions";
 import { sfx } from "@/lib/sounds";
 
 type Mood = "happy" | "celebrate" | "thinking" | "sad" | "neutral";
@@ -524,6 +524,120 @@ function getRank(score: number): { name: string; emoji: string } {
   return { name: "Beginner Explorer", emoji: "🌱" };
 }
 
+type CityStat = {
+  city: string;
+  attempts: number;
+  correct: number;
+  questions: number;
+  bestPoints: number;
+  totalPoints: number;
+  lastPlayed: string;
+};
+
+type ProfileRow = {
+  best_score: number;
+  display_name: string | null;
+  email: string | null;
+  rank: string | null;
+};
+
+type UserResult = {
+  id: string;
+  score: number;
+  rank: string | null;
+  created_at: string;
+  levels_completed: number;
+};
+
+const PROFILE_COPY: Record<Lang, Record<string, string>> = {
+  en: {
+    account: "My account",
+    playerProfile: "Player profile",
+    progress: "Progress",
+    gamesPlayed: "Games played",
+    bestScore: "Best score",
+    completedLevels: "Completed levels",
+    strongCities: "Best cities",
+    weakCities: "Needs practice",
+    noRuns: "Play one full level to collect city stats.",
+    aiMaterials: "AI materials",
+    loadingMaterials: "Preparing materials...",
+    close: "Close",
+    recentRuns: "Recent runs",
+    cityProgress: "City progress",
+  },
+  kk: {
+    account: "Менің аккаунтым",
+    playerProfile: "Ойыншы профилі",
+    progress: "Прогресс",
+    gamesPlayed: "Ойын саны",
+    bestScore: "Ең жақсы ұпай",
+    completedLevels: "Өткен деңгейлер",
+    strongCities: "Жақсы қалалар",
+    weakCities: "Қайталау керек",
+    noRuns: "Қала статистикасын жинау үшін бір деңгейді ойнап шық.",
+    aiMaterials: "AI материалдар",
+    loadingMaterials: "Материал дайындалуда...",
+    close: "Жабу",
+    recentRuns: "Соңғы ойындар",
+    cityProgress: "Қала прогресі",
+  },
+  ru: {
+    account: "Мой аккаунт",
+    playerProfile: "Профиль игрока",
+    progress: "Прогресс",
+    gamesPlayed: "Игр сыграно",
+    bestScore: "Лучший счет",
+    completedLevels: "Пройдено уровней",
+    strongCities: "Лучшие города",
+    weakCities: "Надо подтянуть",
+    noRuns: "Пройди хотя бы один уровень, чтобы собрать статистику по городам.",
+    aiMaterials: "AI материалы",
+    loadingMaterials: "Готовлю материалы...",
+    close: "Закрыть",
+    recentRuns: "Последние игры",
+    cityProgress: "Прогресс по городам",
+  },
+};
+
+function cityStatsKey(userId: string) {
+  return `kq_city_stats_${userId}`;
+}
+
+function loadCityStats(userId: string): CityStat[] {
+  if (typeof window === "undefined") return [];
+  try {
+    const parsed = JSON.parse(localStorage.getItem(cityStatsKey(userId)) ?? "[]");
+    return Array.isArray(parsed) ? parsed : [];
+  } catch {
+    return [];
+  }
+}
+
+function saveCityStats(userId: string, stats: CityStat[]) {
+  if (typeof window === "undefined") return;
+  localStorage.setItem(cityStatsKey(userId), JSON.stringify(stats));
+}
+
+function recordCityStats(userId: string, level: Level, correct: number, points: number) {
+  const stats = loadCityStats(userId);
+  const current = stats.find((item) => item.city === level.city);
+  const next: CityStat = {
+    city: level.city,
+    attempts: (current?.attempts ?? 0) + 1,
+    correct: (current?.correct ?? 0) + correct,
+    questions: (current?.questions ?? 0) + level.questions.length,
+    bestPoints: Math.max(current?.bestPoints ?? 0, points),
+    totalPoints: (current?.totalPoints ?? 0) + points,
+    lastPlayed: new Date().toISOString(),
+  };
+  saveCityStats(userId, [next, ...stats.filter((item) => item.city !== level.city)]);
+}
+
+function accuracy(stat: CityStat) {
+  return stat.questions > 0 ? Math.round((stat.correct / stat.questions) * 100) : 0;
+}
+
 function Game({ session }: { session: import("@supabase/supabase-js").Session }) {
   const userEmail = session.user.email ?? "Signed-in user";
   const [lang, setLang] = useState<Lang>(() => {
@@ -559,6 +673,7 @@ function Game({ session }: { session: import("@supabase/supabase-js").Session })
   const [historyShowHint, setHistoryShowHint] = useState(false);
   const [historyBusy, setHistoryBusy] = useState(false);
   const [historyError, setHistoryError] = useState<string | null>(null);
+  const [profileOpen, setProfileOpen] = useState(false);
   const [hearts, setHearts] = useState(5);
   const [streak, setStreak] = useState<number>(() => loadStreak());
   const [timeLeft, setTimeLeft] = useState(25);
@@ -779,6 +894,8 @@ function Game({ session }: { session: import("@supabase/supabase-js").Session })
       setQIdx((i) => i + 1);
     } else {
       // level complete
+      const perfectBonus = levelCorrect === level.questions.length ? 20 : 0;
+      recordCityStats(session.user.id, level, levelCorrect, levelScore + perfectBonus);
       if (levelCorrect === level.questions.length) {
         setScore((s) => s + 20);
         setLevelScore((s) => s + 20);
@@ -850,6 +967,12 @@ function Game({ session }: { session: import("@supabase/supabase-js").Session })
               {t.aiTest}
             </button>
             <button
+              onClick={() => setProfileOpen(true)}
+              className="inline-flex items-center px-4 py-2.5 rounded-lg bg-background text-foreground text-sm font-medium border border-border hover:bg-secondary transition-colors"
+            >
+              {PROFILE_COPY[lang].account}
+            </button>
+            <button
               onClick={() => supabase.auth.signOut()}
               className="inline-flex items-center px-3 py-2 rounded-lg text-sm font-medium text-muted-foreground hover:text-foreground hover:bg-muted transition-colors"
               title="Sign out"
@@ -904,6 +1027,12 @@ function Game({ session }: { session: import("@supabase/supabase-js").Session })
                 className="w-full sm:w-auto px-6 py-4 rounded-lg bg-secondary text-secondary-foreground font-medium hover:opacity-90 transition-colors"
               >
                 {t.aiTest}
+              </button>
+              <button
+                onClick={() => setProfileOpen(true)}
+                className="w-full sm:w-auto px-6 py-4 rounded-lg bg-background text-foreground font-medium border border-border hover:bg-secondary transition-colors"
+              >
+                {PROFILE_COPY[lang].account}
               </button>
               <button
                 onClick={startGame}
@@ -1050,6 +1179,14 @@ function Game({ session }: { session: import("@supabase/supabase-js").Session })
               )}
             </div>
           </div>
+        )}
+
+        {profileOpen && (
+          <PlayerProfileModal
+            session={session}
+            lang={lang}
+            onClose={() => setProfileOpen(false)}
+          />
         )}
 
         {/* Footer hairline */}
@@ -1368,6 +1505,241 @@ function Game({ session }: { session: import("@supabase/supabase-js").Session })
             )}
           </div>
         </div>
+      </div>
+    </div>
+  );
+}
+
+function PlayerProfileModal({
+  session,
+  lang,
+  onClose,
+}: {
+  session: import("@supabase/supabase-js").Session;
+  lang: Lang;
+  onClose: () => void;
+}) {
+  const copy = PROFILE_COPY[lang];
+  const [profile, setProfile] = useState<ProfileRow | null>(null);
+  const [results, setResults] = useState<UserResult[]>([]);
+  const [cityStats, setCityStats] = useState<CityStat[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [materials, setMaterials] = useState<string | null>(null);
+  const [materialsCity, setMaterialsCity] = useState<string | null>(null);
+  const [materialsBusy, setMaterialsBusy] = useState(false);
+  const [materialsError, setMaterialsError] = useState<string | null>(null);
+
+  useEffect(() => {
+    let alive = true;
+    (async () => {
+      setLoading(true);
+      const userId = session.user.id;
+      const [{ data: profileData }, { data: resultData }] = await Promise.all([
+        supabase
+          .from("profiles")
+          .select("best_score, display_name, email, rank")
+          .eq("user_id", userId)
+          .maybeSingle(),
+        supabase
+          .from("game_results")
+          .select("id, score, rank, created_at, levels_completed")
+          .eq("user_id", userId)
+          .order("created_at", { ascending: false })
+          .limit(8),
+      ]);
+
+      if (!alive) return;
+      setProfile((profileData ?? null) as ProfileRow | null);
+      setResults((resultData ?? []) as UserResult[]);
+      setCityStats(loadCityStats(userId));
+      setLoading(false);
+    })();
+    return () => {
+      alive = false;
+    };
+  }, [session.user.id]);
+
+  const cityRows = LEVELS.map((level) => {
+    const stat = cityStats.find((item) => item.city === level.city);
+    return {
+      city: level.city,
+      monument: level.monument,
+      location: level.location,
+      attempts: stat?.attempts ?? 0,
+      correct: stat?.correct ?? 0,
+      questions: stat?.questions ?? 0,
+      bestPoints: stat?.bestPoints ?? 0,
+      percent: stat ? accuracy(stat) : 0,
+    };
+  });
+
+  const practicedCities = cityRows.filter((item) => item.attempts > 0);
+  const strongCities = [...practicedCities].sort((a, b) => b.percent - a.percent || b.bestPoints - a.bestPoints).slice(0, 2);
+  const weakCities = [...cityRows].sort((a, b) => a.percent - b.percent || a.attempts - b.attempts).slice(0, 2);
+  const targetCity = weakCities[0] ?? cityRows[0];
+  const bestScore = profile?.best_score ?? Math.max(0, ...results.map((item) => item.score));
+  const completedLevels = results.reduce((sum, item) => sum + (item.levels_completed ?? 0), 0);
+
+  async function loadMaterials(city: string) {
+    const level = LEVELS.find((item) => item.city === city) ?? LEVELS[0];
+    setMaterialsBusy(true);
+    setMaterialsError(null);
+    setMaterials(null);
+    setMaterialsCity(city);
+    try {
+      const result = await getStudyMaterials({
+        data: {
+          city,
+          language: lang,
+          weakAreas: [level.monument, level.location],
+          bestScore,
+        },
+      });
+      setMaterials(result.materials);
+    } catch (err: any) {
+      setMaterialsError(err.message ?? "AI materials are unavailable right now.");
+    } finally {
+      setMaterialsBusy(false);
+    }
+  }
+
+  return (
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/45 p-3 sm:p-4">
+      <div className="max-h-[calc(100vh-1.5rem)] w-full max-w-4xl overflow-y-auto rounded-xl border border-border bg-card p-4 sm:p-6 shadow-2xl">
+        <div className="mb-5 flex items-start justify-between gap-4">
+          <div className="min-w-0">
+            <div className="text-xs uppercase tracking-wide text-muted-foreground mb-1">{copy.account}</div>
+            <h2 className="text-2xl font-medium tracking-tight">{copy.playerProfile}</h2>
+            <p className="mt-1 truncate text-sm text-muted-foreground">{profile?.email ?? session.user.email}</p>
+          </div>
+          <button
+            onClick={onClose}
+            className="rounded-lg px-3 py-2 text-sm font-medium text-muted-foreground hover:bg-muted hover:text-foreground"
+            aria-label={copy.close}
+          >
+            {copy.close}
+          </button>
+        </div>
+
+        {loading ? (
+          <div className="rounded-lg border border-border bg-muted p-5 text-sm font-medium">{I18N[lang].loading}</div>
+        ) : (
+          <div className="grid gap-4 lg:grid-cols-[1fr_1.15fr]">
+            <div className="space-y-4">
+              <div className="grid grid-cols-2 gap-3">
+                <div className="rounded-lg border border-border p-4">
+                  <div className="text-xs uppercase tracking-wide text-muted-foreground">{copy.gamesPlayed}</div>
+                  <div className="mt-2 text-3xl font-semibold tabular-nums">{results.length}</div>
+                </div>
+                <div className="rounded-lg border border-border p-4">
+                  <div className="text-xs uppercase tracking-wide text-muted-foreground">{copy.bestScore}</div>
+                  <div className="mt-2 text-3xl font-semibold tabular-nums">{bestScore}</div>
+                </div>
+                <div className="rounded-lg border border-border p-4">
+                  <div className="text-xs uppercase tracking-wide text-muted-foreground">{copy.completedLevels}</div>
+                  <div className="mt-2 text-3xl font-semibold tabular-nums">{completedLevels}</div>
+                </div>
+                <div className="rounded-lg border border-border p-4">
+                  <div className="text-xs uppercase tracking-wide text-muted-foreground">Rank</div>
+                  <div className="mt-2 text-base font-semibold">{profile?.rank ?? getRank(bestScore).name}</div>
+                </div>
+              </div>
+
+              <div className="rounded-lg border border-border p-4">
+                <div className="mb-3 text-xs uppercase tracking-wide text-muted-foreground">{copy.strongCities}</div>
+                {strongCities.length === 0 ? (
+                  <div className="text-sm text-muted-foreground">{copy.noRuns}</div>
+                ) : (
+                  <div className="space-y-2">
+                    {strongCities.map((item) => (
+                      <div key={item.city} className="flex items-center justify-between rounded-lg bg-muted px-3 py-2 text-sm">
+                        <span className="font-semibold">{item.city}</span>
+                        <span className="tabular-nums">{item.percent}%</span>
+                      </div>
+                    ))}
+                  </div>
+                )}
+              </div>
+
+              <div className="rounded-lg border border-border p-4">
+                <div className="mb-3 text-xs uppercase tracking-wide text-muted-foreground">{copy.weakCities}</div>
+                <div className="space-y-2">
+                  {weakCities.map((item) => (
+                    <button
+                      key={item.city}
+                      onClick={() => loadMaterials(item.city)}
+                      className="flex w-full items-center justify-between rounded-lg bg-background px-3 py-2 text-left text-sm hover:bg-secondary"
+                    >
+                      <span>
+                        <span className="block font-semibold">{item.city}</span>
+                        <span className="block text-xs text-muted-foreground">{item.monument}</span>
+                      </span>
+                      <span className="tabular-nums">{item.percent}%</span>
+                    </button>
+                  ))}
+                </div>
+              </div>
+            </div>
+
+            <div className="space-y-4">
+              <div className="rounded-lg border border-border p-4">
+                <div className="mb-3 flex items-center justify-between gap-3">
+                  <div className="text-xs uppercase tracking-wide text-muted-foreground">{copy.cityProgress}</div>
+                  <button
+                    onClick={() => loadMaterials(targetCity.city)}
+                    disabled={materialsBusy}
+                    className="rounded-lg bg-primary px-3 py-2 text-xs font-semibold text-primary-foreground hover:opacity-90 disabled:opacity-50"
+                  >
+                    {materialsBusy ? copy.loadingMaterials : copy.aiMaterials}
+                  </button>
+                </div>
+                <div className="space-y-3">
+                  {cityRows.map((item) => (
+                    <div key={item.city}>
+                      <div className="mb-1 flex justify-between text-sm">
+                        <span className="font-semibold">{item.city}</span>
+                        <span className="text-muted-foreground tabular-nums">
+                          {item.correct}/{item.questions || LEVELS.find((level) => level.city === item.city)?.questions.length || 5}
+                        </span>
+                      </div>
+                      <div className="h-2 overflow-hidden rounded-full bg-muted">
+                        <div className="h-full rounded-full bg-primary" style={{ width: `${item.percent}%` }} />
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+
+              <div className="rounded-lg border border-border p-4">
+                <div className="mb-3 text-xs uppercase tracking-wide text-muted-foreground">
+                  {copy.aiMaterials}{materialsCity ? ` · ${materialsCity}` : ""}
+                </div>
+                {materialsError && <div className="rounded-lg bg-destructive/15 p-3 text-sm font-semibold text-destructive">{materialsError}</div>}
+                {materialsBusy && <div className="rounded-lg bg-muted p-3 text-sm font-medium">{copy.loadingMaterials}</div>}
+                {!materialsBusy && !materials && !materialsError && (
+                  <div className="text-sm text-muted-foreground">{copy.noRuns}</div>
+                )}
+                {materials && <div className="whitespace-pre-line text-sm leading-relaxed">{materials}</div>}
+              </div>
+
+              <div className="rounded-lg border border-border p-4">
+                <div className="mb-3 text-xs uppercase tracking-wide text-muted-foreground">{copy.recentRuns}</div>
+                {results.length === 0 ? (
+                  <div className="text-sm text-muted-foreground">{copy.noRuns}</div>
+                ) : (
+                  <div className="divide-y divide-border">
+                    {results.slice(0, 5).map((item) => (
+                      <div key={item.id} className="flex items-center justify-between py-2 text-sm">
+                        <span className="text-muted-foreground">{new Date(item.created_at).toLocaleDateString()}</span>
+                        <span className="font-semibold tabular-nums">{item.score}</span>
+                      </div>
+                    ))}
+                  </div>
+                )}
+              </div>
+            </div>
+          </div>
+        )}
       </div>
     </div>
   );

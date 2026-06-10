@@ -13,6 +13,13 @@ const historyQuestionInput = z.object({
   language: z.enum(["en", "kk", "ru"]).default("en"),
 });
 
+const studyMaterialsInput = z.object({
+  city: z.string().min(1).max(80),
+  language: z.enum(["en", "kk", "ru"]).default("en"),
+  weakAreas: z.array(z.string().min(1).max(120)).max(5).default([]),
+  bestScore: z.number().int().min(0).max(10000).default(0),
+});
+
 type GeminiGenerateContentResponse = {
   candidates?: Array<{
     content?: {
@@ -185,4 +192,66 @@ export const getKazHistoryQuestion = createServerFn({ method: "POST" })
     }
 
     return question;
+  });
+
+export const getStudyMaterials = createServerFn({ method: "POST" })
+  .inputValidator(studyMaterialsInput)
+  .handler(async ({ data }) => {
+    const apiKey = process.env.GEMINI_API_KEY;
+    const model = process.env.GEMINI_MODEL || "gemini-2.5-flash-lite";
+
+    if (!apiKey) {
+      throw new Error("Gemini is not configured. Add GEMINI_API_KEY to the server environment.");
+    }
+
+    const languageName = data.language === "kk" ? "Kazakh" : data.language === "ru" ? "Russian" : "English";
+    const weakAreas = data.weakAreas.length ? data.weakAreas.join(", ") : "general city facts";
+    const prompt = [
+      "You are a friendly Kazakhstan Quest tutor.",
+      `Write in simple ${languageName}.`,
+      "Create short study materials for one city so a student can improve in the game.",
+      "Use plain text with these exact section labels: Overview, Remember, Mini plan, Practice.",
+      "Keep the whole answer under 180 words.",
+      "Do not mention that you are an AI.",
+      "",
+      `City: ${data.city}`,
+      `Student best total score: ${data.bestScore}`,
+      `Weak areas: ${weakAreas}`,
+    ].join("\n");
+
+    const response = await fetch(
+      `https://generativelanguage.googleapis.com/v1beta/models/${encodeURIComponent(model)}:generateContent`,
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "x-goog-api-key": apiKey,
+        },
+        body: JSON.stringify({
+          contents: [
+            {
+              parts: [{ text: prompt }],
+            },
+          ],
+          generationConfig: {
+            temperature: 0.55,
+            maxOutputTokens: 280,
+          },
+        }),
+      },
+    );
+
+    const result = (await response.json()) as GeminiGenerateContentResponse;
+
+    if (!response.ok) {
+      throw new Error(result.error?.message || "Gemini request failed.");
+    }
+
+    const materials = readGeminiText(result);
+
+    if (!materials) {
+      throw new Error("Gemini returned empty study materials.");
+    }
+
+    return { materials };
   });
