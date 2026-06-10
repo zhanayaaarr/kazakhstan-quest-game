@@ -46,7 +46,7 @@ const baikonur = bai1;
 import konzhyk from "@/assets/konzhyk.png";
 import { AuthGate } from "@/components/AuthGate";
 import { supabase } from "@/integrations/supabase/client";
-import { getAiHint } from "@/lib/api/gemini.functions";
+import { getAiHint, getKazHistoryQuestion } from "@/lib/api/gemini.functions";
 import { sfx } from "@/lib/sounds";
 
 type Mood = "happy" | "celebrate" | "thinking" | "sad" | "neutral";
@@ -311,6 +311,13 @@ const LEVELS: Level[] = [
 ];
 
 type Screen = "start" | "level" | "result" | "finish";
+type AiHistoryQuestion = {
+  question: string;
+  options: string[];
+  answer: string;
+  hint: string;
+  explanation: string;
+};
 
 function normalize(s: string) {
   return s.trim().toLowerCase().replace(/ё/g, "е").replace(/[^a-z0-9а-яәіңғүұқөһ -]/gi, "");
@@ -384,6 +391,21 @@ function Game({ session }: { session: import("@supabase/supabase-js").Session })
   const [aiHint, setAiHint] = useState<string | null>(null);
   const [aiBusy, setAiBusy] = useState(false);
   const [aiError, setAiError] = useState<string | null>(null);
+  const [historyTestOpen, setHistoryTestOpen] = useState(false);
+  const [historyQuestion, setHistoryQuestion] = useState<AiHistoryQuestion | null>(null);
+  const [historySeen, setHistorySeen] = useState<string[]>(() => {
+    if (typeof window === "undefined") return [];
+    try {
+      return JSON.parse(localStorage.getItem("kq_ai_history_seen") ?? "[]");
+    } catch {
+      return [];
+    }
+  });
+  const [historySelected, setHistorySelected] = useState<string | null>(null);
+  const [historyAnswered, setHistoryAnswered] = useState(false);
+  const [historyShowHint, setHistoryShowHint] = useState(false);
+  const [historyBusy, setHistoryBusy] = useState(false);
+  const [historyError, setHistoryError] = useState<string | null>(null);
   const [hearts, setHearts] = useState(5);
   const [streak, setStreak] = useState<number>(() => loadStreak());
   const [timeLeft, setTimeLeft] = useState(25);
@@ -461,6 +483,70 @@ function Game({ session }: { session: import("@supabase/supabase-js").Session })
     } finally {
       setAiBusy(false);
     }
+  }
+
+  function rememberHistoryQuestion(questionText: string) {
+    setHistorySeen((current) => {
+      const next = [questionText, ...current.filter((item) => item !== questionText)].slice(0, 30);
+      if (typeof window !== "undefined") {
+        localStorage.setItem("kq_ai_history_seen", JSON.stringify(next));
+      }
+      return next;
+    });
+  }
+
+  async function loadHistoryQuestion(excludeOverride?: string[]) {
+    setHistoryBusy(true);
+    setHistoryError(null);
+    setHistorySelected(null);
+    setHistoryAnswered(false);
+    setHistoryShowHint(false);
+    try {
+      const result = await getKazHistoryQuestion({
+        data: {
+          excludeQuestions: excludeOverride ?? historySeen,
+        },
+      });
+      setHistoryQuestion(result);
+      rememberHistoryQuestion(result.question);
+    } catch (err: any) {
+      setHistoryError(err.message ?? "AI test is unavailable right now.");
+    } finally {
+      setHistoryBusy(false);
+    }
+  }
+
+  function openHistoryTest() {
+    sfx.click();
+    setHistoryTestOpen(true);
+    if (!historyQuestion) {
+      void loadHistoryQuestion();
+    }
+  }
+
+  function closeHistoryTest() {
+    sfx.click();
+    setHistoryTestOpen(false);
+  }
+
+  function answerHistoryQuestion(option: string) {
+    if (historyAnswered) return;
+    setHistorySelected(option);
+    setHistoryAnswered(true);
+    if (option === historyQuestion?.answer) {
+      sfx.correct();
+    } else {
+      sfx.wrong();
+    }
+  }
+
+  function resetHistoryQuestions() {
+    const next: string[] = [];
+    setHistorySeen(next);
+    if (typeof window !== "undefined") {
+      localStorage.setItem("kq_ai_history_seen", JSON.stringify(next));
+    }
+    void loadHistoryQuestion(next);
   }
 
   function backToMenu() {
@@ -580,6 +666,12 @@ function Game({ session }: { session: import("@supabase/supabase-js").Session })
               Start playing
             </button>
             <button
+              onClick={openHistoryTest}
+              className="hidden md:inline-flex items-center px-5 py-2.5 rounded-lg bg-secondary text-secondary-foreground text-sm font-medium hover:opacity-90 transition-colors"
+            >
+              AI test
+            </button>
+            <button
               onClick={() => supabase.auth.signOut()}
               className="inline-flex items-center px-3 py-2 rounded-lg text-sm font-medium text-muted-foreground hover:text-foreground hover:bg-muted transition-colors"
               title="Sign out"
@@ -614,6 +706,12 @@ function Game({ session }: { session: import("@supabase/supabase-js").Session })
                 className="px-6 py-4 rounded-lg bg-primary text-primary-foreground font-medium hover:bg-[#0d1218] transition-colors"
               >
                 Start the journey
+              </button>
+              <button
+                onClick={openHistoryTest}
+                className="px-6 py-4 rounded-lg bg-secondary text-secondary-foreground font-medium hover:opacity-90 transition-colors"
+              >
+                AI test
               </button>
               <button
                 onClick={startGame}
@@ -659,6 +757,108 @@ function Game({ session }: { session: import("@supabase/supabase-js").Session })
             </div>
           </div>
         </section>
+
+        {historyTestOpen && (
+          <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/45 p-4">
+            <div className="w-full max-w-2xl rounded-xl border border-border bg-card p-6 shadow-2xl">
+              <div className="mb-5 flex items-start justify-between gap-4">
+                <div>
+                  <div className="text-xs uppercase tracking-wide text-muted-foreground mb-1">AI history test</div>
+                  <h2 className="text-2xl font-medium tracking-tight">Kazakhstan history</h2>
+                </div>
+                <button
+                  onClick={closeHistoryTest}
+                  className="rounded-lg px-3 py-2 text-sm font-medium text-muted-foreground hover:bg-muted hover:text-foreground"
+                  aria-label="Close AI test"
+                >
+                  Close
+                </button>
+              </div>
+
+              {historyBusy && (
+                <div className="rounded-lg border border-border bg-muted p-5 text-sm font-medium">
+                  Generating a new question...
+                </div>
+              )}
+
+              {historyError && (
+                <div className="rounded-lg bg-destructive/15 p-4 text-sm font-semibold text-destructive">
+                  {historyError}
+                </div>
+              )}
+
+              {!historyBusy && historyQuestion && (
+                <div className="space-y-4">
+                  <div className="rounded-lg border border-border bg-background p-4">
+                    <div className="text-sm font-semibold leading-relaxed">{historyQuestion.question}</div>
+                  </div>
+
+                  <div className="grid gap-2">
+                    {historyQuestion.options.map((option) => {
+                      const isCorrect = historyAnswered && option === historyQuestion.answer;
+                      const isWrong = historyAnswered && option === historySelected && option !== historyQuestion.answer;
+                      return (
+                        <button
+                          key={option}
+                          onClick={() => answerHistoryQuestion(option)}
+                          disabled={historyAnswered}
+                          className={`rounded-lg border px-4 py-3 text-left text-sm font-medium transition ${
+                            isCorrect
+                              ? "border-success bg-success text-success-foreground"
+                              : isWrong
+                              ? "border-destructive bg-destructive text-destructive-foreground"
+                              : "border-border bg-background hover:bg-secondary"
+                          }`}
+                        >
+                          {option}
+                        </button>
+                      );
+                    })}
+                  </div>
+
+                  {historyShowHint && (
+                    <div className="rounded-lg bg-secondary/30 p-3 text-sm font-semibold">
+                      Hint: {historyQuestion.hint}
+                    </div>
+                  )}
+
+                  {historyAnswered && (
+                    <div className="rounded-lg border border-border p-3 text-sm">
+                      <div className="font-semibold">
+                        {historySelected === historyQuestion.answer ? "Correct." : `Correct answer: ${historyQuestion.answer}`}
+                      </div>
+                      <div className="mt-1 text-muted-foreground">{historyQuestion.explanation}</div>
+                    </div>
+                  )}
+
+                  <div className="flex flex-wrap gap-2 pt-2">
+                    <button
+                      onClick={() => setHistoryShowHint(true)}
+                      disabled={historyShowHint || historyAnswered}
+                      className="rounded-lg bg-muted px-4 py-2 text-sm font-semibold hover:bg-secondary disabled:opacity-50"
+                    >
+                      Hint
+                    </button>
+                    <button
+                      onClick={() => loadHistoryQuestion()}
+                      disabled={historyBusy}
+                      className="rounded-lg bg-primary px-4 py-2 text-sm font-semibold text-primary-foreground hover:opacity-90 disabled:opacity-50"
+                    >
+                      Next question
+                    </button>
+                    <button
+                      onClick={resetHistoryQuestions}
+                      disabled={historyBusy}
+                      className="rounded-lg px-4 py-2 text-sm font-semibold text-muted-foreground hover:bg-muted hover:text-foreground disabled:opacity-50"
+                    >
+                      Reset history
+                    </button>
+                  </div>
+                </div>
+              )}
+            </div>
+          </div>
+        )}
 
         {/* Footer hairline */}
         <div className="mt-auto border-t border-border px-6 md:px-10 py-6 text-xs text-muted-foreground flex justify-between">
