@@ -1012,12 +1012,6 @@ function Game({ session }: { session: import("@supabase/supabase-js").Session })
               {t.startPlaying}
             </button>
             <button
-              onClick={openHistoryTest}
-              className="hidden md:inline-flex items-center px-5 py-2.5 rounded-lg bg-secondary text-secondary-foreground text-sm font-medium hover:opacity-90 transition-colors"
-            >
-              {t.aiTest}
-            </button>
-            <button
               onClick={() => setProfileOpen(true)}
               className="inline-flex items-center px-4 py-2.5 rounded-lg bg-background text-foreground text-sm font-medium border border-border hover:bg-secondary transition-colors"
             >
@@ -1058,6 +1052,14 @@ function Game({ session }: { session: import("@supabase/supabase-js").Session })
                 className="w-full sm:w-auto px-6 py-4 rounded-lg bg-primary text-primary-foreground font-medium hover:bg-[#0d1218] transition-colors"
               >
                 {t.startJourney}
+              </button>
+            </div>
+            <div className="mt-4">
+              <button
+                onClick={openHistoryTest}
+                className="w-full sm:w-auto px-6 py-3 rounded-lg bg-secondary text-secondary-foreground font-medium hover:opacity-90 transition-colors"
+              >
+                {t.aiTest}
               </button>
             </div>
             <div className="mt-10">
@@ -1300,6 +1302,12 @@ function Game({ session }: { session: import("@supabase/supabase-js").Session })
   // ============ LEVEL ============
   return (
     <div className="min-h-screen bg-background p-3 sm:p-4 md:p-6">
+      <button
+        onClick={backToMenu}
+        className="z-40 mb-3 inline-flex items-center rounded-lg bg-card px-3 py-2 text-sm font-semibold text-foreground shadow-sm border border-border hover:bg-secondary transition-colors md:fixed md:left-4 md:top-24 md:mb-0 md:px-4"
+      >
+        {t.backToMenu}
+      </button>
       <div className="max-w-3xl mx-auto">
         {/* HUD */}
         <div className="flex items-start sm:items-center justify-between mb-4 bg-card rounded-2xl p-3 sm:px-5 gap-3 flex-wrap" style={{ boxShadow: "var(--shadow-card)" }}>
@@ -1314,12 +1322,6 @@ function Game({ session }: { session: import("@supabase/supabase-js").Session })
             </div>
           </div>
           <div className="flex w-full sm:w-auto items-center justify-between sm:justify-end gap-2 sm:gap-4 flex-wrap">
-            <button
-              onClick={backToMenu}
-              className="px-3 sm:px-4 py-2 rounded-lg text-sm font-semibold bg-muted text-foreground hover:bg-secondary transition-colors"
-            >
-              {t.backToMenu}
-            </button>
             {/* Hearts */}
             <div className="flex items-center gap-0.5" title={`${hearts} lives left`} aria-label={`${hearts} hearts`}>
               {[0, 1, 2].map((i) => (
