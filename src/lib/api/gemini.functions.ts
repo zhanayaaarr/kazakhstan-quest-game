@@ -75,6 +75,14 @@ function readGeminiText(result: GeminiGenerateContentResponse) {
   return result.candidates?.[0]?.content?.parts?.map((part) => part.text ?? "").join("").trim() ?? "";
 }
 
+function geminiErrorMessage(message?: string) {
+  const text = message ?? "";
+  if (/quota|rate[- ]?limit|free_tier|429/i.test(text)) {
+    return "AI limit reached for now. Please try again later.";
+  }
+  return text || "Gemini request failed.";
+}
+
 function parseJsonObject(text: string) {
   const cleaned = text
     .replace(/^```(?:json)?/i, "")
@@ -177,7 +185,7 @@ export const getAiHint = createServerFn({ method: "POST" })
     const result = (await response.json()) as GeminiGenerateContentResponse;
 
     if (!response.ok) {
-      throw new Error(result.error?.message || "Gemini request failed.");
+      throw new Error(geminiErrorMessage(result.error?.message));
     }
 
     const hint = readGeminiText(result);
@@ -247,7 +255,7 @@ export const getKazHistoryQuestion = createServerFn({ method: "POST" })
     const result = (await response.json()) as GeminiGenerateContentResponse;
 
     if (!response.ok) {
-      throw new Error(result.error?.message || "Gemini request failed.");
+      throw new Error(geminiErrorMessage(result.error?.message));
     }
 
     const parsed = parseJsonObject(readGeminiText(result)) as AiHistoryQuestion;
@@ -318,7 +326,7 @@ export const getStudyMaterials = createServerFn({ method: "POST" })
     const result = (await response.json()) as GeminiGenerateContentResponse;
 
     if (!response.ok) {
-      throw new Error(result.error?.message || "Gemini request failed.");
+      throw new Error(geminiErrorMessage(result.error?.message));
     }
 
     const materials = readGeminiText(result);
@@ -385,7 +393,7 @@ export const getAiJourney = createServerFn({ method: "POST" })
     const result = (await response.json()) as GeminiGenerateContentResponse;
 
     if (!response.ok) {
-      throw new Error(result.error?.message || "Gemini request failed.");
+      throw new Error(geminiErrorMessage(result.error?.message));
     }
 
     const parsed = generatedJourneySchema.parse(parseJsonObject(readGeminiText(result)));
@@ -393,8 +401,12 @@ export const getAiJourney = createServerFn({ method: "POST" })
       parsed.levels.map(async (level) => {
         const images = await Promise.all(
           level.questions.map(async (question) => {
-            const image = await findWikimediaImage(question.imageSearchTerm);
-            return image ?? "";
+            const image =
+              (await findWikimediaImage(question.imageSearchTerm)) ??
+              (await findWikimediaImage(level.monument)) ??
+              (await findWikimediaImage(level.city)) ??
+              "";
+            return image;
           }),
         );
         const fallbackImage = images.find(Boolean) ?? "";
@@ -415,10 +427,6 @@ export const getAiJourney = createServerFn({ method: "POST" })
         };
       }),
     );
-
-    if (levels.some((level) => !level.image || level.images.some((image) => !image))) {
-      throw new Error("Wikimedia did not return enough images for this journey.");
-    }
 
     return { levels };
   });

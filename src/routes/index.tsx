@@ -685,6 +685,15 @@ function createQuestionImages(levels: Level[]) {
   return next;
 }
 
+function ensureJourneyImages(levels: Level[]) {
+  return levels.map((level, index) => {
+    const fallback = LEVELS[index % LEVELS.length];
+    const image = level.image || level.images.find(Boolean) || fallback.image;
+    const images = level.questions.map((_, questionIndex) => level.images[questionIndex] || image || fallback.images[questionIndex] || fallback.image);
+    return { ...level, image, images };
+  });
+}
+
 function Game({ session }: { session: import("@supabase/supabase-js").Session }) {
   const userEmail = session.user.email ?? "Signed-in user";
   const [lang, setLang] = useState<Lang>(() => {
@@ -812,11 +821,16 @@ function Game({ session }: { session: import("@supabase/supabase-js").Session })
           excludeCities: loadJourneyCityHistory(),
         },
       });
-      nextLevels = result.levels as Level[];
+      nextLevels = ensureJourneyImages(result.levels as Level[]);
       setJourneyLevels(nextLevels);
       rememberJourneyCities(nextLevels);
     } catch (err: any) {
-      setJourneyError(err.message ?? "AI journey is unavailable right now. Starting the classic journey.");
+      const message = String(err?.message ?? "");
+      setJourneyError(
+        /quota|rate[- ]?limit|free_tier|AI limit/i.test(message)
+          ? "AI limit reached for now. Starting the classic journey."
+          : "AI journey is unavailable right now. Starting the classic journey.",
+      );
       setJourneyLevels(LEVELS);
       nextLevels = LEVELS;
     } finally {
@@ -889,7 +903,13 @@ function Game({ session }: { session: import("@supabase/supabase-js").Session })
       setHistoryQuestion(result);
       rememberHistoryQuestion(result.question);
     } catch (err: any) {
-      setHistoryError(err.message ?? "AI test is unavailable right now.");
+      setHistoryQuestion(null);
+      const message = String(err?.message ?? "");
+      setHistoryError(
+        /quota|rate[- ]?limit|free_tier|AI limit/i.test(message)
+          ? "AI limit reached for now. Please try again later."
+          : "AI test is unavailable right now.",
+      );
     } finally {
       setHistoryBusy(false);
     }
@@ -1183,7 +1203,7 @@ function Game({ session }: { session: import("@supabase/supabase-js").Session })
                 </div>
               )}
 
-              {!historyBusy && historyQuestion && (
+              {!historyBusy && !historyError && historyQuestion && (
                 <div className="space-y-4">
                   <div className="rounded-lg border border-border bg-background p-4">
                     <div className="text-sm font-semibold leading-relaxed">{historyQuestion.question}</div>
