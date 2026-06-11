@@ -44,19 +44,26 @@ type AiHistoryQuestion = {
   explanation: string;
 };
 
+function shortString(max: number) {
+  return z
+    .string()
+    .transform((value) => value.trim().replace(/\s+/g, " ").slice(0, max))
+    .pipe(z.string().min(1).max(max));
+}
+
 const journeyQuestionSchema = z.object({
-  q: z.string().min(8).max(320),
-  answers: z.array(z.string().min(1).max(80)).min(2).max(10),
-  hint: z.string().min(4).max(220),
-  imageSearchTerm: z.string().min(3).max(120),
+  q: shortString(320).pipe(z.string().min(8)),
+  answers: z.array(shortString(80)).min(2).max(10),
+  hint: shortString(220).pipe(z.string().min(4)),
+  imageSearchTerm: shortString(120).pipe(z.string().min(3)),
 });
 
 const journeyLevelSchema = z.object({
-  city: z.string().min(2).max(80),
-  monument: z.string().min(2).max(120),
-  location: z.string().min(2).max(140),
-  guide: z.string().min(2).max(40),
-  fact: z.string().min(8).max(260),
+  city: shortString(80).pipe(z.string().min(2)),
+  monument: shortString(120).pipe(z.string().min(2)),
+  location: shortString(140).pipe(z.string().min(2)),
+  guide: shortString(40).pipe(z.string().min(2)),
+  fact: shortString(260).pipe(z.string().min(8)),
   questions: z.array(journeyQuestionSchema).length(5),
 });
 
