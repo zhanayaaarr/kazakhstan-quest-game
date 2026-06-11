@@ -759,6 +759,11 @@ function ensureJourneyImages(levels: Level[]) {
   });
 }
 
+function fallbackQuestionImage(levelIndex: number, questionIndex: number) {
+  const fallback = LEVELS[levelIndex % LEVELS.length] ?? LEVELS[0];
+  return fallback.images[questionIndex] || fallback.image || heroBg;
+}
+
 function Game({ session }: { session: import("@supabase/supabase-js").Session }) {
   const userEmail = session.user.email ?? "Signed-in user";
   const [lang, setLang] = useState<Lang>(() => {
@@ -932,7 +937,8 @@ function Game({ session }: { session: import("@supabase/supabase-js").Session })
       });
       setAiHint(result.hint);
     } catch (err: any) {
-      setAiError(err.message ?? "AI hint is unavailable right now.");
+      setAiHint(`${question.hint} (${level.city})`);
+      setAiError(null);
     } finally {
       setAiBusy(false);
     }
@@ -1536,7 +1542,19 @@ function Game({ session }: { session: import("@supabase/supabase-js").Session })
         {/* Image card */}
         <div className="bg-card rounded-xl sm:rounded-3xl overflow-hidden mb-4" style={{ boxShadow: "var(--shadow-card)" }}>
           <div className="relative">
-            <img key={`${levelIdx}-${qIdx}-${questionImages[levelIdx]?.[qIdx] ?? ""}`} src={questionImages[levelIdx]?.[qIdx] ?? level.images[qIdx] ?? level.image} alt="Mystery location" className="w-full h-56 sm:h-72 md:h-96 object-contain bg-muted" width={1024} height={1024} loading="eager" />
+            <img
+              key={`${levelIdx}-${qIdx}-${questionImages[levelIdx]?.[qIdx] ?? ""}`}
+              src={questionImages[levelIdx]?.[qIdx] || level.images[qIdx] || level.image || fallbackQuestionImage(levelIdx, qIdx)}
+              alt="Mystery location"
+              className="w-full h-56 sm:h-72 md:h-96 object-contain bg-muted"
+              width={1024}
+              height={1024}
+              loading="eager"
+              onError={(event) => {
+                event.currentTarget.onerror = null;
+                event.currentTarget.src = fallbackQuestionImage(levelIdx, qIdx);
+              }}
+            />
             <div className="absolute top-3 left-3 bg-card/90 backdrop-blur px-3 py-1 rounded-full text-sm font-bold">
               📷 {t.question} {qIdx + 1} / {level.questions.length}
             </div>
