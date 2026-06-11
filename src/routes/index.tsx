@@ -471,6 +471,71 @@ function normalize(s: string) {
   return s.trim().toLowerCase().replace(/ё/g, "е").replace(/[^a-z0-9а-яәіңғүұқөһ -]/gi, "");
 }
 
+const FALLBACK_HISTORY_QUESTIONS: AiHistoryQuestion[] = [
+  {
+    question: "Which city is home to the Baikonur Cosmodrome?",
+    options: ["Baikonur", "Almaty", "Turkestan", "Aktau"],
+    answer: "Baikonur",
+    hint: "It is famous for rocket launches.",
+    explanation: "Baikonur is the space launch city in Kyzylorda Region.",
+  },
+  {
+    question: "In what year did Kazakhstan become independent?",
+    options: ["1991", "1986", "1997", "2001"],
+    answer: "1991",
+    hint: "It happened when the Soviet Union ended.",
+    explanation: "Kazakhstan declared independence in 1991.",
+  },
+  {
+    question: "Which city became Kazakhstan's capital in 1997?",
+    options: ["Astana", "Almaty", "Shymkent", "Turkestan"],
+    answer: "Astana",
+    hint: "The Baiterek tower is there.",
+    explanation: "Astana became the capital in 1997.",
+  },
+  {
+    question: "Which historical mausoleum in Turkestan is a UNESCO site?",
+    options: ["Khoja Ahmed Yasawi Mausoleum", "Baiterek Tower", "Kok-Tobe", "Medeu"],
+    answer: "Khoja Ahmed Yasawi Mausoleum",
+    hint: "It is connected with a famous Sufi poet.",
+    explanation: "The Khoja Ahmed Yasawi Mausoleum is protected by UNESCO.",
+  },
+  {
+    question: "What traditional Kazakh instrument has two strings?",
+    options: ["Dombra", "Piano", "Violin", "Guitar"],
+    answer: "Dombra",
+    hint: "It is a national symbol of Kazakh music.",
+    explanation: "The dombra is a two-stringed Kazakh instrument.",
+  },
+  {
+    question: "Which movement is linked with Kazakh intellectuals in the early 20th century?",
+    options: ["Alash movement", "Renaissance", "Space Race", "Silk Road"],
+    answer: "Alash movement",
+    hint: "Its leaders worked for Kazakh autonomy.",
+    explanation: "The Alash movement was important for Kazakh political thought.",
+  },
+  {
+    question: "Which route helped connect ancient Kazakhstan with trade between East and West?",
+    options: ["Silk Road", "Panama Canal", "Route 66", "Trans-Siberian Railway"],
+    answer: "Silk Road",
+    hint: "Caravans used it for trade.",
+    explanation: "The Silk Road passed through important cities in Kazakhstan.",
+  },
+  {
+    question: "Which city was Kazakhstan's capital before Astana?",
+    options: ["Almaty", "Atyrau", "Kostanay", "Kokshetau"],
+    answer: "Almaty",
+    hint: "It is near the Tian Shan mountains.",
+    explanation: "Almaty was the capital before Astana.",
+  },
+];
+
+function pickFallbackHistoryQuestion(seen: string[]) {
+  const unseen = FALLBACK_HISTORY_QUESTIONS.filter((item) => !seen.includes(item.question));
+  const pool = unseen.length > 0 ? unseen : FALLBACK_HISTORY_QUESTIONS;
+  return pool[Math.floor(Math.random() * pool.length)];
+}
+
 const MOTIVATIONS = {
   correct: [
     "Молодец! Қонжық гордится тобой! 🐻",
@@ -826,11 +891,7 @@ function Game({ session }: { session: import("@supabase/supabase-js").Session })
       rememberJourneyCities(nextLevels);
     } catch (err: any) {
       const message = String(err?.message ?? "");
-      setJourneyError(
-        /quota|rate[- ]?limit|free_tier|AI limit/i.test(message)
-          ? "AI limit reached for now. Starting the classic journey."
-          : "AI journey is unavailable right now. Starting the classic journey.",
-      );
+      setJourneyError(/quota|rate[- ]?limit|free_tier|AI limit/i.test(message) ? null : "AI journey is unavailable right now. Starting the classic journey.");
       setJourneyLevels(LEVELS);
       nextLevels = LEVELS;
     } finally {
@@ -903,13 +964,11 @@ function Game({ session }: { session: import("@supabase/supabase-js").Session })
       setHistoryQuestion(result);
       rememberHistoryQuestion(result.question);
     } catch (err: any) {
-      setHistoryQuestion(null);
+      const fallback = pickFallbackHistoryQuestion(excludeOverride ?? historySeen);
+      setHistoryQuestion(fallback);
+      rememberHistoryQuestion(fallback.question);
       const message = String(err?.message ?? "");
-      setHistoryError(
-        /quota|rate[- ]?limit|free_tier|AI limit/i.test(message)
-          ? "AI limit reached for now. Please try again later."
-          : "AI test is unavailable right now.",
-      );
+      setHistoryError(/quota|rate[- ]?limit|free_tier|AI limit/i.test(message) ? null : "AI test is using offline questions right now.");
     } finally {
       setHistoryBusy(false);
     }
@@ -1203,7 +1262,7 @@ function Game({ session }: { session: import("@supabase/supabase-js").Session })
                 </div>
               )}
 
-              {!historyBusy && !historyError && historyQuestion && (
+              {!historyBusy && historyQuestion && (
                 <div className="space-y-4">
                   <div className="rounded-lg border border-border bg-background p-4">
                     <div className="text-sm font-semibold leading-relaxed">{historyQuestion.question}</div>
