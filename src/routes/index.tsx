@@ -536,6 +536,33 @@ function pickFallbackHistoryQuestion(seen: string[]) {
   return pool[Math.floor(Math.random() * pool.length)];
 }
 
+function fallbackStudyMaterials(level: Level, lang: Lang) {
+  if (lang === "ru") {
+    return [
+      `Overview: ${level.city} - важное место Казахстана. Запомни его связь с темой: ${level.monument}.`,
+      `Remember: город/место - ${level.city}; ключевой объект - ${level.monument}; локация - ${level.location}.`,
+      "Mini plan: 1) повтори название города; 2) свяжи его с фото; 3) запомни один факт; 4) ответь на вопрос без подсказки.",
+      `Practice: если видишь вопрос про ${level.monument}, сначала вспоминай ${level.city}.`,
+    ].join("\n");
+  }
+
+  if (lang === "kk") {
+    return [
+      `Overview: ${level.city} - Қазақстандағы маңызды орын. Негізгі нысан: ${level.monument}.`,
+      `Remember: қала/орын - ${level.city}; нысан - ${level.monument}; орналасуы - ${level.location}.`,
+      "Mini plan: 1) қала атауын қайтала; 2) оны суретпен байланыстыр; 3) бір фактіні есте сақта; 4) көмексіз жауап бер.",
+      `Practice: ${level.monument} туралы сұрақ көрсең, алдымен ${level.city} қаласын есіңе түсір.`,
+    ].join("\n");
+  }
+
+  return [
+    `Overview: ${level.city} is an important Kazakhstan location. Connect it with ${level.monument}.`,
+    `Remember: place - ${level.city}; key landmark - ${level.monument}; location - ${level.location}.`,
+    "Mini plan: 1) repeat the city name; 2) connect it to the photo; 3) remember one fact; 4) answer once without hints.",
+    `Practice: when you see ${level.monument}, first think of ${level.city}.`,
+  ].join("\n");
+}
+
 const MOTIVATIONS = {
   correct: [
     "Молодец! Қонжық гордится тобой! 🐻",
@@ -1769,7 +1796,8 @@ function PlayerProfileModal({
       });
       setMaterials(result.materials);
     } catch (err: any) {
-      setMaterialsError(err.message ?? "AI materials are unavailable right now.");
+      setMaterials(fallbackStudyMaterials(level, lang));
+      setMaterialsError(null);
     } finally {
       setMaterialsBusy(false);
     }
